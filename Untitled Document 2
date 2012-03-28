@@ -1,0 +1,15 @@
+Title: Finely Threaded Topological Connection Reconstruction
+
+Abstract:
+Many algorithms applied to mesh-based data structures are easily parallelizable because operations 
+ can often be divided by the constituent elements of the mesh and 
+ parallelized with a large number of threads.  The problem with this technique is 
+ that when these threads generate new topological features, they tend to
+ generate redundant information such as coincident vertices.  This 
+ ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring 
+ elements.  We present a novel approach for the efficient construction 
+ of connected topologies on multi- and many-core systems, which we demonstrate with 
+ GPU and OpenMP implementations. In this approach, we use input
+ topological features as a basis for efficient location of coincident
+ features in the output.  We provide examples and performance numbers of the technique for 
+ isosurface generation and multiple forms of tetrahedralization.

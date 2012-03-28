@@ -1,0 +1,96 @@
+\relax 
+\citation{Lorensen1987}
+\citation{Park}
+\citation{Lorensen1987}
+\citation{Rottger2000}
+\citation{Dyken2008}
+\citation{Park}
+\citation{Kipfer2005}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Previous Work}{1}}
+\citation{Horn2005}
+\citation{Sengupta2007}
+\citation{Blelloch1990}
+\citation{Dyken2008}
+\citation{Bell2012}
+\citation{Bell2010}
+\citation{Carr2006}
+\citation{Bell2012}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methods}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Goals}{2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Algorithm}{2}}
+\citation{Carr2006}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Mesh Generation}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Performance Measurement}{3}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Test system configurations}}{3}}
+\newlabel{tab:systems}{{1}{3}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Test Datasets}}{3}}
+\newlabel{tab:datasets}{{2}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Method of Topological Connectivity Construction}{3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}Vertex Welding}{3}}
+\newlabel{sec:IntegralIDs}{{3.5.1}{3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}Vertex Welding Results}{4}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Performance comparison for different approaches to Vertex Welding}}{4}}
+\newlabel{tab:welding}{{3}{4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.3}Topological connectivity construction}{4}}
+\newlabel{sec:topology}{{3.5.3}{4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.4}Topology Generation Results}{4}}
+\citation{Potter2011}
+\citation{DeCoro2007}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Timings for topological connectivity generation of contours on structured (SG) and unstructured (UG) grids.}}{5}}
+\newlabel{tab:toptimings}{{4}{5}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Timings for topological connectivity generation of tetrahedral grids.}}{5}}
+\newlabel{tab:toptimingstetra}{{5}{5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces A depiction of a point-to-face list, where the original triangular mesh is marked in black, each vertex is marked in white, and the surrounding centroids are marked in blue.}}{5}}
+\newlabel{fig:vtcc}{{1}{5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Applications}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.1}Local Averaging}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.2}Local Averaging Results}{5}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Timings for local averaging of vector (V) and scalar (S) properties on contour surfaces}}{5}}
+\newlabel{tab:timingsaverage}{{6}{5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Top left: Before neighbor scalar averaging function. Top right: After scalar averaging function. Bottom left: Before vertex averaging (simple mesh smoothing). Bottom Right: After vertex averaging.}}{5}}
+\newlabel{fig:averaging}{{2}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.3}Mesh coarsening}{5}}
+\citation{Bank2003}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces When Marching Cubes and Marching Tetrahedra generate contour surfaces, the produced vertices can only occur on voxel edges (black). When the output vertices (blue) fall close to the voxel vertices (black), small or skinny triangles are produced (red). We eliminate these by merging all vertices that fall close to a voxel vertex into a single output. This collapses the skinny triangles into degenerate triangles, which are then removed. }}{6}}
+\newlabel{fig:SkinnyCollapse}{{3}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces We use a control parameter $k$ to determine the size of the regions along edges of length $\ell $. Our coarsening technique can eliminate these during vertex welding without additional performance cost.}}{6}}
+\newlabel{fig:IDs}{{4}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces 2D representation of implicit spatial subdivision into regions for the assignment of IDs to vertices generated on structured grids. Each region surrounding a voxel edge is shared by between 4 and 8 voxels. Because these regions can be determined directly from the output vertex, they need not be stored. As such, no modification to the geometry generating function is required. Furthermore, determination of the integral region ID allows for faster sorting, as no lexicographic comparison of the vertices is required.}}{6}}
+\newlabel{fig:Subdivision}{{5}{6}}
+\bibstyle{abbrv}
+\citation{*}
+\bibdata{template}
+\bibcite{Bank2003}{1}
+\bibcite{Bell2010}{2}
+\bibcite{Bell2012}{3}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces A problem with our coarsening method is that in some cases nonmanifold faces are produced. In the example above, two vertices from different faces are merged and a 3D volume is collapsed into a single plane. To recreate a manifold surface, we detect and remove these cases in a separate step.}}{7}}
+\newlabel{fig:Nonmanifold}{{6}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.4}Mesh Coarsening Results}{7}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Timings for mesh coarsening during vertex welding}}{7}}
+\newlabel{tab:timingscoarsening}{{7}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.5}Dual Mesh Generation}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.6}Dual Mesh Generation Results}{7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Top: Before coarsening. Bottom: After coarsening.}}{7}}
+\newlabel{fig:coarsening}{{7}{7}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Timings for dual mesh generation}}{7}}
+\newlabel{tab:timingsdualmesh}{{8}{7}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions and Future Work}{7}}
+\bibcite{Blelloch1990}{4}
+\bibcite{Boubekeur2005}{5}
+\bibcite{Carr2006}{6}
+\bibcite{Computing1992}{7}
+\bibcite{DeCoro2007}{8}
+\bibcite{Dyken2008}{9}
+\bibcite{Horn2005}{10}
+\bibcite{Hsieh2005}{11}
+\bibcite{Kipfer2005}{12}
+\bibcite{Lindstrom2000}{13}
+\bibcite{Lorensen1987}{14}
+\bibcite{Park}{15}
+\bibcite{Potter2011}{16}
+\bibcite{Rottger2000}{17}
+\bibcite{Sengupta2007}{18}
+\bibcite{Sifakis2007}{19}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Top left: Orange represents the triangles that the coarsening chose to keep. Green represents the triangles that the coarsening removed. Top right: Green and Orange are as in the top left. Blue represents the quality of the triangles that the orange triangles were modified into. Top left inset: distribution of triangle quality as compared between the original triangles, and the coarsened triangles. Top right inset: Distribution of triangle quality for coarsened, passed and removed triangles.}}{8}}
+\newlabel{fig:coarseninggraphs}{{8}{8}}
