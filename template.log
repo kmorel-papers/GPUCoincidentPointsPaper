@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  22 MAR 2012 13:31
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2011.7.3)  19 JUN 2012 14:06
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -7,20 +7,21 @@ entering extended mode
 (./template.tex
 LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
-rman-x-2009-06-19, ngerman-x-2009-06-19, ancientgreek, ibycus, arabic, armenian
-, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danish, dutch, u
-kenglish, usenglishmax, esperanto, estonian, farsi, finnish, french, galician, 
-german, ngerman, swissgerman, monogreek, greek, hungarian, icelandic, assamese,
- bengali, gujarati, hindi, kannada, malayalam, marathi, oriya, panjabi, tamil, 
-telugu, indonesian, interlingua, irish, italian, kurmanji, lao, latin, latvian,
- lithuanian, mongolian, mongolianlmc, bokmal, nynorsk, polish, portuguese, roma
-nian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, turkish,
- turkmen, ukrainian, uppersorbian, welsh, loaded.
+rman-x-2009-06-19, ngerman-x-2009-06-19, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, galician, german, ngerman, swissgerman, monogreek, greek, hungarian,
+ icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, marathi, or
+iya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, kurmanji,
+ lao, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk, pol
+ish, portuguese, romanian, russian, sanskrit, serbian, serbianc, slovak, sloven
+ian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, welsh, loaded
+.
 (./vgtc.cls
 Document Class: vgtc 2006/05/21 IEEE VGTC
-(/usr/local/texlive/2010/texmf-dist/tex/latex/base/article.cls
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
-(/usr/local/texlive/2010/texmf-dist/tex/latex/base/size10.clo
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
@@ -43,7 +44,21 @@ File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \abstxtspace=\skip46
 \vgtc@copyrightlength=\skip47
 )
-(/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/mathptmx.sty
+(./clrscode.sty
+Package: clrscode 2007/03/29 v1.7 format pseudocode
+ (/usr/local/texlive/2011/texmf-dist/tex/latex/base/latexsym.sty
+Package: latexsym 1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
+\symlasy=\mathgroup4
+LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
+(Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
+)
+\c@codelinenumber=\count87
+\c@indent=\count88
+\digitwidth=\skip48
+\savecode=\box26
+\codeboxwidth=\skip49
+\c@thisindent=\count89
+) (/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/mathptmx.sty
 Package: mathptmx 2005/04/12 PSNFSS-v9.2a Times w/ Math, improved (SPQR, WaS) 
 LaTeX Font Info:    Redeclaring symbol font `operators' on input line 28.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
@@ -65,8 +80,8 @@ LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
 (Font)                  OMX/cmex/m/n --> OMX/ztmcm/m/n on input line 31.
 LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
 (Font)                  OMX/cmex/m/n --> OMX/ztmcm/m/n on input line 31.
-\symbold=\mathgroup4
-\symitalic=\mathgroup5
+\symbold=\mathgroup5
+\symitalic=\mathgroup6
 LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 34.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
 (Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 34.
@@ -79,325 +94,463 @@ LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
 (Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 35.
 LaTeX Info: Redefining \hbar on input line 50.
 )
-(/usr/local/texlive/2010/texmf-dist/tex/latex/graphics/graphicx.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/local/texlive/2010/texmf-dist/tex/latex/graphics/keyval.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks14
 )
-(/usr/local/texlive/2010/texmf-dist/tex/latex/graphics/graphics.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/local/texlive/2010/texmf-dist/tex/latex/graphics/trig.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/usr/local/texlive/2010/texmf-dist/tex/latex/latexconfig/graphics.cfg
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/graphics.cfg
 File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
 )
 Package graphics Info: Driver file: pdftex.def on input line 91.
 
-(/usr/local/texlive/2010/texmf-dist/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2010/02/14 v0.04n Graphics/color for pdfTeX
-\Gread@gobject=\count87
+(/usr/local/texlive/2011/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
+)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/04/18 v1.20 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count90
 ))
 \Gin@req@height=\dimen105
 \Gin@req@width=\dimen106
 )
-(/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/times.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/times.sty
 Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
 )
-(/usr/local/texlive/2010/texmf-dist/tex/latex/graphics/epsfig.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/epsfig.sty
 Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
 \epsfxsize=\dimen107
 \epsfysize=\dimen108
 )
-(/usr/local/texlive/2010/texmf-dist/tex/latex/oberdiek/epstopdf.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/epstopdf.sty
 Package: epstopdf 2010/02/09 v2.5 Conversion with epstopdf on the fly (HO)
 
-(/usr/local/texlive/2010/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
 
-(/usr/local/texlive/2010/texmf-dist/tex/generic/oberdiek/infwarerr.sty
-Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
-)
-(/usr/local/texlive/2010/texmf-dist/tex/latex/oberdiek/grfext.sty
-Package: grfext 2007/09/30 v1.0 Managing graphics extensions (HO)
-)
-(/usr/local/texlive/2010/texmf-dist/tex/latex/oberdiek/kvoptions.sty
-Package: kvoptions 2010/02/22 v3.7 Keyval support for LaTeX options (HO)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Managing graphics extensions (HO)
 
-(/usr/local/texlive/2010/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
-Package: kvsetkeys 2010/03/01 v1.9 Key value parser (HO)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Defining keys (HO)
+))
+(/usr/local/texlive/2011/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2010/12/23 v3.10 Keyval support for LaTeX options (HO)
 
-(/usr/local/texlive/2010/texmf-dist/tex/generic/oberdiek/etexcmds.sty
-Package: etexcmds 2010/01/28 v1.3 Prefix for e-TeX command names (HO)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2011/04/07 v1.13 Key value parser (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Prefix for e-TeX command names (HO)
+
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
 Package etexcmds Info: Could not find \expanded.
 (etexcmds)             That can mean that you are not using pdfTeX 1.50 or
 (etexcmds)             that some package has redefined \expanded.
 (etexcmds)             In the latter case, load this package earlier.
 )))
-(/usr/local/texlive/2010/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
-Package: pdftexcmds 2010/04/01 v0.9 Utility functions of pdfTeX for LuaTeX (HO)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/04/22 v0.16 Utilities of pdfTeX for LuaTeX (HO)
 
-
-(/usr/local/texlive/2010/texmf-dist/tex/generic/oberdiek/ifluatex.sty
-Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
-Package ifluatex Info: LuaTeX not detected.
-)
-(/usr/local/texlive/2010/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
-Package: ltxcmds 2010/04/26 v1.7 LaTeX kernel commands for general use (HO)
+(/usr/local/texlive/2011/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
 )
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
 )
 Package grfext Info: Graphics extension search list:
 (grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
 G,.JBIG2,.JB2,.eps]
-(grfext)             \AppendGraphicsExtensions on input line 436.
+(grfext)             \AppendGraphicsExtensions on input line 452.
 
-(/usr/local/texlive/2010/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 )))
-(/usr/local/texlive/2010/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2011/texmf-dist/tex/latex/subfig/subfig.sty
+Package: subfig 2005/06/28 ver: 1.3 subfig package
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2010/01/09 v3.1m Customizing captions (AR)
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2010/01/14 v3.1m caption3 kernel (AR)
+\captionmargin=\dimen109
+\captionmargin@=\dimen110
+\captionwidth=\dimen111
+\caption@indent=\dimen112
+\caption@parindent=\dimen113
+\caption@hangindent=\dimen114
+Package caption Info: Unknown document class (or package),
+(caption)             standard defaults will be used on input line 1084.
+)
+
+Package caption Warning: Unsupported document class (or package) detected,
+(caption)                usage of the caption package is not recommended.
+See the caption package documentation for explanation.
+
+Package caption Info: \@makecaption = \long macro:#1#2->\vskip \abovecaptionski
+p \leftskip = \captionmargin \rightskip = \leftskip \sbox \@tempboxa {\captionf
+onts #1\ifvgtcjournal . \else : \fi #2}\ifdim \wd \@tempboxa >\hsize {\captionf
+onts #1\ifvgtcjournal . \else : \fi #2\par } \else \global \@minipagefalse \def
+ \@figcaptype {figure} \hskip 0.0in\hb@xt@ \hsize {\ifvgtcjournal \ifx \@captyp
+e \@figcaptype \else \hfil \fi \else \hfil \fi \box \@tempboxa \hfil }\fi \vski
+p \belowcaptionskip .
+\c@ContinuedFloat=\count91
+)
+\c@KVtest=\count92
+\sf@farskip=\skip50
+\sf@captopadj=\dimen115
+\sf@capskip=\skip51
+\sf@nearskip=\skip52
+\c@subfigure=\count93
+\c@subfigure@save=\count94
+\c@lofdepth=\count95
+\c@subtable=\count96
+\c@subtable@save=\count97
+\c@lotdepth=\count98
+\sf@top=\skip53
+\sf@bottom=\skip54
+) (/usr/local/texlive/2011/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count99
+\float@exts=\toks15
+\float@box=\box27
+\@float@everytoks=\toks16
+\@floatcapt=\box28
+)
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/color.sty
 Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
 
-(/usr/local/texlive/2010/texmf-dist/tex/latex/latexconfig/color.cfg
+(/usr/local/texlive/2011/texmf-dist/tex/latex/latexconfig/color.cfg
 File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 130.
 
-(/usr/local/texlive/2010/texmf-dist/tex/latex/graphics/dvipsnam.def
+(/usr/local/texlive/2011/texmf-dist/tex/latex/graphics/dvipsnam.def
 File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 ))
+\@float@every@floatbox=\toks17
+\c@floatbox=\count100
+
 (./template.aux)
 \openout1 = `template.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 125.
-LaTeX Font Info:    ... okay on input line 125.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 125.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 120.
+LaTeX Font Info:    ... okay on input line 120.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 120.
 
- (/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+ (/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
-\big@size=\dimen109
- (/usr/local/texlive/2010/texmf-dist/tex/context/base/supp-pdf.mkii
+\big@size=\dimen116
+ (/usr/local/texlive/2011/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count88
-\scratchdimen=\dimen110
-\scratchbox=\box26
-\nofMPsegments=\count89
-\nofMParguments=\count90
-\everyMPshowfont=\toks15
-\MPscratchCnt=\count91
-\MPscratchDim=\dimen111
-\MPnumerator=\count92
-\everyMPtoPDFconversion=\toks16
+\scratchcounter=\count101
+\scratchdimen=\dimen117
+\scratchbox=\box29
+\nofMPsegments=\count102
+\nofMParguments=\count103
+\everyMPshowfont=\toks18
+\MPscratchCnt=\count104
+\MPscratchDim=\dimen118
+\MPnumerator=\count105
+\makeMPintoPDFobject=\count106
+\everyMPtoPDFconversion=\toks19
 )
-LaTeX Font Info:    Try loading font information for OT1+phv on input line 133.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption3 Info: subfig package 1.2 or 1.3 is loaded.
+LaTeX Info: Redefining \subref on input line 120.
+Package caption Info: float package is loaded.
+Package caption Info: End \AtBeginDocument code.
+LaTeX Font Info:    Try loading font information for OT1+phv on input line 128.
 
- (/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/ot1phv.fd
+ (/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2001/06/04 scalable font definitions for OT1/phv.
 )
-LaTeX Font Info:    Try loading font information for OT1+ztmcm on input line 13
-3.
-
-(/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/ot1ztmcm.fd
-File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
-)
-LaTeX Font Info:    Try loading font information for OML+ztmcm on input line 13
-3.
-
-(/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/omlztmcm.fd
-File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
-)
-LaTeX Font Info:    Try loading font information for OMS+ztmcm on input line 13
-3.
-
-(/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/omsztmcm.fd
-File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
-)
-LaTeX Font Info:    Try loading font information for OMX+ztmcm on input line 13
-3.
-
-(/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/omxztmcm.fd
-File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
-)
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 133.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 133.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 133.
 LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <8> not available
-(Font)              Font shape `OT1/phv/b/n' tried instead on input line 133.
+(Font)              Font shape `OT1/phv/b/n' tried instead on input line 128.
 Package epstopdf Info: Source file: <diamondrule.eps>
-(epstopdf)                    date: 2012-03-12 03:17:15
+(epstopdf)                    date: 2012-06-19 14:04:00
 (epstopdf)                    size: 1628 bytes
 (epstopdf)             Output file: <diamondrule-eps-converted-to.pdf>
-(epstopdf)                    date: 2012-03-12 03:17:24
+(epstopdf)                    date: 2012-06-19 14:04:14
 (epstopdf)                    size: 2554 bytes
 (epstopdf)             Command: <epstopdf --outfile=diamondrule-eps-converted-t
 o.pdf diamondrule.eps>
-(epstopdf)             \includegraphics on input line 133.
+(epstopdf)             \includegraphics on input line 128.
 Package epstopdf Info: Output file is already uptodate.
 
 <diamondrule-eps-converted-to.pdf, id=1, 213.79875pt x 12.045pt>
 File: diamondrule-eps-converted-to.pdf Graphic file (type pdf)
 
 <use diamondrule-eps-converted-to.pdf>
+Package pdftex.def Info: diamondrule-eps-converted-to.pdf used on input line 12
+8.
+(pdftex.def)             Requested size: 213.79822pt x 12.04495pt.
 LaTeX Font Info:    Font shape `OT1/phv/bx/n' in size <9> not available
-(Font)              Font shape `OT1/phv/b/n' tried instead on input line 133.
+(Font)              Font shape `OT1/phv/b/n' tried instead on input line 128.
 LaTeX Font Info:    Font shape `OT1/phv/bx/sc' in size <9> not available
-(Font)              Font shape `OT1/phv/b/sc' tried instead on input line 133.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 133.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 133.
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 133.
+(Font)              Font shape `OT1/phv/b/sc' tried instead on input line 128.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 176.
 
 
-(/usr/local/texlive/2010/texmf-dist/tex/latex/psnfss/omsptm.fd
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
-LaTeX Font Info:    Font shape `OMS/ptm/m/it' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 133.
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 179.
- [1{/usr/local/texlive/2010/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 176.
+LaTeX Font Info:    Try loading font information for OT1+ztmcm on input line 19
+0.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/ot1ztmcm.fd
+File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
+)
+LaTeX Font Info:    Try loading font information for OML+ztmcm on input line 19
+0.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/omlztmcm.fd
+File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
+)
+LaTeX Font Info:    Try loading font information for OMS+ztmcm on input line 19
+0.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/omsztmcm.fd
+File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
+)
+LaTeX Font Info:    Try loading font information for OMX+ztmcm on input line 19
+0.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/omxztmcm.fd
+File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
+)
+LaTeX Font Info:    Try loading font information for U+lasy on input line 190.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/base/ulasy.fd
+File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 190.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 190.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 190.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Overfull \vbox (2.32803pt too high) has occurred while \output is active []
+
+
+[1{/usr/local/texlive/2011/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
  <./diamondrule-eps-converted-to.pdf>]
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 274.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 274.
+Overfull \hbox (3.711pt too wide) in paragraph at lines 285--285
+| [] 
+ []
+
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 293.
+
+(/usr/local/texlive/2011/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+<KeyWeld.pdf, id=14, 614.295pt x 227.85126pt>
+File: KeyWeld.pdf Graphic file (type pdf)
+ <use KeyWeld.pdf>
+Package pdftex.def Info: KeyWeld.pdf used on input line 330.
+(pdftex.def)             Requested size: 514.92374pt x 191.00435pt.
  [2]
-Underfull \hbox (badness 1112) in paragraph at lines 332--333
-[]\OT1/ptm/m/n/9 Transform each el-e-ment in $\OML/ztmcm/m/it/9 N$ \OT1/ptm/m/n
-/9 into out-puts us-ing the
+Underfull \hbox (badness 1675) in paragraph at lines 427--428
+[]\OT1/ptm/m/n/9 Steps 7 through 18 in \OT1/ptm/m/sc/9 Key-Weld \OT1/ptm/m/n/9 
+are de-scribed at a high
  []
 
 
-Overfull \hbox (7.21574pt too wide) in paragraph at lines 350--350
-[]\OT1/ptm/m/n/9 Backend| 
- []
+Overfull \vbox (2.32803pt too high) has occurred while \output is active []
 
 
-Overfull \hbox (0.9519pt too wide) in paragraph at lines 352--352
-[]\OT1/ptm/m/n/9 CUDA| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 352--353
-[]\OT1/ptm/m/n/9 2 x nVidia
- []
-
-
-Overfull \hbox (8.31374pt too wide) in paragraph at lines 354--354
-[]\OT1/ptm/m/n/9 OpenMP| 
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[3]
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<vtcc.png, id=25, 1435.3625pt x 1428.33624pt>
-File: vtcc.png Graphic file (type png)
- <use vtcc.png> [4]
-Overfull \hbox (8.4294pt too wide) in paragraph at lines 528--536
-[][] 
- []
-
-<averaging.png, id=29, 5082.99pt x 3043.37pt>
-File: averaging.png Graphic file (type png)
- <use averaging.png> [5 <./vtcc.png (PNG copy)> <./averaging.png (PNG copy)>]
-<SkinnyCollapse.png, id=33, 245.8275pt x 209.6925pt>
-File: SkinnyCollapse.png Graphic file (type png)
- <use SkinnyCollapse.png>
-<IDs.png, id=34, 180.46368pt x 234.56053pt>
-File: IDs.png Graphic file (type png)
- <use IDs.png>
-<Subdivision.png, id=35, 151.59761pt x 158.90947pt>
-File: Subdivision.png Graphic file (type png)
- <use Subdivision.png>
-[6 <./SkinnyCollapse.png> <./IDs.png> <./Subdivision.png>]
-<Nonmanifold.png, id=39, 289.3623pt x 224.00877pt>
-File: Nonmanifold.png Graphic file (type png)
- <use Nonmanifold.png>
-<Coarsening.png, id=40, 1906.12125pt x 2156.055pt>
-File: Coarsening.png Graphic file (type png)
- <use Coarsening.png>
-<CoarseningGraphs.png, id=42, 5717.36pt x 2521.42pt>
-File: CoarseningGraphs.png Graphic file (type png)
-
-<use CoarseningGraphs.png>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-(./template.bbl [7 <./Nonmanifold.png> <./Coarsening.png>]
-Underfull \hbox (badness 1205) in paragraph at lines 41--46
-[]\OT1/ptm/m/n/8 C. DeCoro and N. Tatarchuk.  Real-time mesh sim-pli-fi-ca-tion
- us-
- []
-
-
-Underfull \hbox (badness 1173) in paragraph at lines 41--46
-\OT1/ptm/m/n/8 ing the GPU.  In \OT1/ptm/m/it/8 Pro-ceed-ings of the 2007 Sym-p
-o-sium on In-ter-
- []
-
-
-Underfull \hbox (badness 1127) in paragraph at lines 41--46
-\OT1/ptm/m/it/8 ac-tive 3D Graph-ics and Games (I3D '07)\OT1/ptm/m/n/8 , pages 
-161--166, 2007.
+[3 <./KeyWeld.pdf>] [4]
+Overfull \hbox (1.17331pt too wide) in paragraph at lines 542--550
+ [] 
  []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-) [8 <./CoarseningGraphs.png (PNG copy)>] (./template.aux) ) 
+
+<IncidenceList.pdf, id=227, 614.295pt x 227.85126pt>
+File: IncidenceList.pdf Graphic file (type pdf)
+ <use IncidenceList.pdf>
+Package pdftex.def Info: IncidenceList.pdf used on input line 577.
+(pdftex.def)             Requested size: 514.92374pt x 191.00435pt.
+
+Overfull \vbox (2.32803pt too high) has occurred while \output is active []
+
+
+[5] <FaceNoAveraging.png, id=231, 1011.78pt x 1102.1175pt>
+File: FaceNoAveraging.png Graphic file (type png)
+
+<use FaceNoAveraging.png>
+Package pdftex.def Info: FaceNoAveraging.png used on input line 695.
+(pdftex.def)             Requested size: 80.4239pt x 87.59943pt.
+
+<FaceAveraging.png, id=232, 1002.74625pt x 1097.09875pt>
+File: FaceAveraging.png Graphic file (type png)
+
+<use FaceAveraging.png>
+Package pdftex.def Info: FaceAveraging.png used on input line 696.
+(pdftex.def)             Requested size: 80.4239pt x 87.98732pt.
+ <FaceCoarsening.png, id=233, 1004.75375pt x 1116.17pt>
+File: FaceCoarsening.png Graphic file (type png)
+
+<use FaceCoarsening.png>
+Package pdftex.def Info: FaceCoarsening.png used on input line 697.
+(pdftex.def)             Requested size: 80.4239pt x 89.32948pt.
+ [6 <./IncidenceList.pdf>]
+<SkinnyCollapse.pdf, id=397, 542.025pt x 209.78375pt>
+File: SkinnyCollapse.pdf Graphic file (type pdf)
+ <use SkinnyCollapse.pdf>
+Package pdftex.def Info: SkinnyCollapse.pdf used on input line 720.
+(pdftex.def)             Requested size: 251.31898pt x 97.26993pt.
+
+<IDs.pdf, id=398, 238.8925pt x 119.44624pt>
+File: IDs.pdf Graphic file (type pdf)
+ <use IDs.pdf>
+Package pdftex.def Info: IDs.pdf used on input line 729.
+(pdftex.def)             Requested size: 251.31839pt x 125.65948pt.
+
+<Subdivision.pdf, id=399, 151.56625pt x 158.5925pt>
+File: Subdivision.pdf Graphic file (type pdf)
+ <use Subdivision.pdf>
+Package pdftex.def Info: Subdivision.pdf used on input line 737.
+(pdftex.def)             Requested size: 120.0968pt x 125.65948pt.
+
+Overfull \vbox (2.32803pt too high) has occurred while \output is active []
+
+
+[7 <./FaceNoAveraging.png> <./FaceAveraging.png> <./FaceCoarsening.png> <./Skin
+nyCollapse.pdf> <./IDs.pdf>]
+<Nonmanifold.pdf, id=472, 332.24126pt x 223.83624pt>
+File: Nonmanifold.pdf Graphic file (type pdf)
+ <use Nonmanifold.pdf>
+Package pdftex.def Info: Nonmanifold.pdf used on input line 751.
+(pdftex.def)             Requested size: 251.31898pt x 169.31808pt.
+
+<ScatterAll.png, id=473, 234.8775pt x 162.6075pt>
+File: ScatterAll.png Graphic file (type png)
+ <use ScatterAll.png>
+Package pdftex.def Info: ScatterAll.png used on input line 781.
+(pdftex.def)             Requested size: 289.76492pt x 200.59201pt.
+
+<MergedFigures.pdf, id=474, 614.295pt x 794.97pt>
+File: MergedFigures.pdf Graphic file (type pdf)
+ <use MergedFigures.pdf>
+Package pdftex.def Info: MergedFigures.pdf used on input line 783.
+(pdftex.def)             Requested size: 154.99812pt x 200.59201pt.
+
+<Coarsening.png, id=475, 1906.12125pt x 2146.0175pt>
+File: Coarsening.png Graphic file (type png)
+ <use Coarsening.png>
+Package pdftex.def Info: Coarsening.png used on input line 792.
+(pdftex.def)             Requested size: 251.31898pt x 282.92154pt.
+
+[8 <./Subdivision.pdf> <./Nonmanifold.pdf> <./Coarsening.png>]
+<DualExample.pdf, id=542, 296.10625pt x 212.795pt>
+File: DualExample.pdf Graphic file (type pdf)
+ <use DualExample.pdf>
+Package pdftex.def Info: DualExample.pdf used on input line 804.
+(pdftex.def)             Requested size: 118.77925pt x 85.35826pt.
+
+<DualMeshSkeleton.png, id=543, 1424.32124pt x 919.435pt>
+File: DualMeshSkeleton.png Graphic file (type png)
+
+<use DualMeshSkeleton.png>
+Package pdftex.def Info: DualMeshSkeleton.png used on input line 815.
+(pdftex.def)             Requested size: 251.31898pt x 162.22229pt.
+
+Overfull \hbox (0.79999pt too wide) in paragraph at lines 815--816
+ [] 
+ []
+
+(./template.bbl
+Overfull \vbox (2.32803pt too high) has occurred while \output is active []
+
+
+[9 <./ScatterAll.png> <./MergedFigures.pdf> <./DualExample.pdf> <./DualMeshSkel
+eton.png>]
+Underfull \hbox (badness 1205) in paragraph at lines 51--56
+[]\OT1/ptm/m/n/8 C. DeCoro and N. Tatarchuk.  Real-time mesh sim-pli-fi-ca-tion
+ us-
+ []
+
+
+Underfull \hbox (badness 1173) in paragraph at lines 51--56
+\OT1/ptm/m/n/8 ing the GPU.  In \OT1/ptm/m/it/8 Pro-ceed-ings of the 2007 Sym-p
+o-sium on In-ter-
+ []
+
+
+Underfull \hbox (badness 1127) in paragraph at lines 51--56
+\OT1/ptm/m/it/8 ac-tive 3D Graph-ics and Games (I3D '07)\OT1/ptm/m/n/8 , pages 
+161--166, 2007.
+ []
+
+) [10
+
+] (./template.aux) ) 
 Here is how much of TeX's memory you used:
- 2052 strings out of 493747
- 30029 string characters out of 3143546
- 97751 words of memory out of 3000000
- 5275 multiletter control sequences out of 15000+200000
- 50346 words of font info for 99 fonts, out of 3000000 for 9000
- 714 hyphenation exceptions out of 8191
- 41i,10n,23p,1109b,280s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/local/texlive
-/2010/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2010/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2010/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2010/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2010/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2010/texmf-dist/font
-s/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2010/texmf-dist/fonts/
-type1/urw/helvetic/uhvb8a.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/u
-rw/helvetic/uhvr8a.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/urw/time
-s/utmb8a.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/urw/times/utmr8a.p
-fb></usr/local/texlive/2010/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on template.pdf (8 pages, 8626948 bytes).
+ 3501 strings out of 493633
+ 54737 string characters out of 3143378
+ 128333 words of memory out of 3000000
+ 6692 multiletter control sequences out of 15000+200000
+ 39424 words of font info for 76 fonts, out of 3000000 for 9000
+ 831 hyphenation exceptions out of 8191
+ 44i,9n,42p,1237b,384s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/local/texlive/2011/texmf-dist/fonts/enc/dvips/base/8r
+.enc}</usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.
+pfb></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pf
+b></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+></usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb><
+/usr/local/texlive/2011/texmf-dist/fonts/type1/public/amsfonts/latxfont/lasy9.p
+fb></usr/local/texlive/2011/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr
+/local/texlive/2011/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/local/
+texlive/2011/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive
+/2011/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2011/texm
+f-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2011/texmf-dist/fon
+ts/type1/urw/times/utmri8a.pfb>
+Output written on template.pdf (10 pages, 4616770 bytes).
 PDF statistics:
- 85 PDF objects out of 1000 (max. 8388607)
- 54 compressed objects within 1 object stream
+ 686 PDF objects out of 1000 (max. 8388607)
+ 370 compressed objects within 4 object streams
  0 named destinations out of 1000 (max. 500000)
- 46 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 76 words of extra memory for PDF output out of 10000 (max. 10000000)
 

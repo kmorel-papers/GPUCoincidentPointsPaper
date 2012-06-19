@@ -20,6 +20,11 @@ G.~Blelloch.
 \newblock {Prefix sums and their applications}.
 \newblock {\em Synthesis of Parallel Algorithms}, pages 35--60, 1990.
 
+\bibitem{Blelloch1991}
+G.~E. Blelloch.
+\newblock {Vector Models for Data-Parallel Computing}.
+\newblock {\em Computing Control Engineering Journal}, 2(5):238, 1991.
+
 \bibitem{Boubekeur2005}
 T.~Boubekeur and C.~Schlick.
 \newblock {Generic mesh refinement on GPU}.
@@ -37,6 +42,11 @@ H.~P. Computing.
 \newblock {Scientific Visualization with VTK, The Visualization Toolkit}.
 \newblock {\em Fluid Dynamics}, 12(1):1--9, 1992.
 
+\bibitem{MapReduce}
+J.~Dean and S.~Ghemawat.
+\newblock {MapReduce}: Simplified data processing on large clusters.
+\newblock {\em Communications of the ACM}, 51(1):107--113, January 2008.
+
 \bibitem{DeCoro2007}
 C.~DeCoro and N.~Tatarchuk.
 \newblock Real-time mesh simplification using the {GPU}.
@@ -48,6 +58,18 @@ C.~DeCoro and N.~Tatarchuk.
 C.~Dyken, G.~Ziegler, C.~Theobalt, and H.-P. Seidel.
 \newblock {High-speed Marching Cubes using HistoPyramids}.
 \newblock {\em Computer Graphics Forum}, 27(8):2028--2039, 2008.
+
+\bibitem{Garland2001}
+M.~Garland, A.~Willmott, and P.~S. Heckbert.
+\newblock {Hierarchical face clustering on polygonal surfaces}.
+\newblock {\em Proceedings of the 2001 symposium on Interactive 3D graphics
+  SI3D 01}, pages 49--58, 2001.
+
+\bibitem{Hoppe1996}
+H.~Hoppe.
+\newblock {Progressive meshes}.
+\newblock {\em Proceedings of the 23rd annual conference on Computer graphics
+  and interactive techniques SIGGRAPH 96}, 30(3):99--108, 1996.
 
 \bibitem{Horn2005}
 D.~Horn.
@@ -110,5 +132,19 @@ S.~Sengupta, M.~Harris, Y.~Zhang, and J.~D. Owens.
 E.~Sifakis.
 \newblock {Arbitrary Cutting of Deformable Tetrahedralized Objects}.
 \newblock {\em Computing}, 1, 2007.
+
+\bibitem{Stuart2010}
+J.~A. Stuart, C.-K. Chen, K.-L. Ma, and J.~D. Owens.
+\newblock Multi-{GPU} volume rendering using {MapReduce}.
+\newblock In {\em 1st International Workshop on MapReduce and its
+  Applications}, June 2010.
+
+\bibitem{Vo2011}
+H.~T. Vo, J.~Bronson, B.~Summa, J.~L. Comba, J.~Freire, B.~Howe, V.~Pascucci,
+  and C.~T. Silva.
+\newblock Parallel visualization on large clusters using {MapReduce}.
+\newblock In {\em Proceedings of the IEEE Symposium on Large-Scale Data
+  Analysis and Visualization}, pages 81--88, October 2011.
+\newblock {DOI}~10.1109/LDAV.2011.6092321.
 
 \end{thebibliography}

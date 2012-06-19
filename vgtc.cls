@@ -116,16 +116,19 @@
    %\ExecuteOptions{tvcgpapersize}
 }
 
-%% the following code has partly been adapted from egpubl.cls
-\newif\ifpdf  % determine if we are running PDFLaTeX or not
-\ifx\pdfoutput\undefined \pdffalse % we are not running PDFLaTeX 
-\else 
- %\pdfoutput=1 % we are running PDFLaTeX 
- \pdftrue 
-\fi 
+
+
+%%% the following code has partly been adapted from egpubl.cls
+%\newif\ifpdf  % determine if we are running PDFLaTeX or not
+%\ifx\pdfoutput\undefined \pdffalse % we are not running PDFLaTeX 
+%\else 
+% %\pdfoutput=1 % we are running PDFLaTeX 
+% \pdftrue 
+%\fi 
 
 \newcommand{\vgtcinsertpkg}{}
 \DeclareOption{electronic}{%
+\RequirePackage{ifpdf}
 \ifpdf 
  \renewcommand{\vgtcinsertpkg}{%
   \usepackage[pdftex,
@@ -250,8 +253,9 @@
 
 %%MEGHAN Comment from here
 \newcommand{\manuscriptnotetxt}{
-Manuscript received 31 March 2011; accepted 1 August 2011; posted online 23 October 2011; mailed on 14 October 2011.\par
-For information on obtaining reprints of this article, please send email~to:~tvcg@computer.org.
+Manuscript received 31 March 2012; accepted 1 August 2012; posted online 14 October 2012; mailed on 5 October 2012.\par
+For information on obtaining reprints of this article, please send \par
+e-mail to: tvcg@computer.org.
 }
 %% to here to not use the blank
 

@@ -1,52 +1,48 @@
-This is BibTeX, Version 0.99d (TeX Live 2010)
+This is BibTeX, Version 0.99d (TeX Live 2011)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: template.aux
 The style file: abbrv.bst
 Database file #1: template.bib
-Repeated entry---line 216 of file template.bib
- : @article{Computing1992
- :                       ,
-I'm skipping whatever remains of this entry
 Warning--there's a number but no series in Boubekeur2005
-You've used 19 entries,
+You've used 25 entries,
             2118 wiz_defined-function locations,
-            640 strings with 6872 characters,
-and the built_in function-call counts, 6830 in all, are:
-= -- 709
-> -- 244
-< -- 13
-+ -- 96
-- -- 77
-* -- 441
-:= -- 1070
-add.period$ -- 62
-call.type$ -- 19
-change.case$ -- 94
+            689 strings with 8163 characters,
+and the built_in function-call counts, 9064 in all, are:
+= -- 926
+> -- 355
+< -- 15
++ -- 140
+- -- 115
+* -- 606
+:= -- 1434
+add.period$ -- 81
+call.type$ -- 25
+change.case$ -- 131
 chr.to.int$ -- 0
-cite$ -- 20
-duplicate$ -- 293
-empty$ -- 568
-format.name$ -- 77
-if$ -- 1494
+cite$ -- 26
+duplicate$ -- 379
+empty$ -- 739
+format.name$ -- 115
+if$ -- 1961
 int.to.chr$ -- 0
-int.to.str$ -- 19
-missing$ -- 17
-newline$ -- 98
-num.names$ -- 40
-pop$ -- 95
+int.to.str$ -- 25
+missing$ -- 23
+newline$ -- 129
+num.names$ -- 52
+pop$ -- 132
 preamble$ -- 1
-purify$ -- 76
+purify$ -- 107
 quote$ -- 0
-skip$ -- 233
+skip$ -- 295
 stack$ -- 0
-substring$ -- 472
-swap$ -- 98
-text.length$ -- 13
+substring$ -- 606
+swap$ -- 120
+text.length$ -- 15
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 76
+type$ -- 100
 warning$ -- 1
-while$ -- 75
-width$ -- 21
-write$ -- 218
-(There was 1 error message)
+while$ -- 98
+width$ -- 27
+write$ -- 285
+(There was 1 warning)
