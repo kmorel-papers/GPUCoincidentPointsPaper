@@ -572,15 +572,17 @@ We demonstrate the use of our \proc{Key-Weld} technique as a basis for determina
 \vspace{0.2cm}
 \end{minipage}
 
-We begin with a procedure \proc{Vertex-Incidence-Lists} for the generation of incident faces for each input vertex on a generated surface. Example input is provided in Figure~\ref{fig:IncidenceList}.
-\begin{figure*}[!tb]
-\includegraphics[width=\textwidth]{IncidenceList.pdf}
-\caption{An example of the \proc{Vertex-Incidence-Lists} procedure on a very small set of triangles. Data values within the algorithm at several stages are shown above the flow diagram. The numbers shown in the green bubbles represent \emph{values (cell-ids)}, not \emph{keys} as in the \proc{Key-Weld} algorithm in Figure~\ref{fig:KeyWeld}. Upon output, $links\mbox{-}offsets$ contains offsets to the beginning of each vertex's face list in $links$.}
-\label{fig:IncidenceList}
-\end{figure*}
+We begin with a procedure \proc{Vertex-Incidence-Lists} for the generation of incident faces for each input vertex on a generated surface. 
+
+%Example input is provided in Figure~\ref{fig:IncidenceList}.
+%\begin{figure*}[!tb]
+%\includegraphics[width=\textwidth]{IncidenceList.pdf}
+%\caption{An example of the \proc{Vertex-Incidence-Lists} procedure on a very small set of triangles. Data values within the algorithm at several stages are shown above the flow diagram. The numbers shown in the green bubbles represent \emph{values (cell-ids)}, not \emph{keys} as in the \proc{Key-Weld} algorithm in Figure~\ref{fig:KeyWeld}. Upon output, $links\mbox{-}offsets$ contains offsets to the beginning of each vertex's face list in $links$.}
+%\label{fig:IncidenceList}
+%\end{figure*}
 
 \noindent
-\begin{figure}[b]
+\begin{figure}[hb]
 \vspace{-0.4cm}
 \begin{codebox}
   \Procname{$\proc{Vertex-Incidence-Lists}(\id{cell-ids},\id{cell-connections},\id{counts})$\\
@@ -600,7 +602,7 @@ We begin with a procedure \proc{Vertex-Incidence-Lists} for the generation of in
   \li \Return $(\id{links},\id{links-counts},\id{links-offsets})$
 \end{codebox}
 \vspace{-0.4cm}
-\caption*{Alg. 3: \proc{Vertex-Incidence-Lists} takes the output of the \proc{Key-Weld} algorithm and quickly generates an incidence list.}
+\caption*{Alg. 3: \proc{Vertex-Incidence-Lists} takes the output of the \proc{Key-Weld} algorithm and quickly generates an incidence list, represented as an array of \emph{cell-ids} and an array of pointers into \emph{cell-ids} called \emph{links-offsets} that represents the start of each cell's incidence list.}
 \end{figure}
 
 %\begin{itemize}
