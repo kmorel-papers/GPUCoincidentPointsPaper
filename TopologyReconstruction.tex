@@ -575,7 +575,7 @@ We demonstrate the use of our \proc{Key-Weld} technique as a basis for determina
 We begin with a procedure \proc{Vertex-Incidence-Lists} for the generation of incident faces for each input vertex on a generated surface. Example input is provided in Figure~\ref{fig:IncidenceList}.
 \begin{figure*}[!tb]
 \includegraphics[width=\textwidth]{IncidenceList.pdf}
-\caption{An example of the \proc{Vertex-Incidence-Lists} procedure on a very small set of triangles. Data values within the algorithm at several stages are shown above the flow diagram. Upon output, $links\mbox{-}offsets$ contains offsets to the beginning of each vertex's face list in $links$.}
+\caption{An example of the \proc{Vertex-Incidence-Lists} procedure on a very small set of triangles. Data values within the algorithm at several stages are shown above the flow diagram. The numbers shown in the green bubbles represent \emph{values (cell-ids)}, not \emph{keys} as in the \proc{Key-Weld} algorithm in Figure~\ref{fig:KeyWeld}. Upon output, $links\mbox{-}offsets$ contains offsets to the beginning of each vertex's face list in $links$.}
 \label{fig:IncidenceList}
 \end{figure*}
 
