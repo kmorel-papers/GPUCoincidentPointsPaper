@@ -1,29 +1,104 @@
-%\documentclass[journal]{vgtc}                % final (journal style)
-\documentclass[review,journal]{vgtc}         % review (journal style)
-%\documentclass[widereview]{vgtc}             % wide-spaced review
-%\documentclass[preprint,journal]{vgtc}       % preprint (journal style)
-%\documentclass[electronic,journal]{vgtc}     % electronic version, journal
 
-%% Uncomment one of the lines above depending on where your paper is
-%% in the conference process. ``review'' and ``widereview'' are for review
-%% submission, ``preprint'' is for pre-publication, and the final version
-%% doesn't use a specific qualifier. Further, ``electronic'' includes
-%% hyperreferences for more convenient online viewing.
+%% bare_jrnl_compsoc.tex
+%% V1.3
+%% 2007/01/11
+%% by Michael Shell
+%% See:
+%% http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.7 or later) with an IEEE Computer
+%% Society journal paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/tex-archive/macros/latex/contrib/IEEEtran/
+%% and
+%% http://www.ieee.org/
 
-%% Please use one of the ``review'' options in combination with the
-%% assigned online id (see below) ONLY if your paper uses a double blind
-%% review process. Some conferences, like IEEE Vis and InfoVis, have NOT
-%% in the past.
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% User assumes all risk.
+%% In no event shall IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%
+%% File list of work: IEEEtran.cls, IEEEtran_HOWTO.pdf, bare_adv.tex,
+%%                    bare_conf.tex, bare_jrnl.tex, bare_jrnl_compsoc.tex
+%%*************************************************************************
 
-%% Please note that the use of figures other than the optional teaser is not permitted on the first page
-%% of the journal version.  Figures should begin on the second page and be
-%% in CMYK or Grey scale format, otherwise, colour shifting may occur
-%% during the printing process.  Papers submitted with figures other than the optional teaser on the
-%% first page will be refused.
+% *** Authors should verify (and, if needed, correct) their LaTeX system  ***
+% *** with the testflow diagnostic prior to trusting their LaTeX platform ***
+% *** with production work. IEEE's font choices can trigger bugs that do  ***
+% *** not appear when using other class files.                            ***
+% The testflow support page is at:
+% http://www.michaelshell.org/tex/testflow/
 
-%% These three lines bring in essential packages: ``mathptmx'' for Type 1
-%% typefaces, ``graphicx'' for inclusion of EPS figures. and ``times''
-%% for proper handling of the times font family.
+
+
+
+% Note that the a4paper option is mainly intended so that authors in
+% countries using A4 can easily print to A4 and see how their papers will
+% look in print - the typesetting of the document will not typically be
+% affected with changes in paper size (but the bottom and side margins will).
+% Use the testflow package mentioned above to verify correct handling of
+% both paper sizes by the user's LaTeX system.
+%
+% Also note that the "draftcls" or "draftclsnofoot", not "draft", option
+% should be used if it is desired that the figures are to be displayed in
+% draft mode.
+%
+% The Computer Society usually requires 10pt for submissions.
+%
+\documentclass[10pt,journal,cspaper,compsoc]{IEEEtran}
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[12pt,journal,compsoc]{../sty/IEEEtran}
+
+
+
+
+
+% Some very useful LaTeX packages include:
+% (uncomment the ones you want to load)
+
+
+% *** MISC UTILITY PACKAGES ***
+%
+%\usepackage{ifpdf}
+% Heiko Oberdiek's ifpdf.sty is very useful if you need conditional
+% compilation based on whether the output is pdf or dvi.
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+% The latest version of ifpdf.sty can be obtained from:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/oberdiek/
+% Also, note that IEEEtran.cls V1.7 and later provides a builtin
+% \ifCLASSINFOpdf conditional that works the same way.
+% When switching from latex to pdflatex and vice-versa, the compiler may
+% have to be run twice to clear warning/error messages.
+
 
 \usepackage{clrscode}
 \usepackage{mathptmx}
@@ -38,97 +113,504 @@
 \newfloat{floatbox}{thp}{lob}[section]
 \floatname{floatbox}{Algorithm}
 
-%% We encourage the use of mathptmx for consistent usage of times font
-%% throughout the proceedings. However, if you encounter conflicts
-%% with other math-related packages, you may want to disable it.
 
-%% If you are submitting a paper to a conference for review with a double
-%% blind reviewing process, please replace the value ``0'' below with your
-%% OnlineID. Otherwise, you may safely leave it at ``0''.
-\onlineid{307}
+% *** CITATION PACKAGES ***
+%
+\ifCLASSOPTIONcompsoc
+  % IEEE Computer Society needs nocompress option
+  % requires cite.sty v4.0 or later (November 2003)
+  % \usepackage[nocompress]{cite}
+\else
+  % normal IEEE
+  % \usepackage{cite}
+\fi
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 4.0 (2003-05-27) and later if using hyperref.sty. cite.sty does
+% not currently provide for hyperlinked citations.
+% The latest version can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/cite/
+% The documentation is contained in the cite.sty file itself.
+%
+% Note that some packages require special options to format as the Computer
+% Society requires. In particular, Computer Society  papers do not use
+% compressed citation ranges as is done in typical IEEE papers
+% (e.g., [1]-[4]). Instead, they list every citation separately in order
+% (e.g., [1], [2], [3], [4]). To get the latter we need to load the cite
+% package with the nocompress option which is supported by cite.sty v4.0
+% and later. Note also the use of a CLASSOPTION conditional provided by
+% IEEEtran.cls V1.7 and later.
 
-%% declare the category of your paper, only shown in review mode
-\vgtccategory{Research}
 
-%% allow for this line if you want the electronic option to work properly
-\vgtcinsertpkg
 
-%% In preprint mode you may define your own headline.
-%\preprinttext{To appear in an IEEE VGTC sponsored conference.}
 
-%% Paper title.
 
-\title{Finely Threaded Topological Connection Reconstruction}
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+  % \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../pdf/}{../jpeg/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+% graphicx was written by David Carlisle and Sebastian Rahtz. It is
+% required if you want graphics, photos, etc. graphicx.sty is already
+% installed on most LaTeX systems. The latest version and documentation can
+% be obtained at: 
+% http://www.ctan.org/tex-archive/macros/latex/required/graphics/
+% Another good source of documentation is "Using Imported Graphics in
+% LaTeX2e" by Keith Reckdahl which can be found as epslatex.ps or
+% epslatex.pdf at: http://www.ctan.org/tex-archive/info/
+%
+% latex, and pdflatex in dvi mode, support graphics in encapsulated
+% postscript (.eps) format. pdflatex in pdf mode supports graphics
+% in .pdf, .jpeg, .png and .mps (metapost) formats. Users should ensure
+% that all non-photo figures use a vector format (.eps, .pdf, .mps) and
+% not a bitmapped formats (.jpeg, .png). IEEE frowns on bitmapped formats
+% which can result in "jaggedy"/blurry rendering of lines and letters as
+% well as large increases in file sizes.
+%
+% You can find documentation about the pdfTeX application at:
+% http://www.tug.org/applications/pdftex
 
-%% This is how authors are specified in the journal style
 
-%% indicate IEEE Member or Student Member in form indicated below
-\author{Robert Miller, Kenneth Moreland, Kwan-Liu Ma}
-\authorfooter{
-%% insert punctuation at end of each item
-\item
- Robert Miller is a member of the ViDi group at the University of California, Davis. E-mail: bobmiller@ucdavis.edu
-%\item
-%#Utkarsh Ayachit works at Kitware, inc. E-mail: utkarsh.ayachit@kitware.com
-\item
-Kenneth Moreland works at Sandia National Laboratories. E-mail: kmorel@sandia.gov
-\item
-Kwan-Liu Ma leads the ViDi group at the University of California, Davis. E-mail: ma@cs.ucdavis.edu
-}
 
-%other entries to be set up for journal
-\shortauthortitle{Miller \MakeLowercase{\textit{et al.}}: Parallel Topological Connection Reconstruction}
-%\shortauthortitle{Firstauthor \MakeLowercase{\textit{et al.}}: Paper Title}
 
-%% Abstract section.
-\abstract{
- Many algorithms applied to mesh-based data structures are easily parallelizable because operations can often be divided by the constituent elements of the mesh and parallelized with a large number of threads. The problem with this technique is that when these threads generate new topological features, they tend to generate redundant information such as coincident vertices. This ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring elements. We present a novel approach for the efficient construction of connected topologies on multi- and many-core systems, which we demonstrate with GPU and OpenMP implementations. In this approach, we use input topological features as a basis for efficient location of coincident features in the output. We provide examples and performance numbers of the technique for isosurface generation and multiple forms of tetrahedralization.
-} % end of abstract
 
-%% Keywords that describe your work. Will show as 'Index Terms' in journal
-%% please capitalize first letter and insert punctuation after last keyword
-\keywords{Parallel Systems, GPUs and Multi-core Architectures, CPU and GPU clusters, Petascale Techniques, Scalability Issues}
+% *** MATH PACKAGES ***
+%
+%\usepackage[cmex10]{amsmath}
+% A popular package from the American Mathematical Society that provides
+% many useful and powerful commands for dealing with mathematics. If using
+% it, be sure to load this package with the cmex10 option to ensure that
+% only type 1 fonts will utilized at all point sizes. Without this option,
+% it is possible that some math symbols, particularly those within
+% footnotes, will be rendered in bitmap form which will result in a
+% document that can not be IEEE Xplore compliant!
+%
+% Also, note that the amsmath package sets \interdisplaylinepenalty to 10000
+% thus preventing page breaks from occurring within multiline equations. Use:
+%\interdisplaylinepenalty=2500
+% after loading amsmath to restore such page breaks as IEEEtran.cls normally
+% does. amsmath.sty is already installed on most LaTeX systems. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/required/amslatex/math/
 
-%% ACM Computing Classification System (CCS). 
-%% See <http://www.acm.org/class/1998/> for details.
-%% The ``\CCScat'' command takes four arguments.
 
-\CCScatlist{ % not used in journal version
- \CCScat{K.6.1}{Management of Computing and Information Systems}%
-{Project and People Management}{Life Cycle};
- \CCScat{K.7.m}{The Computing Profession}{Miscellaneous}{Ethics}
-}
 
-%% Uncomment below to include a teaser figure.
-%%\teaser{
-%%\centering
-%%\includegraphics[width=16cm]{CypressView.eps}
-%%\caption{In the Clouds: Vancouver from Cypress Mountain}
-%%}
 
-%% Uncomment below to disable the manuscript note
-%\renewcommand{\manuscriptnotetxt}{}
 
-%% Copyright space is enabled by default as required by guidelines.
-%% It is disabled by the 'review' option or via the following command:
-% \nocopyrightspace
+% *** SPECIALIZED LIST PACKAGES ***
+%
+%\usepackage{algorithmic}
+% algorithmic.sty was written by Peter Williams and Rogerio Brito.
+% This package provides an algorithmic environment fo describing algorithms.
+% You can use the algorithmic environment in-text or within a figure
+% environment to provide for a floating algorithm. Do NOT use the algorithm
+% floating environment provided by algorithm.sty (by the same authors) or
+% algorithm2e.sty (by Christophe Fiorio) as IEEE does not use dedicated
+% algorithm float types and packages that provide these will not provide
+% correct IEEE style captions. The latest version and documentation of
+% algorithmic.sty can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/algorithms/
+% There is also a support site at:
+% http://algorithms.berlios.de/index.html
+% Also of interest may be the (relatively newer and more customizable)
+% algorithmicx.sty package by Szasz Janos:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/algorithmicx/
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%% START OF THE PAPER %%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+% *** ALIGNMENT PACKAGES ***
+%
+%\usepackage{array}
+% Frank Mittelbach's and David Carlisle's array.sty patches and improves
+% the standard LaTeX2e array and tabular environments to provide better
+% appearance and additional user controls. As the default LaTeX2e table
+% generation code is lacking to the point of almost being broken with
+% respect to the quality of the end results, all users are strongly
+% advised to use an enhanced (at the very least that provided by array.sty)
+% set of table tools. array.sty is already installed on most systems. The
+% latest version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/required/tools/
+
+
+%\usepackage{mdwmath}
+%\usepackage{mdwtab}
+% Also highly recommended is Mark Wooding's extremely powerful MDW tools,
+% especially mdwmath.sty and mdwtab.sty which are used to format equations
+% and tables, respectively. The MDWtools set is already installed on most
+% LaTeX systems. The lastest version and documentation is available at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/mdwtools/
+
+
+% IEEEtran contains the IEEEeqnarray family of commands that can be used to
+% generate multiline equations as well as matrices, tables, etc., of high
+% quality.
+
+
+%\usepackage{eqparbox}
+% Also of notable interest is Scott Pakin's eqparbox package for creating
+% (automatically sized) equal width boxes - aka "natural width parboxes".
+% Available at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/eqparbox/
+
+
+
+
+
+% *** SUBFIGURE PACKAGES ***
+%\ifCLASSOPTIONcompsoc
+%\usepackage[tight,normalsize,sf,SF]{subfigure}
+%\else
+%\usepackage[tight,footnotesize]{subfigure}
+%\fi
+% subfigure.sty was written by Steven Douglas Cochran. This package makes it
+% easy to put subfigures in your figures. e.g., "Figure 1a and 1b". For IEEE
+% work, it is a good idea to load it with the tight package option to reduce
+% the amount of white space around the subfigures. Computer Society papers
+% use a larger font and \sffamily font for their captions, hence the
+% additional options needed under compsoc mode. subfigure.sty is already
+% installed on most LaTeX systems. The latest version and documentation can
+% be obtained at:
+% http://www.ctan.org/tex-archive/obsolete/macros/latex/contrib/subfigure/
+% subfigure.sty has been superceeded by subfig.sty.
+
+
+%\ifCLASSOPTIONcompsoc
+%  \usepackage[caption=false]{caption}
+%  \usepackage[font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\else
+%  \usepackage[caption=false]{caption}
+%  \usepackage[font=footnotesize]{subfig}
+%\fi
+% subfig.sty, also written by Steven Douglas Cochran, is the modern
+% replacement for subfigure.sty. However, subfig.sty requires and
+% automatically loads Axel Sommerfeldt's caption.sty which will override
+% IEEEtran.cls handling of captions and this will result in nonIEEE style
+% figure/table captions. To prevent this problem, be sure and preload
+% caption.sty with its "caption=false" package option. This is will preserve
+% IEEEtran.cls handing of captions. Version 1.3 (2005/06/28) and later 
+% (recommended due to many improvements over 1.2) of subfig.sty supports
+% the caption=false option directly:
+%\ifCLASSOPTIONcompsoc
+%  \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\else
+%  \usepackage[caption=false,font=footnotesize]{subfig}
+%\fi
+%
+% The latest version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/subfig/
+% The latest version and documentation of caption.sty can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/caption/
+
+
+
+
+% *** FLOAT PACKAGES ***
+%
+%\usepackage{fixltx2e}
+% fixltx2e, the successor to the earlier fix2col.sty, was written by
+% Frank Mittelbach and David Carlisle. This package corrects a few problems
+% in the LaTeX2e kernel, the most notable of which is that in current
+% LaTeX2e releases, the ordering of single and double column floats is not
+% guaranteed to be preserved. Thus, an unpatched LaTeX2e can allow a
+% single column figure to be placed prior to an earlier double column
+% figure. The latest version and documentation can be found at:
+% http://www.ctan.org/tex-archive/macros/latex/base/
+
+
+
+%\usepackage{stfloats}
+% stfloats.sty was written by Sigitas Tolusis. This package gives LaTeX2e
+% the ability to do double column floats at the bottom of the page as well
+% as the top. (e.g., "\begin{figure*}[!b]" is not normally possible in
+% LaTeX2e). It also provides a command:
+%\fnbelowfloat
+% to enable the placement of footnotes below bottom floats (the standard
+% LaTeX2e kernel puts them above bottom floats). This is an invasive package
+% which rewrites many portions of the LaTeX2e float routines. It may not work
+% with other packages that modify the LaTeX2e float routines. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/sttools/
+% Documentation is contained in the stfloats.sty comments as well as in the
+% presfull.pdf file. Do not use the stfloats baselinefloat ability as IEEE
+% does not allow \baselineskip to stretch. Authors submitting work to the
+% IEEE should note that IEEE rarely uses double column equations and
+% that authors should try to avoid such use. Do not be tempted to use the
+% cuted.sty or midfloat.sty packages (also by Sigitas Tolusis) as IEEE does
+% not format its papers in such ways.
+
+
+
+
+%\ifCLASSOPTIONcaptionsoff
+%  \usepackage[nomarkers]{endfloat}
+% \let\MYoriglatexcaption\caption
+% \renewcommand{\caption}[2][\relax]{\MYoriglatexcaption[#2]{#2}}
+%\fi
+% endfloat.sty was written by James Darrell McCauley and Jeff Goldberg.
+% This package may be useful when used in conjunction with IEEEtran.cls'
+% captionsoff option. Some IEEE journals/societies require that submissions
+% have lists of figures/tables at the end of the paper and that
+% figures/tables without any captions are placed on a page by themselves at
+% the end of the document. If needed, the draftcls IEEEtran class option or
+% \CLASSINPUTbaselinestretch interface can be used to increase the line
+% spacing as well. Be sure and use the nomarkers option of endfloat to
+% prevent endfloat from "marking" where the figures would have been placed
+% in the text. The two hack lines of code above are a slight modification of
+% that suggested by in the endfloat docs (section 8.3.1) to ensure that
+% the full captions always appear in the list of figures/tables - even if
+% the user used the short optional argument of \caption[]{}.
+% IEEE papers do not typically make use of \caption[]'s optional argument,
+% so this should not be an issue. A similar trick can be used to disable
+% captions of packages such as subfig.sty that lack options to turn off
+% the subcaptions:
+% For subfig.sty:
+% \let\MYorigsubfloat\subfloat
+% \renewcommand{\subfloat}[2][\relax]{\MYorigsubfloat[]{#2}}
+% For subfigure.sty:
+% \let\MYorigsubfigure\subfigure
+% \renewcommand{\subfigure}[2][\relax]{\MYorigsubfigure[]{#2}}
+% However, the above trick will not work if both optional arguments of
+% the \subfloat/subfig command are used. Furthermore, there needs to be a
+% description of each subfigure *somewhere* and endfloat does not add
+% subfigure captions to its list of figures. Thus, the best approach is to
+% avoid the use of subfigure captions (many IEEE journals avoid them anyway)
+% and instead reference/explain all the subfigures within the main caption.
+% The latest version of endfloat.sty and its documentation can obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/endfloat/
+%
+% The IEEEtran \ifCLASSOPTIONcaptionsoff conditional can also be used
+% later in the document, say, to conditionally put the References on a 
+% page by themselves.
+
+
+
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+%
+%\usepackage{url}
+% url.sty was written by Donald Arseneau. It provides better support for
+% handling and breaking URLs. url.sty is already installed on most LaTeX
+% systems. The latest version can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/misc/
+% Read the url.sty source comments for usage information. Basically,
+% \url{my_url_here}.
+
+
+
+
+
+% *** Do not adjust lengths that control margins, column widths, etc. ***
+% *** Do not use packages that alter fonts (such as pslatex).         ***
+% There should be no need to do such things with IEEEtran.cls V1.6 and later.
+% (Unless specifically asked to do so by the journal or conference you plan
+% to submit to, of course. )
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
 
 \begin{document}
+%
+% paper title
+% can use linebreaks \\ within to get better formatting as desired
 
-%% The ``\maketitle'' command must be the first command after the
-%% ``\begin{document}'' command. It prepares and prints the title block.
+\title{Provenance-Enabled Topological Connection Reconstruction}
 
-%% the only exception to this rule is the \firstsection command
-\firstsection{Introduction}
+%
+%
+% author names and IEEE memberships
+% note positions of commas and nonbreaking spaces ( ~ ) LaTeX will not break
+% a structure at a ~ so this keeps an author's name from being broken across
+% two lines.
+% use \thanks{} to gain access to the first footnote area
+% a separate \thanks must be used for each paragraph as LaTeX2e's \thanks
+% was not built to handle multiple paragraphs
+%
+%
+%\IEEEcompsocitemizethanks is a special \thanks that produces the bulleted
+% lists the Computer Society journals use for "first footnote" author
+% affiliations. Use \IEEEcompsocthanksitem which works much like \item
+% for each affiliation group. When not in compsoc mode,
+% \IEEEcompsocitemizethanks becomes like \thanks and
+% \IEEEcompsocthanksitem becomes a line break with idention. This
+% facilitates dual compilation, although admittedly the differences in the
+% desired content of \author between the different types of papers makes a
+% one-size-fits-all approach a daunting prospect. For instance, compsoc 
+% journal papers have the author affiliations above the "Manuscript
+% received ..."  text while in non-compsoc journals this is reversed. Sigh.
 
+\author{Robert~Miller,~\IEEEmembership{Student Member,~IEEE,}
+        Kenneth~Moreland,~\IEEEmembership{Member,~IEEE,} \protect\\
+        and~Kwan-Liu~Ma,~\IEEEmembership{Senior Member,~IEEE}% <-this % stops a space
+\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem Robert Miller and Kwan-Liu Ma are with the University of California,~Davis, 2063 Kemper Hall, One Shields Avenue, Davis, CA 95616-8562.\protect\\
+% note need leading \protect in front of \\ to get a newline within \thanks as
+% \\ is fragile and will error, could use \hfil\break instead.
+E-mail: \{bobmiller, ma\}@ucdavis.edu
+\IEEEcompsocthanksitem Kenneth Moreland is with Sandia National Labs}% <-this % stops a space
+\thanks{}}
+
+% note the % following the last \IEEEmembership and also \thanks - 
+% these prevent an unwanted space from occurring between the last author name
+% and the end of the author line. i.e., if you had this:
+% 
+% \author{....lastname \thanks{...} \thanks{...} }
+%                     ^------------^------------^----Do not want these spaces!
+%
+% a space would be appended to the last name and could cause every name on that
+% line to be shifted left slightly. This is one of those "LaTeX things". For
+% instance, "\textbf{A} \textbf{B}" will typeset as "A B" not "AB". To get
+% "AB" then you have to do: "\textbf{A}\textbf{B}"
+% \thanks is no different in this regard, so shield the last } of each \thanks
+% that ends a line with a % and do not let a space in before the next \thanks.
+% Spaces after \IEEEmembership other than the last one are OK (and needed) as
+% you are supposed to have spaces between the names. For what it is worth,
+% this is a minor point as most people would not even notice if the said evil
+% space somehow managed to creep in.
+
+
+
+% The paper headers
+%\markboth{Journal of \LaTeX\ Class Files,~Vol.~6, No.~1, January~2007}%
+%{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Computer Society Journals}
+% The only time the second header will appear is for the odd numbered pages
+% after the title page when using the twoside option.
+% 
+% *** Note that you probably will NOT want to include the author's ***
+% *** name in the headers of peer review papers.                   ***
+% You can use \ifCLASSOPTIONpeerreview for conditional compilation here if
+% you desire.
+
+
+
+% The publisher's ID mark at the bottom of the page is less important with
+% Computer Society journal papers as those publications place the marks
+% outside of the main text columns and, therefore, unlike regular IEEE
+% journals, the available text space is not reduced by their presence.
+% If you want to put a publisher's ID mark on the page you can do it like
+% this:
+%\IEEEpubid{0000--0000/00\$00.00~\copyright~2007 IEEE}
+% or like this to get the Computer Society new two part style.
+%\IEEEpubid{\makebox[\columnwidth]{\hfill 0000--0000/00/\$00.00~\copyright~2007 IEEE}%
+%\hspace{\columnsep}\makebox[\columnwidth]{Published by the IEEE Computer Society\hfill}}
+% Remember, if you use this you must call \IEEEpubidadjcol in the second
+% column for its text to clear the IEEEpubid mark (Computer Society jorunal
+% papers don't need this extra clearance.)
+
+
+
+
+% for Computer Society papers, we must declare the abstract and index terms
+% PRIOR to the title within the \IEEEcompsoctitleabstractindextext IEEEtran
+% command as these need to go into the title area created by \maketitle.
+\IEEEcompsoctitleabstractindextext{%
+\begin{abstract}
+%\boldmath
+ Many algorithms applied to mesh-based data structures are easily parallelizable because operations can often be divided by the constituent elements of the mesh and parallelized with a large number of threads. The problem with this technique is that when these threads generate new topological features, they tend to generate redundant information such as coincident vertices. This ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring elements. We present a novel approach for the efficient construction of connected topologies on multi- and many-core systems, which we demonstrate with GPU and OpenMP implementations. In this approach, we use input topological features as a basis for efficient location of coincident features in the output. We provide examples and performance numbers of the technique for isosurface generation and multiple forms of tetrahedralization.
+\end{abstract}
+% IEEEtran.cls defaults to using nonbold math in the Abstract.
+% This preserves the distinction between vectors and scalars. However,
+% if the journal you are submitting to favors bold math in the abstract,
+% then you can use LaTeX's standard command \boldmath at the very start
+% of the abstract to achieve this. Many IEEE journals frown on math
+% in the abstract anyway. In particular, the Computer Society does
+% not want either math or citations to appear in the abstract.
+
+% Note that keywords are not normally used for peer review papers.
+\begin{keywords}
+Parallel Systems, GPUs and Multi-core Architectures, CPU and GPU clusters, Petascale Techniques, Scalability Issues
+\end{keywords}}
+
+
+% make the title area
 \maketitle
 
-%% \section{Introduction} %for journal use above \firstsection{..} instead
-Many existing parallel graphics techniques are designed to generate geometry from
+
+% To allow for easy dual compilation without having to reenter the
+% abstract/keywords data, the \IEEEcompsoctitleabstractindextext text will
+% not be used in maketitle, but will appear (i.e., to be "transported")
+% here as \IEEEdisplaynotcompsoctitleabstractindextext when compsoc mode
+% is not selected <OR> if conference mode is selected - because compsoc
+% conference papers position the abstract like regular (non-compsoc)
+% papers do!
+\IEEEdisplaynotcompsoctitleabstractindextext
+% \IEEEdisplaynotcompsoctitleabstractindextext has no effect when using
+% compsoc under a non-conference mode.
+
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+
+
+\section{Introduction}
+% Computer Society journal papers do something a tad strange with the very
+% first section heading (almost always called "Introduction"). They place it
+% ABOVE the main text! IEEEtran.cls currently does not do this for you.
+% However, You can achieve this effect by making LaTeX jump through some
+% hoops via something like:
+%
+%\ifCLASSOPTIONcompsoc
+%  \noindent\raisebox{2\baselineskip}[0pt][0pt]%
+%  {\parbox{\columnwidth}{\section{Introduction}\label{sec:introduction}%
+%  \global\everypar=\everypar}}%
+%  \vspace{-1\baselineskip}\vspace{-\parskip}\par
+%\else
+%  \section{Introduction}\label{sec:introduction}\par
+%\fi
+%
+% Admittedly, this is a hack and may well be fragile, but seems to do the
+% trick for me. Note the need to keep any \label that may be used right
+% after \section in the above as the hack puts \section within a raised box.
+
+
+
+% The very first letter is a 2 line initial drop letter followed
+% by the rest of the first word in caps (small caps for compsoc).
+% 
+% form to use if the first word consists of a single letter:
+% \IEEEPARstart{A}{demo} file is ....
+% 
+% form to use if you need the single drop letter followed by
+% normal text (unknown if ever used by IEEE):
+% \IEEEPARstart{A}{}demo file is ....
+% 
+% Some journals put the first two words in caps:
+% \IEEEPARstart{T}{his demo} file is ....
+% 
+% Here we have the typical use of a "T" for an initial drop letter
+% and "HIS" in caps to complete the first word.
+\IEEEPARstart{M}{any} existing parallel graphics techniques are designed to generate geometry from
 some form of input mesh. Such algorithms tend to have the attribute that
 computation of any given output feature depends solely on a small set
 of input features. This provides a natural partitioning of the input
@@ -169,8 +651,8 @@ geometry, where information is stored about what feature of the input topology w
 each output feature. For instance, Marching Cubes generates all output vertices on edges that
 exist between the voxel coordinates of the input mesh.
 
-\noindent
-\begin{minipage}{\linewidth}
+%\noindent
+%\begin{minipage}{\linewidth}
 To summarize, this paper makes the following contributions:
 \begin{itemize}
 	\item{Provide a generalized technique for generation of topological connectivity information on highly parallel systems.}
@@ -187,7 +669,7 @@ To summarize, this paper makes the following contributions:
 		 simple mesh coarsening in the same pass as the topology resolution.}
  
 \end{itemize}
-\end{minipage}
+%\end{minipage}
 
 We developed our technique for topology resolution so that it could be implemented
 into the upcoming DAX framework, which will provide data analysis capabilities similar to those
@@ -437,7 +919,7 @@ to find the topological connections of a 3D structure.
 
 \subsection{Testing Environment and Datasets}
 
-We measure performance on a test system containing an Intel Core i7 975 Processor, which has a clock speed of 3.33GHz. Our test system has 12GB of RAM, and contains 2 nVidia Tesla C2070 cards. The datasets we use for timing are shown in Table~\ref{tab:datasets}. For all OpenMP tests, we set the number of threads to 8.
+We measure performance on a test system containing an Intel Core i7 975 Processor, which has a clock speed of 3.33GHz. Our test system has 12GB of RAM, and contains 2 nVidia Tesla C2070 cards. The datasets we use for timing are shown in Table~\ref{tab:datasets}.  We do not include a tetrahedralized version of the Spherical Distance D dataset because of memory constraints. For all OpenMP tests, we set the number of threads to 8.
 
 
 \begin{table}[tb!]
@@ -717,7 +1199,7 @@ Rather than computing the topological connectivity of the original generated dat
 
 This measure of triangle quality considers only aspect ratio, and is such that triangles where $Q > 0.6$ are considered to be of acceptable quality, and $Q = 1$ when the triangle is equilateral \cite{Bank2003}. This is equivalent to the pdetriq function in MATLAB.
 
-\begin{figure}[!t]
+\begin{figure}[!tb]
 \begin{center}
 \includegraphics[width=\columnwidth]{SkinnyCollapse.pdf}
 \caption{When Marching Cubes and Marching Tetrahedra generate contour surfaces, the produced vertices can only occur on voxel edges (black). When several output vertices (blue) fall close to the same voxel vertex (black), small or skinny triangles may be produced (red). We eliminate these by merging all vertices that fall close to a voxel vertex into a single output. This collapses the skinny triangles into degenerate triangles, which are then removed. }
@@ -726,7 +1208,7 @@ This measure of triangle quality considers only aspect ratio, and is such that t
 \end{figure}
 
 
-\begin{figure}[!b]
+\begin{figure}[!tb]
 \begin{center}
 \includegraphics[height=0.5\columnwidth]{IDs.pdf}
 \caption{Our goal is to merge output vertices (light blue) that are generated too close to the vertices of the input voxel grid (black). To do so, we split each input voxel edge into three regions along edges of length $\ell$, using a control parameter $k$ to control the size. If a vertex is generated in the central region (B), we assign an output ID as normal. However, if a vertex is generated in one of the edge regions (A or C), we repeat that region's vertex ID. All output vertices generated near a particular input grid vertex are thus assigned the same ID and merged, which collapses skinny triangles to degenerate cases.}
@@ -749,7 +1231,7 @@ As with the original ID assignment for structured grids, we can use our knowledg
 After the coarsening has been applied, we expect many degenerate triangles in the output. These triangles may be quickly removed in parallel by removing
 all instances of faces containing two or more identical indices. This invalidates the output array of group sizes $C$ from the Vertex Welding array, but a corrected group sizes $C$ can be generated by sorting the output array $cell-connections$ and performing a segmented scan to determine the number of instances of each index.
 
-\begin{figure}[!b]
+\begin{figure}[!tb]
 \includegraphics[width=\columnwidth]{Nonmanifold.pdf}
 \caption{A problem with our coarsening method is that in some cases nonmanifold faces may be produced. In the example above, two vertices from different faces are merged and a 3D volume is collapsed into a single plane. To recreate a manifold surface, we detect and remove these cases in a separate step.}
 \label{fig:Nonmanifold}
@@ -757,8 +1239,14 @@ all instances of faces containing two or more identical indices. This invalidate
 
 A larger problem with the coarsening technique is that in some cases, such as the case shown in Figure \ref{fig:Nonmanifold}, non-manifold surface elements may be generated. If such surface elements are undesirable, they may be eliminated by calculating the maximum edge curvature of each triangle, and removing all triangles containing an edge curvature of $180^{\circ}$.
 
-\subsection{Mesh Coarsening Results}
+\begin{figure}[!tb]
+\includegraphics[width=\columnwidth]{Coarsening}
+\caption{Top: Before coarsening. Bottom: After coarsening. Note that skinny triangles caused by the underlying voxel grid are removed in the bottom image. Removal of these triangles eliminates the artifacts visible along the crests and valleys of the top image, and provides a better sampling of vertex properties across the contour surface. The coarsened mesh in the bottom image contains approximately half the triangle count of the mesh in the top image.}
 
+\label{fig:coarsening}
+\end{figure}
+
+\subsection{Mesh Coarsening Results}
 Figure \ref{fig:coarsening} shows a before and after comparison of our coarsening technique with $k=1$. 
 Figure \ref{fig:coarseninggraphs} shows the change in triangle quality before and after coarsening.
 Table~\ref{tab:timingscoarsening} shows the timings for coarsening the mesh as part of the vertex welding algorithm. Compare with Table~\ref{tab:vertexwelding} to observe that simultaneously performing the coarsening operation does not significantly affect the timing of the topology generation. In addition, sampling of vertex attributes is markedly improved in the coarsened graph. Although our Marching Cubes algorithm strictly determines surface normals by the information given in a single voxel, we find that our approach yields similar quality surface normals to those generated by the VTK Marching Cubes algorithm, which visits neighboring voxels to determine accurate normals. This is advantageous because it allows for completely local operation during geometry generation without loss of computed attribute quality, which provides better performance on the GPU.
@@ -790,14 +1278,6 @@ Bottom Right: Cumulative distributions of triangles before and after coarsening.
 \end{center}
 \end{figure*}
 
-\begin{figure}[!tb]
-\includegraphics[width=\columnwidth]{Coarsening}
-\caption{Top: Before coarsening. Bottom: After coarsening. Note that skinny triangles caused by the underlying voxel grid are removed in the bottom image. Removal of these triangles eliminates the artifacts visible along the crests and valleys of the top image, and provides a better sampling of vertex properties across the contour surface. The coarsened mesh in the bottom image contains approximately half the triangle count of the mesh in the top image.}
-
-\label{fig:coarsening}
-\end{figure}
-
-
 \subsection{Dual Mesh Generation}
 To generate the dual of our triangular input meshes, we perform the following procedure: For each face, weaverage the vertices to get the centroid, and store it in a new array at the same ID as the original face. Now the surrounding face lists from \proc{Key-Weld} for each of the vertices in the original mesh form a representation of each face of the dual mesh, with the vertices not necessarily in order. To order the vertices, we create an adjacency list for all faces in parallel as described in \ref{sec:topology}, then use the adacency lists for each face to `walk' around each dual mesh cell, storing the order as we go. We perform all of these operations in a data parallel manner using existing functions of the Thrust library. Figure~\ref{fig:DualExample} shows an example of this kind of dual mesh for a 2D case.
 
@@ -811,7 +1291,7 @@ To generate the dual of our triangular input meshes, we perform the following pr
 
 \subsection{Dual Mesh Generation Results}
 
-\begin{figure}[!b]
+\begin{figure}[!tb]
 \begin{center}
 \setlength\fboxsep{0pt}
 \fbox{\includegraphics[width=\linewidth]{DualMeshSkeleton.png}}
@@ -842,15 +1322,232 @@ OpenMP & 24 & 113 & 522 & 2263 & 115 & 531 & 2302
 We provide an efficient, generalized method for parallel generation of topological connectivity information. We require little to no alteration to the algorithms generating geometry, although we leverage small modifications to allow for knowledge of input topological features for better performance. We demonstrate how to use such modifications to gain performance on structured grids, and to perform a simple mesh coarsening on either structured or unstructured grids. We demonstrate that our algorithm is effective on structured grids and on several different tetrahedral grids. 
 
 Future work includes measurement of how well this technique can scale on architectures approaching the exascale and determining what bottlenecks, if any, need to be addressed for this transition. 
- 
-%% if specified like this the section will be ommitted in review mode
-\acknowledgments{
+
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+
+% An example of a floating figure using the graphicx package.
+% Note that \label must occur AFTER (or within) \caption.
+% For figures, \caption should occur after the \includegraphics.
+% Note that IEEEtran v1.7 and later has special internal code that
+% is designed to preserve the operation of \label within \caption
+% even when the captionsoff option is in effect. However, because
+% of issues like this, it may be the safest practice to put all your
+% \label just after \caption rather than within \caption{}.
+%
+% Reminder: the "draftcls" or "draftclsnofoot", not "draft", class
+% option should be used if it is desired that the figures are to be
+% displayed while in draft mode.
+%
+%\begin{figure}[!t]
+%\centering
+%\includegraphics[width=2.5in]{myfigure}
+% where an .eps filename suffix will be assumed under latex, 
+% and a .pdf suffix will be assumed for pdflatex; or what has been declared
+% via \DeclareGraphicsExtensions.
+%\caption{Simulation Results}
+%\label{fig_sim}
+%\end{figure}
+
+% Note that IEEE CS typically puts floats only at the top, even when this
+% results in a large percentage of a column being occupied by floats.
+% However, the Computer Society has been known to put floats at the bottom.
+
+
+% An example of a double column floating figure using two subfigures.
+% (The subfig.sty package must be loaded for this to work.)
+% The subfigure \label commands are set within each subfloat command, the
+% \label for the overall figure must come after \caption.
+% \hfil must be used as a separator to get equal spacing.
+% The subfigure.sty package works much the same way, except \subfigure is
+% used instead of \subfloat.
+%
+%\begin{figure*}[!t]
+%\centerline{\subfloat[Case I]\includegraphics[width=2.5in]{subfigcase1}%
+%\label{fig_first_case}}
+%\hfil
+%\subfloat[Case II]{\includegraphics[width=2.5in]{subfigcase2}%
+%\label{fig_second_case}}}
+%\caption{Simulation results}
+%\label{fig_sim}
+%\end{figure*}
+%
+% Note that often IEEE CS papers with subfigures do not employ subfigure
+% captions (using the optional argument to \subfloat), but instead will
+% reference/describe all of them (a), (b), etc., within the main caption.
+
+
+% An example of a floating table. Note that, for IEEE style tables, the 
+% \caption command should come BEFORE the table. Table text will default to
+% \footnotesize as IEEE normally uses this smaller font for tables.
+% The \label must come after \caption as always.
+%
+%\begin{table}[!t]
+%% increase table row spacing, adjust to taste
+%\renewcommand{\arraystretch}{1.3}
+% if using array.sty, it might be a good idea to tweak the value of
+% \extrarowheight as needed to properly center the text within the cells
+%\caption{An Example of a Table}
+%\label{table_example}
+%\centering
+%% Some packages, such as MDW tools, offer better commands for making tables
+%% than the plain LaTeX2e tabular which is used here.
+%\begin{tabular}{|c||c|}
+%\hline
+%One & Two\\
+%\hline
+%Three & Four\\
+%\hline
+%\end{tabular}
+%\end{table}
+
+
+% Note that IEEE does not put floats in the very first column - or typically
+% anywhere on the first page for that matter. Also, in-text middle ("here")
+% positioning is not used. Most IEEE journals use top floats exclusively.
+% However, Computer Society journals sometimes do use bottom floats - bear
+% this in mind when choosing appropriate optional arguments for the
+% figure/table environments.
+% Note that, LaTeX2e, unlike IEEE journals, places footnotes above bottom
+% floats. This can be corrected via the \fnbelowfloat command of the
+% stfloats package.
+
+
+
+
+
+% if have a single appendix:
+%\appendix[Proof of the Zonklar Equations]
+% or
+%\appendix  % for no appendix heading
+% do not use \section anymore after \appendix, only \section*
+% is possibly needed
+
+% use appendices with more than one appendix
+% then use \section to start each appendix
+% you must declare a \section before using any
+% \subsection or using \label (\appendices by itself
+% starts a section numbered zero.)
+%
+
+
+\appendices
+%\section{Proof of the First Zonklar Equation}
+%Appendix one text goes here.
+
+% you can choose not to have a title for an appendix
+% if you want by leaving the argument blank
+
+% use section* for acknowledgement
+\ifCLASSOPTIONcompsoc
+  % The Computer Society usually uses the plural form
+  \section*{Acknowledgments}
+\else
+  % regular IEEE prefers the singular form
+  \section*{Acknowledgment}
+\fi
+
+
 This work was supported in full by the DOE Office of Science, Advanced Scientific Computing Research, under award number 10-014707, program manager Lucy Nowell.
 
-Part of this work was performed by Sandia National Laboratories.  Sandia National Laboratories is a multi-program laboratory operated by Sandia Corporation, a wholly owned subsidiary of Lockheed Martin Corporation, for the U.S. Department of Energy's National Nuclear Security Administration.}
+Part of this work was performed by Sandia National Laboratories.  Sandia National Laboratories is a multi-program laboratory operated by Sandia Corporation, a wholly owned subsidiary of Lockheed Martin Corporation, for the U.S. Department of Energy's National Nuclear Security Administration.
 
-\bibliographystyle{abbrv}
-%%use following if all content of bibtex file should be shown
-\nocite{*}
-\bibliography{TopologyReconstruction}
+
+% Can use something like this to put references on a page
+% by themselves when using endfloat and the captionsoff option.
+\ifCLASSOPTIONcaptionsoff
+  \newpage
+\fi
+
+
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+\bibliography{IEEEabrv,TopologyReconstruction}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+%\begin{thebibliography}{1}
+
+%\bibitem{IEEEhowto:kopka}
+%This is an example of a book reference
+%H. Kopka and P.W. Daly, \emph{A Guide to {\LaTeX}}, third ed. Harlow, U.K.: Addison-Wesley, 1999.
+
+
+%This is an example of a Transactions article reference
+%D.S. Coming and O.G. Staadt, "Velocity-Aligned Discrete Oriented Polytopes for Dynamic Collision Detection," IEEE Trans. Visualization and Computer Graphics, vol. 14,  no. 1,  pp. 1-12,  Jan/Feb  2008, doi:10.1109/TVCG.2007.70405.
+
+%This is an example of a article from a conference proceeding
+%H. Goto, Y. Hasegawa, and M. Tanaka, "Efficient Scheduling Focusing on the Duality of MPL Representation," Proc. IEEE Symp. Computational Intelligence in Scheduling (SCIS '07), pp. 57-64, Apr. 2007, doi:10.1109/SCIS.2007.367670.
+
+%This is an example of a PrePrint reference
+%J.M.P. Martinez, R.B. Llavori, M.J.A. Cabo, and T.B. Pedersen, "Integrating Data Warehouses with Web Data: A Survey," IEEE Trans. Knowledge and Data Eng., preprint, 21 Dec. 2007, doi:10.1109/TKDE.2007.190746.
+
+%Again, see the IEEEtrans_HOWTO.pdf for several more bibliographical examples. Also, more style examples
+%can be seen at http://www.computer.org/author/style/transref.htm
+%\end{thebibliography}
+
+% biography section
+% 
+% If you have an EPS/PDF photo (graphicx package needed) extra braces are
+% needed around the contents of the optional argument to biography to prevent
+% the LaTeX parser from getting confused when it sees the complicated
+% \includegraphics command within an optional argument. (You could create
+% your own custom macro containing the \includegraphics command to make things
+% simpler here.)
+%\begin{biography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
+% or if you just want to reserve a space for a photo:
+
+%\begin{IEEEbiography}{Michael Shell}
+%Biography text here.
+%\end{IEEEbiography}
+
+% if you will not have a photo at all:
+%\begin{IEEEbiographynophoto}{John Doe}
+%Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.
+%\end{IEEEbiographynophoto}
+
+% insert where needed to balance the two columns on the last page with
+% biographies
+%\newpage
+
+%\begin{IEEEbiographynophoto}{Jane Doe}
+%Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.Biography text here.
+%\end{IEEEbiographynophoto}
+
+% You can push biographies down or up by placing
+% a \vfill before or after them. The appropriate
+% use of \vfill depends on what kind of text is
+% on the last page and whether or not the columns
+% are being equalized.
+
+%\vfill
+
+% Can be used to pull up biographies so that the bottom of the last one
+% is flush with the other column.
+%\enlargethispage{-5in}
+
+
+
+% that's all folks
 \end{document}
+
+
+
