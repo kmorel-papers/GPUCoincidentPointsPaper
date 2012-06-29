@@ -645,11 +645,7 @@ may need to be split in a final pass. This process is computationally complex, a
 specific to the topological connections between triangles. 
 
 We present a technique which applies equally well to other types of topological 
-connections, such as determining the neighboring facets of tetrahedra. To this end, we have
-explored the advantages of making a small modification to the algorithms that generate the
-geometry, where information is stored about what feature of the input topology was used to generate
-each output feature. For instance, Marching Cubes generates all output vertices on edges that
-exist between the voxel coordinates of the input mesh.
+connections, such as determining the neighboring facets of tetrahedra. Our technique makes use of the fact that geometry is rarely generated in a vacuum; we usually have some information about how the geometry is generated. To list a few examples: Marching Cubes generates its output vertices on the edges of a structured grid, dual meshes generate their vertices on the faces of an input mesh, and tetrahedralizations can be generated on an existing spatial grid or mesh. We explore the advantages of making a small modification to the algorithms that generate the geometry, where the information is stored about what feature of the input topology was used to generate each output feature. 
 
 %\noindent
 %\begin{minipage}{\linewidth}
@@ -659,13 +655,13 @@ To summarize, this paper makes the following contributions:
 	\item{Require no modifications to the algorithms generating geometry save for the
 		storage of information about the input topological features used to generate each output feature.}
 
-	\item{Make use of features of input topology to enhance the performance of the topology
+	\item{Make use provenance of disconnected geometry to enhance the performance of the topology
 		resolution technique.}
 
 	\item{Demonstrate the effectiveness of our technique on the output of the Marching Cubes
 		algorithm and a tetrahedralization algorithm.}
  
-	\item{Show how knowledge of the output topology of an algorithm can be used to perform
+	\item{Show how a provenance-aware algorithmva can be used to perform
 		 simple mesh coarsening in the same pass as the topology resolution.}
  
 \end{itemize}
@@ -738,7 +734,7 @@ The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as follows:
 Thrust functions \texttt{sort}, \texttt{unique}, and \texttt{lower\_bound},
 respectively.
 
-Our approach has many similarities, but there are several areas of interest where \proc{Vertex-Weld} was not designed to accommodate topological reconstruction. In particular, geometry is rarely generated in a vacuum; We generally have some knowledge of how the geometry was generated, such as on a structured grid, but the \proc{Vertex-Weld} algorithm provides no way to make use of this. Additionally, the \proc{Vertex-Weld} algorithm as presented is unstable in the presence of floating point errors because these can cause the \proc{Lexicographic-Sort} to place 'identical' points in noncontiguous regions of memory, thus invalidating the algorithm. A more stable solution which still uses bitwise comparison can be constructed by sorting on each dimension and removing duplicates each time, but this is inefficient. Instead, we resolve both of these concerns by allowing a sort on input topological features, and a generalized comparison and merge operation with our algorithm, to be described in the next section.
+Our approach has many similarities, but there are several areas of interest where \proc{Vertex-Weld} was not designed to accommodate topological reconstruction. In particular, \proc{Vertex-Weld} provides no way to make use of the provenance of the disconnected geometry. Additionally, the \proc{Vertex-Weld} algorithm as presented is unstable in the presence of floating point errors because these can cause the \proc{Lexicographic-Sort} to place 'identical' points in noncontiguous regions of memory, thus invalidating the algorithm. A more stable solution which still uses bitwise comparison can be constructed by sorting on each dimension and removing duplicates each time, but this is inefficient. Instead, we resolve both of these concerns by allowing a sort on input topological features, and a generalized comparison and merge operation with our algorithm, to be described in the next section.
 
 Carr et al. \cite{Carr2006} describe several ways to subdivide voxel grids into tetrahedral grids. To fairly test performance of our topology generation on unstructured grids, we generate each of these subdivisions and demonstrate that the performance of our approach is similar in all cases.
 
@@ -1481,7 +1477,159 @@ Part of this work was performed by Sandia National Laboratories.  Sandia Nationa
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
 \bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
-\bibliography{IEEEabrv, ./TopologyReconstruction.bib}
+%%%%%%%\bibliography{IEEEabrv, ./TopologyReconstruction.bib}
+
+\begin{thebibliography}{10}
+
+\bibitem{Bank2003}
+R.~E. Bank and M.~Holst.
+\newblock {A New Paradigm for Parallel Adaptive Meshing Algorithms}.
+\newblock {\em SIAM Review}, 45(2):291, 2003.
+
+\bibitem{Bell2010}
+N.~Bell.
+\newblock {High-Productivity CUDA Development with the Thrust Template
+  Library}, 2010.
+
+\bibitem{Bell2012}
+N.~Bell and J.~Hoberock.
+\newblock {Thrust: A Productivity-Oriented Library for CUDA}.
+\newblock {\em thrust.googlecode.com}, pages 359--373, 2012.
+
+\bibitem{Blelloch1990}
+G.~Blelloch.
+\newblock {Prefix sums and their applications}.
+\newblock {\em Synthesis of Parallel Algorithms}, pages 35--60, 1990.
+
+\bibitem{Blelloch1991}
+G.~E. Blelloch.
+\newblock {Vector Models for Data-Parallel Computing}.
+\newblock {\em Computing Control Engineering Journal}, 2(5):238, 1991.
+
+\bibitem{Boubekeur2005}
+T.~Boubekeur and C.~Schlick.
+\newblock {Generic mesh refinement on GPU}.
+\newblock In {\em Proceedings of the ACM SIGGRAPH/EUROGRAPHICS conference on
+  graphics hardware}, number July, pages 99--104. ACM, 2005.
+
+\bibitem{Carr2006}
+H.~Carr, T.~M\"{o}ller, and J.~Snoeyink.
+\newblock {Artifacts caused by simplicial subdivision.}
+\newblock {\em IEEE transactions on visualization and computer graphics},
+  12(2):231--42, 2006.
+
+\bibitem{Computing1992}
+H.~P. Computing.
+\newblock {Scientific Visualization with VTK, The Visualization Toolkit}.
+\newblock {\em Fluid Dynamics}, 12(1):1--9, 1992.
+
+\bibitem{MapReduce}
+J.~Dean and S.~Ghemawat.
+\newblock {MapReduce}: Simplified data processing on large clusters.
+\newblock {\em Communications of the ACM}, 51(1):107--113, January 2008.
+
+\bibitem{DeCoro2007}
+C.~DeCoro and N.~Tatarchuk.
+\newblock Real-time mesh simplification using the {GPU}.
+\newblock In {\em Proceedings of the 2007 Symposium on Interactive 3D Graphics
+  and Games (I3D '07)}, pages 161--166, 2007.
+\newblock {DOI}~10.1145/1230100.1230128.
+
+\bibitem{Dyken2008}
+C.~Dyken, G.~Ziegler, C.~Theobalt, and H.-P. Seidel.
+\newblock {High-speed Marching Cubes using HistoPyramids}.
+\newblock {\em Computer Graphics Forum}, 27(8):2028--2039, 2008.
+
+\bibitem{Garland2001}
+M.~Garland, A.~Willmott, and P.~S. Heckbert.
+\newblock {Hierarchical face clustering on polygonal surfaces}.
+\newblock {\em Proceedings of the 2001 symposium on Interactive 3D graphics
+  SI3D 01}, pages 49--58, 2001.
+
+\bibitem{Hoppe1996}
+H.~Hoppe.
+\newblock {Progressive meshes}.
+\newblock {\em Proceedings of the 23rd annual conference on Computer graphics
+  and interactive techniques SIGGRAPH 96}, 30(3):99--108, 1996.
+
+\bibitem{Horn2005}
+D.~Horn.
+\newblock {Stream Reduction Operations for GPGPU Applications}.
+\newblock In M.~Pharr, editor, {\em GPU Gems 2}, volume~2, chapter~36, pages
+  573--589. Addison Wesley, 2005.
+
+\bibitem{Hsieh2005}
+H.~Hsieh and W.~Tai.
+\newblock {A simple GPU-based approach for 3D Voronoi diagram construction and
+  visualization}.
+\newblock {\em Simulation Modelling Practice and Theory}, 13(8):681--692, Nov.
+  2005.
+
+\bibitem{Kipfer2005}
+P.~Kipfer and R.~Westermann.
+\newblock {GPU construction and transparent rendering of iso-surfaces}.
+\newblock In {\em Proceedings Vision, Modeling and Visualization}, volume~5,
+  2005.
+
+\bibitem{Lindstrom2000}
+P.~Lindstrom.
+\newblock {Out-of-core simplification of large polygonal models}.
+\newblock In {\em Proceedings of the 27th annual conference on Computer
+  graphics and interactive techniques}, pages 259--262. ACM
+  Press/Addison-Wesley Publishing Co., 2000.
+
+\bibitem{Lorensen1987}
+W.~E. Lorensen and H.~E. Cline.
+\newblock {Marching cubes: A high resolution 3D surface construction
+  algorithm}.
+\newblock {\em Computer}, 21(4):163--169, 1987.
+
+\bibitem{Park}
+J.~Park, B.~Choi, and Y.~Chung.
+\newblock {Efficient topology construction from triangle soup}.
+\newblock In {\em Geometric Modeling and Processing, Proceedings}, volume~1,
+  pages 359--364. IEEE, 2004.
+
+\bibitem{Potter2011}
+M.~Potter.
+\newblock {\em Anisotropic mesh coarsening and refinement on {GPU}
+  architecture}.
+\newblock PhD thesis, Imperial College London, Department of Computing, June
+  2011.
+
+\bibitem{Rottger2000}
+S.~R\"{o}ttger, M.~Kraus, and T.~Ertl.
+\newblock {Hardware-accelerated volume and isosurface rendering based on
+  cell-projection}.
+\newblock In {\em Proceedings of the conference on Visualization'00}, pages
+  109--116. IEEE Computer Society Press, 2000.
+
+\bibitem{Sengupta2007}
+S.~Sengupta, M.~Harris, Y.~Zhang, and J.~D. Owens.
+\newblock {Scan Primitives for GPU Computing}.
+\newblock {\em Computing}, 21(3):106, 2007.
+
+\bibitem{Sifakis2007}
+E.~Sifakis.
+\newblock {Arbitrary Cutting of Deformable Tetrahedralized Objects}.
+\newblock {\em Computing}, 1, 2007.
+
+\bibitem{Stuart2010}
+J.~A. Stuart, C.-K. Chen, K.-L. Ma, and J.~D. Owens.
+\newblock Multi-{GPU} volume rendering using {MapReduce}.
+\newblock In {\em 1st International Workshop on MapReduce and its
+  Applications}, June 2010.
+
+\bibitem{Vo2011}
+H.~T. Vo, J.~Bronson, B.~Summa, J.~L. Comba, J.~Freire, B.~Howe, V.~Pascucci,
+  and C.~T. Silva.
+\newblock Parallel visualization on large clusters using {MapReduce}.
+\newblock In {\em Proceedings of the IEEE Symposium on Large-Scale Data
+  Analysis and Visualization}, pages 81--88, October 2011.
+\newblock {DOI}~10.1109/LDAV.2011.6092321.
+
+\end{thebibliography}
+
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
