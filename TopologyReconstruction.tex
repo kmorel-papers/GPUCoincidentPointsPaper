@@ -755,7 +755,9 @@ Carr et al. \cite{Carr2006} describe several ways to subdivide voxel grids into 
 Observant readers may notice a similarity between our proposed algorithms and those supported by the MapReduce framework \cite{MapReduce}. Like MapReduce, our algorithms first map keys to values then collect keys and reduce the values. Although we believe our algorithms could be implemented in a MapReduce framework (an exercise we leave to the reader), it would require additional collection operations to resolve topological connections. Other researchers 
 \cite{Stuart2010}\cite{Vo2011} have implemented visualization algorithms directly in MapReduce, but they serve purposes other than those we address.
 
-In most cases, existing GPU implementations of Marching Cubes do not determine connectivity information on output contour surfaces, but instead simply forward disconnected geometry for rendering. For example, \textcolor{red}{CITE, CITE, CITE, and CITE} all work in this manner. However, many serial implementations exist that determine topological connectivity information from discrete geometry. For example, VTK and ParaView make use of a point-locator method, which works by beginning with an empty search structure and progressively updating it with each point, checking for duplicates along the way. There also exist efficient implementations of similar search structures for finely threaded cases such as the GPU \textcolor{red}{CITE}, but these are most applicable when the resultant structures will be used extensively as in the case of raytracing. Because operations like tetrahedralization, Marching Cubes (and other contour methods), dual mesh generation, and even simple subdivision can radically alter topology, we can not depend on the reuse of large search structures. Instead, we require a lightweight approach that can generate a new representation of topology quickly using known information from a previous representation.
+In most cases, existing GPU implementations of Marching Cubes do not determine connectivity information on output contour surfaces, but instead simply forward disconnected geometry for rendering \cite{Dyken2008} \cite{Goetz_Junklewitz_Domik_2005} \cite{Johansson_Carr_2006}. However, many serial implementations exist that determine topological connectivity information from discrete geometry. For example, VTK and ParaView make use of a point-locator method, which works by beginning with an empty search structure and progressively updating it with each point, checking for duplicates along the way. There also exist efficient implementations of similar search structures for finely threaded cases such as the GPU \cite{Zhou_Hou_Wang_Guo_2008}, but these are most applicable when the resultant structures will be used extensively as in the case of raytracing. Because operations like tetrahedralization, Marching Cubes (and other contour methods), dual mesh generation, and even simple subdivision can radically alter topology, we can not depend on the reuse of large search structures. Instead, we require a lightweight approach that can generate a new representation of topology quickly using known information from a previous representation.
+
+Late in the paper, we describe a mesh coarsening method which improves triangle output quality over that normally provided by Marching Cubes. There are previously existing methods to obtain improved triangle quality from Marching Cubes \cite{Moore_Warren_1991}. The advantage we provide over these methods is that when topological information is also required we can also perform our coarsening technique in the same pass thus requiring no additional computational cost. 
 
 \section{Merging Algorithm}
 Without significant modification of the algorithms generating topological features,
@@ -905,7 +907,7 @@ types of geometric elements and then merge each group into single outputs. The w
   \zi     \Do
   \li         $\id{sort-index} \gets \id{sort-index-start}$
   \zi         \>\>\>\> $+ \id{group-index}$
-  \li         $v \gets \id{merge}(\id{sorted-values}[\id{sort-index}]$
+  \li         $v \gets \id{merge}(\id{sorted-values}[\id{sort-index}])$
           \End
   \li     $\id{welded-values}[\id{weld-index}]$
   \zi     \>\> $\gets \id{transform}(v, count)$
@@ -1200,7 +1202,7 @@ Performance for averaging scales approximately linearly with the number of input
 \label{sec:coarsening}
 Many algorithms that make use of an input topology must modify that topology to produce their output. To demonstrate how such an algorithm can be constructed with our technique, we implement a form of simple mesh coarsening. Traditional implementations of mesh coarsening operate without regard to the mesh's provenance by either iteratively collapsing features \cite{Potter2011} or collectively clustering vertices \cite{DeCoro2007}.  However, by combining edge collapsing with vertex welding we can provide a first-level coarsening that is fast, has low error, provides well-formed cells, and adapts to the structure of the original mesh.
 
-Rather than computing the topological connectivity of the original generated data and then coarsening it thereafter, we instead alter the input key array to our Vertex Welding technique to perform a type of coarsening in the process of topological connectivity generation. Furthermore, this technique is intended to be more practically useful than the first implementation in that it would improve mesh quality. Specifically, it is our goal to eliminate poor quality triangles in the mesh while performing minimal modifications to the others. We define triangle quality $Q$ as in Equation~\ref{eq:quality}, where $h_x$ are side lengths and $a$ is the triangle area. This quality metric operates only on triangle shape, and is agnostic to triangle size.
+Rather than computing the topological connectivity of the original generated data and then coarsening it thereafter, we instead alter the input key array to our Vertex Welding technique to perform a type of coarsening in the process of topological connectivity generation. Specifically, it is our goal to eliminate poor quality triangles in the mesh while performing minimal modifications to the others, without requiring an additional processing pass. We define triangle quality $Q$ as in Equation~\ref{eq:quality}, where $h_x$ are side lengths and $a$ is the triangle area. This quality metric operates only on triangle shape, and is agnostic to triangle size.
 
 \begin{equation}
 \label{eq:quality}
@@ -1251,8 +1253,8 @@ all instances of faces containing two or more identical indices. This invalidate
 A larger problem with the coarsening technique is that in some cases, such as the case shown in Figure \ref{fig:Nonmanifold}, non-manifold surface elements may be generated. If such surface elements are undesirable, they may be eliminated by calculating the maximum edge curvature of each triangle, and removing all triangles containing an edge curvature of $180^{\circ}$.
 
 \begin{figure}[!tb]
-\includegraphics[width=\columnwidth]{Coarsening}
-\caption{Top: Before coarsening. Bottom: After coarsening. Note that skinny triangles caused by the underlying voxel grid are removed in the bottom image. Removal of these triangles eliminates the artifacts visible along the crests and valleys of the top image, and provides a better sampling of vertex properties across the contour surface. The coarsened mesh in the bottom image contains approximately half the triangle count of the mesh in the top image.}
+\includegraphics[width=\columnwidth]{Coarsening.jpg}
+\caption{Top: Before coarsening. Bottom: After coarsening. Note that skinny triangles caused by the underlying voxel grid are removed in the bottom image. Removal of these triangles eliminates the artifacts visible along the crests and valleys of the top image, and provides a better sampling of vertex properties across the contour surface. The coarsened mesh in the bottom image contains approximately half the triangle count of the mesh in the top image. The blue region (left) shows how triangle quality is improved by eliminating thin triangles near input voxel borders. The green regions show improvements to surface interpolation made possible by removal of the thin triangles.}
 
 \label{fig:coarsening}
 \end{figure}
@@ -1284,7 +1286,7 @@ OpenMP & 28 & 122 & 561 & 2567 & 122 & 807 & 6208 \\
 \includegraphics[height=7.05cm]{MergedFigures.pdf}
 \caption{Left: Scatterplot of triangle area and triangle quality for the MRI head dataset as calculated in Eq. \ref{eq:quality} in Section \ref{sec:coarsening}. Note that in general the triangles that are removed by our coarsening (green) are either small or poor quality as compared with other triangles in the distribution. Triangles that are not removed by the coarsening (orange) are transformed by the coarsening into the output triangles (blue). While not all passed triangles are improved by this coarsening, there is a lower bound on produced triangle quality. After coarsening, most of the triangles are relatively large and high quality.
 Top Right: Histograms of the quality of passed, removed, and coarsened triangles.
-Bottom Right: Cumulative distributions of triangles before and after coarsening. Our coarsening generally reduces the size of the output mesh to approximately half of its original size. Median quality of the removed triangles is approximately $Q=0.5$. Median quality of passed triangles is approximately $Q=0.85$, and after coarsening the median quality of the output triangles remains at approximately $Q=0.85$.}
+Bottom Right: Cumulative distributions of triangles before and after coarsening. Our coarsening generally reduces the size of the output mesh to approximately half of its original size. Median quality of the removed triangles is approximately $Q=0.5$. Median quality of passed triangles is approximately $Q=0.85$, and after coarsening the median quality of the output triangles remains at approximately $Qb=0.85$.}
 \label{fig:coarseninggraphs}
 \end{center}
 \end{figure*}
@@ -1558,6 +1560,11 @@ M.~Garland, A.~Willmott, and P.~S. Heckbert.
 \newblock {\em Proceedings of the 2001 symposium on Interactive 3D graphics
   SI3D 01}, pages 49--58, 2001.
 
+\bibitem{Goetz_Junklewitz_Domik_2005}
+F. Goetz, T. Junklewitz and G. Domik.
+\newblock Real-Time Marching Cubes on the Vertex Shader.
+\newblock In {\em EUROGRAPHICS}, pages 1--4, 2005.
+
 \bibitem{Hoppe1996}
 H.~Hoppe.
 \newblock {Progressive meshes}.
@@ -1576,6 +1583,11 @@ H.~Hsieh and W.~Tai.
   visualization}.
 \newblock {\em Simulation Modelling Practice and Theory}, 13(8):681--692, Nov.
   2005.
+  
+\bibitem{Johansson_Carr_2006}
+G. Johansson and H. Carr.
+\newblock Accelerating marching cubes with graphics hardware.
+\newblock In {\em Proceedings of the 2006 conference of the Center for Advanced Studies on Collaborative research CASCON 06}, page 39, 2006.
 
 \bibitem{Kipfer2005}
 P.~Kipfer and R.~Westermann.
@@ -1595,6 +1607,11 @@ W.~E. Lorensen and H.~E. Cline.
 \newblock {Marching cubes: A high resolution 3D surface construction
   algorithm}.
 \newblock {\em Computer}, 21(4):163--169, 1987.
+
+\bibitem{Moore_Warren_1991}
+D. Moore and J. D. Warren.
+\newblock Mesh displacement: An improved contouring method for trivariate data.
+\newblock In {\em Computer}, pages 1--15, 1991
 
 \bibitem{Park}
 J.~Park, B.~Choi, and Y.~Chung.
@@ -1639,6 +1656,11 @@ H.~T. Vo, J.~Bronson, B.~Summa, J.~L. Comba, J.~Freire, B.~Howe, V.~Pascucci,
 \newblock In {\em Proceedings of the IEEE Symposium on Large-Scale Data
   Analysis and Visualization}, pages 81--88, October 2011.
 \newblock {DOI}~10.1109/LDAV.2011.6092321.
+
+\bibitem{Zhou_Hou_Wang_Guo_2008}
+K. Zhou, Q. Hou, R. Wang, and B. Guo.
+\newblock Real-time KD-tree construction on graphics hardware.
+\newblock In {\em ACM Transactions on Graphics}, 27(5):1, 2008.
 
 \end{thebibliography}
 
