@@ -640,7 +640,7 @@ on the structure of the pipeline.
 
 This is not a new problem, and techniques exist to determine topological
 information about a primitive soup \cite{Park}. Generally this approach starts by finding 
-and coalescing duplicate vertices, which may require a bounded radius nearest neighbor search to 
+and coalescing duplicate vertices, which may require a bounded-radius nearest-neighbor search to 
 resolve vertices that are identical save for floating point error. Next, the algorithm finds all primitives that 
 share two or more vertices, and links them together as neighbors. Finally,
 some `duplicate' vertices may not actually represent desirable connections,
@@ -1115,14 +1115,185 @@ face with three canonical vertices, such as the vertices with the lowest,
 second lowest, and third lowest indices in that order.
 
 \section{Mesh Coarsening}
+\label{sec:coarsening}
 
-\fix{I am conflicted about the position of this section.  Part of me wants
-  to put it in or next to the Marching Cubes subsection.  Part of me wants
-  it here after ther vertex welding while it is still fresh.  Part of me
-  wants it after the grouping cell connections so that the funny welding
-  can be introduced after the standard, exact welding is completed.}
+One of the more curious attributes of provenance-enabled topology
+construction is that there is flexibility in how we record the provenance,
+and changing the association between input and output elements can have
+interesting and useful outcomes.  In this section we describe how to alter
+the provenance of the Marching Cubes algorithm to provide an effective but
+free first-level coarsening of the resulting surface.
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=\columnwidth]{SkinnyCollapse.pdf}
+\caption{When several Marching Cubes output vertices (blue) fall close to
+  the same input vertex (black), small or skinny triangles may be produced
+  (red).  Merging the nearby vertices collapses the skinny triangles into
+  degenerate triangles, which are then removed. }
+\label{fig:SkinnyCollapse}
+\end{center}
+\end{figure}
+
+
+%\begin{figure}[!tb]
+%\begin{center}
+%\includegraphics[height=0.5\columnwidth]{IDs.pdf}
+%\caption{Our goal is to merge output vertices (light blue) that are generated too close to the vertices of the input voxel grid (black). To do so, we split each input voxel edge into three regions along edges of length $\ell$, using a control parameter $k$ to control the size. If a vertex is generated in the central region (B), we assign an output ID as normal. However, if a vertex is generated in one of the edge regions (A or C), we repeat that region's vertex ID. All output vertices generated near a particular input grid vertex are thus assigned the same ID and merged, which collapses skinny triangles to degenerate cases.}
+%\label{fig:IDs}
+%\end{center}
+%\end{figure}
+
+%\begin{figure}[!tb]
+%\begin{center}
+%\includegraphics[height=0.5\columnwidth]{Subdivision.pdf}
+%\caption{2D representation of implicit spatial subdivision into regions for the assignment of IDs to vertices generated on structured grids. Each region surrounding a voxel edge is shared by between 4 and 8 voxels. Because these regions can be determined directly from the output vertex coordinates, they need not be stored in memory. As such, no modification to the geometry generating function is required if the input voxel grid is known. Furthermore, determination of the integral region ID allows for faster sorting, as no lexicographic comparison of the vertices is required.}
+%\label{fig:Subdivision}
+%\end{center}
+%\end{figure}
+
+
+The basic idea for our coarsening is described in
+Figure~\ref{fig:SkinnyCollapse}. Marching Cubes generates small or skinny
+triangles when two adjacent output vertices are generated near the same
+input mesh vertex.  These skinny triangles are a problematic artifact of
+Marching Cubes.  They lead to poor interpolation of surface normals,
+shading, and other fields as demonstrated in Figure~\ref{fig:coarsening}.
+The juxtaposition of skinny and fat triangles can also cause irregularities
+in their orientations, which can yield a staircase-like appearance as
+evident in Figure~\ref{fig:averaging}.
+
+\begin{figure}[htb]
+\includegraphics[width=\columnwidth]{Coarsening.jpg}
+\caption{Marching Cubes output without (top) and with (bottom) coarsening.
+  The blue region shows how triangle quality is improved by eliminating
+  thin triangles. The green regions show improvements to surface
+  interpolation made possible by removal of the thin triangles.}
+
+\label{fig:coarsening}
+\end{figure}
+
+\begin{figure}[htb]
+\includegraphics[width=0.32\columnwidth]{FaceNoAveraging.png}
+\includegraphics[width=0.32\columnwidth]{FaceAveraging.png}
+\includegraphics[width=0.32\columnwidth]{FaceCoarsening.png}
+\caption{At left artifacts are visible due to sampling error caused by the
+  local operation of the Marching Cubes algorithm.  At center surface
+  normals are averaged on merged vertices, and smooth shading attempts to
+  make the bumps less noticeable.  At right we remove these artifacts using
+  our coarsening without incurring additional performance costs.  \fix{One
+    thing I notice about the left image is that it does not look as if the
+    shading is totally flat.  Why is that?}}
+\label{fig:averaging}
+\end{figure}
+
+\begin{figure*}[htb]
+\begin{center}
+\includegraphics[height=7.05cm]{ScatterAll.png}
+\hspace{0.1cm}
+\includegraphics[height=7.05cm]{MergedFigures.pdf}
+\caption{Left: Scatterplot of triangle area and triangle quality for the MRI head dataset as calculated in Eq. \ref{eq:quality}.
+Top Right: Histograms of the quality of passed, removed, and coarsened triangles.
+Bottom Right: Cumulative distributions of triangles before and after coarsening.}
+\label{fig:coarseninggraphs}
+\end{center}
+\end{figure*}
+
+The skinny triangles can be eliminated by collapsing nearby vertices.  With
+provenance-enabled topology generation, this collapsing is deceptively
+simple.  Rather than key each output vertex by the input edge whence it
+comes, as described in Section~\ref{sec:MarchingCubes}, we key each output
+vertex by the nearest input vertex connected to the input edge.  This
+simple change causes the partition to group all nearby vertices and the
+reduce to merge these vertices together.  When vertices are merged their
+point coordinates and field values are averaged.
+
+%% Essentially we divide the edges on which geometry is generated into three regions. We reserve a parameter $k$ to determine the size of these regions as a fraction of the edge length $\ell$. For unstructured grids, we modify the ID assignment we used previously in vertex welding. As before, we initially assign each vertex in the input topology an ID. During geometry generation, we pair these vertex IDs to form edge IDs, which are attached as attributes to the output vertex. However, when a vertex falls within $\frac{k\ell}{2}$ of an endpoint of this edge, the ID of that endpoint is repeated.
+
+%% As with the original ID assignment for structured grids, we can use our knowledge of the input topology to assign the IDs implicitly so that there is no performance or storage cost. This is accomplished by subdividing space such that each voxel vertex falls within a unique cell and assigning an integral ID to each cell. All output vertices generated within these cells will be considered identical and merged during Vertex Welding. The value of $k$ is restricted such that $0\leq k \leq 1$, and $k$ specifies the width of the cells that will group vertices. By placing the center of these cells over the intersections of the voxel grid, the `skinny' triangles generated by Marching Cubes can be reduced or eliminated. In the structured grid case, when $k=1$ we can guarantee a minimum possible triangle quality. For cubic voxel grids, this minimum is $Q=0.275$, and the expected triangle quality is much higher, as shown in Figure~\ref{fig:coarseninggraphs}. We cannot make such a guarantee about the output of the coarsening in the unstructured grid case because the triangle quality depends on the aspect ratios of the input cells. When $k=0$ this technique is equivalent to the previous form of vertex welding. In our experience, using a value of $k=1$ provides the best results, which is equivalent to simply keying each generated vertex on the nearest input edge vertex. This allows for a faster sorting operation, so it is the approach taken for all figures and timings representing coarsening in this paper.
+
+After the coarsening has been applied, we expect many degenerate triangles
+in the output. These triangles may be quickly removed in parallel by
+removing all instances of faces containing two or more identical indices.
+%This invalidates the output array of group sizes $C$ from the Vertex Welding array, but a corrected group sizes $C$ can be generated by sorting the output array $cell-connections$ and performing a segmented scan to determine the number of instances of each index.
+
+%% Many algorithms that make use of an input topology must modify that
+%% topology to produce their output. To demonstrate how such an algorithm can
+%% be constructed with our technique, we implement a form of simple mesh
+%% coarsening.
+
+There exist many surface coarsening algorithms.  Traditional
+implementations of mesh coarsening operate without regard to the mesh's
+provenance by either iteratively collapsing features \cite{Potter2011} or
+collectively clustering vertices \cite{DeCoro2007}.  Our approach is
+similar to those clustering vertices except that by integrating the
+clustering with the partitioning we already do, we get a free first-level
+coarsening without requiring a bounded-radius nearest-neighbor search or
+auxiliary search structures.
+
+%% However, by combining
+%% edge collapsing with vertex welding we can provide a first-level coarsening
+%% that is fast, has low error, provides well-formed cells, and adapts to the
+%% structure of the original mesh.
+
+%% Rather than computing the topological connectivity of the original
+%% generated data and then coarsening it thereafter, we instead alter the
+%% input key array to our Vertex Welding technique to perform a type of
+%% coarsening in the process of topological connectivity generation.
+
+Also, although our technique reduces the mesh size, philosophically
+speaking we are more interested in improving the quality of the mesh than
+in reducing the number of triangles, which is the primary focus of previous
+work.  Specifically, it is our goal to eliminate poor quality triangles in
+the mesh while performing minimal modifications to the others, without
+requiring an additional processing pass. We define triangle quality $Q$ as
+\begin{equation}
+\label{eq:quality}
+	Q = \frac{4a\sqrt{3}}{h_1^2 + h_2^2 + h_3^2},
+\end{equation}
+where $h_x$ are side lengths and $a$ is the triangle area. This quality
+metric operates only on triangle shape, and is agnostic to triangle size.
+
+This measure of triangle quality considers only aspect ratio, and is such
+that triangles where $Q > 0.6$ are considered to be of acceptable quality,
+and $Q = 1$ when the triangle is equilateral \cite{Bank2003}. This is
+equivalent to the pdetriq function in MATLAB.  We use this metric to
+empirically demonstrate the effectiveness of our coarsening.
+
+Figure~\ref{fig:coarseninggraphs} demonstrates the effect of our coarsening
+to the isosurface of the MRI head rendered in Figure~\ref{fig:averaging}.
+In general the triangles that are removed by our coarsening (green) are
+either small or poor quality as compared with other triangles in the
+distribution. Triangles that are not removed by the coarsening (orange) are
+altered into the output triangles (blue) when point coordinates are
+averaged. Although not all passed triangles are improved by this coordinate
+averaging, there is a lower bound on produced triangle quality. After
+coarsening, most of the triangles are relatively large and high quality.
+The cumulative triangle distributions show that our coarsening reduces the
+size of the output mesh to approximately half of its original size. The
+median quality of the removed triangles is approximately $Q=0.5$ whereas
+the median quality of passed and output triangles is approximately
+$Q=0.85$.
+
+\begin{figure}[htb]
+\includegraphics[width=\columnwidth]{Nonmanifold.pdf}
+\caption{An example of mesh coarsening causing a non-manifold, overlapping
+  surface.}
+\label{fig:Nonmanifold}
+\end{figure}
+
+A problem with the coarsening technique is that in some cases, such as the
+case shown in Figure \ref{fig:Nonmanifold}, non-manifold surface elements
+may be generated by collapsing vertices from different parts of the
+surface. In this example, two vertices from different faces are merged and
+a 3D volume is collapsed into a single plane.  If such surface elements are
+undesirable, they may be eliminated by calculating the maximum edge
+curvature of each triangle, and removing all triangles containing an edge
+curvature of $180^{\circ}$.
 
 \section{Grouping Cell Connections}
+
+\fix{More serious edits after this point.}
 
 \section{Mesh Generation}
 In order to test our method for generation of topological connectivities on a range of data types, we made use of several techniques to generate geometry.
@@ -1390,77 +1561,10 @@ Type & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
 \end{center}
 \end{table}
 
-\begin{figure}[!tb]
-\includegraphics[width=0.32\columnwidth]{FaceNoAveraging.png}
-\includegraphics[width=0.32\columnwidth]{FaceAveraging.png}
-\includegraphics[width=0.32\columnwidth]{FaceCoarsening.png}
-\caption{Surface normal artifacts are visible in the image of the MRI head dataset at left due to sampling error caused by the local operation of our Marching Cubes algorithm. The most common solution is to visit neighboring voxels while producing geometry to obtain a better sampling, but this can impede performance on the GPU. Without modifying Marching Cubes to do so, we can achieve better results by averaging local normals as shown in the central image, but this requires an additional computation pass. In section \ref{sec:coarsening}, we demonstrate a way to remove these artifacts without incurring the additional performance cost required by local averaging, as shown in right image.}
-\label{fig:averaging}
-\end{figure}
-
 Performance for averaging scales approximately linearly with the number of input vertices in all cases. We have profiled the performance of the algorithm and found that approximately 96\% of the time taken is spent removing duplicate vertices from the incidence lists. Generation of the incidence list is the next largest fraction of the processing time, at 3\%. The time taken to perform the sum and divide operations is negligible.
 
 
 \subsection{Mesh coarsening}
-\label{sec:coarsening}
-Many algorithms that make use of an input topology must modify that topology to produce their output. To demonstrate how such an algorithm can be constructed with our technique, we implement a form of simple mesh coarsening. Traditional implementations of mesh coarsening operate without regard to the mesh's provenance by either iteratively collapsing features \cite{Potter2011} or collectively clustering vertices \cite{DeCoro2007}.  However, by combining edge collapsing with vertex welding we can provide a first-level coarsening that is fast, has low error, provides well-formed cells, and adapts to the structure of the original mesh.
-
-Rather than computing the topological connectivity of the original generated data and then coarsening it thereafter, we instead alter the input key array to our Vertex Welding technique to perform a type of coarsening in the process of topological connectivity generation. Specifically, it is our goal to eliminate poor quality triangles in the mesh while performing minimal modifications to the others, without requiring an additional processing pass. We define triangle quality $Q$ as in Equation~\ref{eq:quality}, where $h_x$ are side lengths and $a$ is the triangle area. This quality metric operates only on triangle shape, and is agnostic to triangle size.
-
-\begin{equation}
-\label{eq:quality}
-	Q = \frac{4a\sqrt{3}}{h_1^2 + h_2^2 + h_3^2}
-\end{equation}
-
-This measure of triangle quality considers only aspect ratio, and is such that triangles where $Q > 0.6$ are considered to be of acceptable quality, and $Q = 1$ when the triangle is equilateral \cite{Bank2003}. This is equivalent to the pdetriq function in MATLAB.
-
-\begin{figure}[!tb]
-\begin{center}
-\includegraphics[width=\columnwidth]{SkinnyCollapse.pdf}
-\caption{When Marching Cubes and Marching Tetrahedra generate contour surfaces, the produced vertices can only occur on voxel edges (black). When several output vertices (blue) fall close to the same voxel vertex (black), small or skinny triangles may be produced (red). We eliminate these by merging all vertices that fall close to a voxel vertex into a single output. This collapses the skinny triangles into degenerate triangles, which are then removed. }
-\label{fig:SkinnyCollapse}
-\end{center}
-\end{figure}
-
-
-%\begin{figure}[!tb]
-%\begin{center}
-%\includegraphics[height=0.5\columnwidth]{IDs.pdf}
-%\caption{Our goal is to merge output vertices (light blue) that are generated too close to the vertices of the input voxel grid (black). To do so, we split each input voxel edge into three regions along edges of length $\ell$, using a control parameter $k$ to control the size. If a vertex is generated in the central region (B), we assign an output ID as normal. However, if a vertex is generated in one of the edge regions (A or C), we repeat that region's vertex ID. All output vertices generated near a particular input grid vertex are thus assigned the same ID and merged, which collapses skinny triangles to degenerate cases.}
-%\label{fig:IDs}
-%\end{center}
-%\end{figure}
-
-%\begin{figure}[!tb]
-%\begin{center}
-%\includegraphics[height=0.5\columnwidth]{Subdivision.pdf}
-%\caption{2D representation of implicit spatial subdivision into regions for the assignment of IDs to vertices generated on structured grids. Each region surrounding a voxel edge is shared by between 4 and 8 voxels. Because these regions can be determined directly from the output vertex coordinates, they need not be stored in memory. As such, no modification to the geometry generating function is required if the input voxel grid is known. Furthermore, determination of the integral region ID allows for faster sorting, as no lexicographic comparison of the vertices is required.}
-%\label{fig:Subdivision}
-%\end{center}
-%\end{figure}
-
-
-The basic idea for our coarsening is described in Figure \ref{fig:SkinnyCollapse}. Marching Cubes generates small or skinny triangles when two adjacent output vertices are generated near the same input mesh vertex. To eliminate this possibility, we consider all vertices close to any particular endpoint as identical so that during Vertex Welding, these skinny triangles become degenerate and can be removed. Essentially we divide the edges on which geometry is generated into three regions. We reserve a parameter $k$ to determine the size of these regions as a fraction of the edge length $\ell$. For unstructured grids, we modify the ID assignment we used previously in vertex welding. As before, we initially assign each vertex in the input topology an ID. During geometry generation, we pair these vertex IDs to form edge IDs, which are attached as attributes to the output vertex. However, when a vertex falls within $\frac{k\ell}{2}$ of an endpoint of this edge, the ID of that endpoint is repeated.
-
-As with the original ID assignment for structured grids, we can use our knowledge of the input topology to assign the IDs implicitly so that there is no performance or storage cost. This is accomplished by subdividing space such that each voxel vertex falls within a unique cell and assigning an integral ID to each cell. All output vertices generated within these cells will be considered identical and merged during Vertex Welding. The value of $k$ is restricted such that $0\leq k \leq 1$, and $k$ specifies the width of the cells that will group vertices. By placing the center of these cells over the intersections of the voxel grid, the `skinny' triangles generated by Marching Cubes can be reduced or eliminated. In the structured grid case, when $k=1$ we can guarantee a minimum possible triangle quality. For cubic voxel grids, this minimum is $Q=0.275$, and the expected triangle quality is much higher, as shown in Figure~\ref{fig:coarseninggraphs}. We cannot make such a guarantee about the output of the coarsening in the unstructured grid case because the triangle quality depends on the aspect ratios of the input cells. When $k=0$ this technique is equivalent to the previous form of vertex welding. In our experience, using a value of $k=1$ provides the best results, which is equivalent to simply keying each generated vertex on the nearest input edge vertex. This allows for a faster sorting operation, so it is the approach taken for all figures and timings representing coarsening in this paper.
-
-After the coarsening has been applied, we expect many degenerate triangles in the output. These triangles may be quickly removed in parallel by removing
-all instances of faces containing two or more identical indices. This invalidates the output array of group sizes $C$ from the Vertex Welding array, but a corrected group sizes $C$ can be generated by sorting the output array $cell-connections$ and performing a segmented scan to determine the number of instances of each index.
-
-\begin{figure}[!tb]
-\includegraphics[width=\columnwidth]{Nonmanifold.pdf}
-\caption{A problem with our coarsening method is that in some cases nonmanifold faces may be produced. In the example above, two vertices from different faces are merged and a 3D volume is collapsed into a single plane. To recreate a manifold surface, we detect and remove these cases in a separate step.}
-\label{fig:Nonmanifold}
-\end{figure}
-
-A larger problem with the coarsening technique is that in some cases, such as the case shown in Figure \ref{fig:Nonmanifold}, non-manifold surface elements may be generated. If such surface elements are undesirable, they may be eliminated by calculating the maximum edge curvature of each triangle, and removing all triangles containing an edge curvature of $180^{\circ}$.
-
-\begin{figure}[!tb]
-\includegraphics[width=\columnwidth]{Coarsening.jpg}
-\caption{Top: Before coarsening. Bottom: After coarsening. Note that skinny triangles caused by the underlying voxel grid are removed in the bottom image. Removal of these triangles eliminates the artifacts visible along the crests and valleys of the top image, and provides a better sampling of vertex properties across the contour surface. The coarsened mesh in the bottom image contains approximately half the triangle count of the mesh in the top image. The blue region (left) shows how triangle quality is improved by eliminating thin triangles near input voxel borders. The green regions show improvements to surface interpolation made possible by removal of the thin triangles.}
-
-\label{fig:coarsening}
-\end{figure}
 
 \subsection{Mesh Coarsening Results}
 Figure \ref{fig:coarsening} shows a before and after comparison of our coarsening technique with $k=1$. 
@@ -1481,18 +1585,6 @@ OpenMP & 28 & 122 & 561 & 2567 & 122 & 807 & 6208 \\
 \end{tabular}
 \end{center}
 \end{table}
-
-\begin{figure*}[!tb]
-\begin{center}
-\includegraphics[height=7.05cm]{ScatterAll.png}
-\hspace{0.1cm}
-\includegraphics[height=7.05cm]{MergedFigures.pdf}
-\caption{Left: Scatterplot of triangle area and triangle quality for the MRI head dataset as calculated in Eq. \ref{eq:quality} in Section \ref{sec:coarsening}. Note that in general the triangles that are removed by our coarsening (green) are either small or poor quality as compared with other triangles in the distribution. Triangles that are not removed by the coarsening (orange) are transformed by the coarsening into the output triangles (blue). While not all passed triangles are improved by this coarsening, there is a lower bound on produced triangle quality. After coarsening, most of the triangles are relatively large and high quality.
-Top Right: Histograms of the quality of passed, removed, and coarsened triangles.
-Bottom Right: Cumulative distributions of triangles before and after coarsening. Our coarsening generally reduces the size of the output mesh to approximately half of its original size. Median quality of the removed triangles is approximately $Q=0.5$. Median quality of passed triangles is approximately $Q=0.85$, and after coarsening the median quality of the output triangles remains at approximately $Qb=0.85$.}
-\label{fig:coarseninggraphs}
-\end{center}
-\end{figure*}
 
 \subsection{Dual Mesh Generation}
 To generate the dual of our triangular input meshes, we perform the following procedure: For each face, weaverage the vertices to get the centroid, and store it in a new array at the same ID as the original face. Now the surrounding face lists from \proc{Key-Weld} for each of the vertices in the original mesh form a representation of each face of the dual mesh, with the vertices not necessarily in order. To order the vertices, we create an adjacency list for all faces in parallel as described in \ref{sec:topology}, then use the adacency lists for each face to `walk' around each dual mesh cell, storing the order as we go. We perform all of these operations in a data parallel manner using existing functions of the Thrust library. Figure~\ref{fig:teaser}(d) shows an example of this kind of dual mesh for a 2D case.
