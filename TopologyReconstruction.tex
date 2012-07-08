@@ -440,7 +440,7 @@
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
 
-\title{Provenance-Enabled Topological Connection Reconstruction}
+\title{Provenance-Enabled Topology Construction}
 
 %
 %
@@ -472,7 +472,8 @@
 % note need leading \protect in front of \\ to get a newline within \thanks as
 % \\ is fragile and will error, could use \hfil\break instead.
 E-mail: \{bobmiller, ma\}@ucdavis.edu
-\IEEEcompsocthanksitem Kenneth Moreland is with Sandia National Labs}% <-this % stops a space
+\IEEEcompsocthanksitem Kenneth Moreland is with Sandia National Laboratories\protect\\
+E-mail: kmorel@sandia.gov}% <-this % stops a space
 \thanks{}}
 
 % note the % following the last \IEEEmembership and also \thanks - 
@@ -531,7 +532,7 @@ E-mail: \{bobmiller, ma\}@ucdavis.edu
 \IEEEcompsoctitleabstractindextext{%
 \begin{abstract}
 %\boldmath
- Many algorithms applied to mesh-based data structures are easily parallelizable because operations can often be divided by the constituent elements of the mesh and parallelized with a large number of threads. The problem with this technique is that when these threads generate new topological features, they tend to generate redundant information such as coincident vertices. This ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring elements. We present a novel approach for the efficient construction of connected topologies on multi- and many-core systems, which we demonstrate with GPU and OpenMP implementations. In this approach, we use input topological features as a basis for efficient location of coincident features in the output. We provide examples and performance numbers of the technique for isosurface generation and multiple forms of tetrahedralization.
+ Many algorithms applied to mesh-based data structures are easily parallelizable on massively threaded devices because operations can often be divided by the constituent elements of the mesh and parallelized with a large number of threads. The problem with this technique is that when these threads generate new topological features, they tend to generate redundant information such as coincident vertices. This ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring elements. We present a novel approach for the efficient construction of connected topologies on multi- and many-core systems, which we demonstrate with GPU and OpenMP implementations. In this approach, we use input topological features as a basis for efficient location of coincident features in the output. We provide examples and performance numbers of the technique for isosurface generation and multiple forms of tetrahedralization.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -622,10 +623,10 @@ the data values at the voxel corners are necessary to generate the geometry
 within the voxel (if any).
 
 The problem with this naive parallelization is that it generates a
-`soup' of output primitives, with no information about connectivity.
+``soup'' of output primitives, with no information about connectivity.
 The aforementioned Marching Cubes algorithm simply produces a set of disconnected triangles.
 This is not a concern so long as all further computation on the output
-depends exclusively on the local attributes of individual primitives, such as is
+depends exclusively on the local attributes of individual primitives and storage cost is not a primary concern, such as is
 the case with rendering. 
 
 Rendering has often been the ultimate goal for the
@@ -643,22 +644,29 @@ information about a primitive soup \cite{Park}. Generally this approach starts b
 and coalescing duplicate vertices, which may require a bounded-radius nearest-neighbor search to 
 resolve vertices that are identical save for floating point error. Next, the algorithm finds all primitives that 
 share two or more vertices, and links them together as neighbors. Finally,
-some `duplicate' vertices may not actually represent desirable connections,
+some ``duplicate'' vertices may not actually represent desirable connections,
 such as is the case where two cones meet at their apices, so these vertices
 may need to be split in a final pass. This process is computationally complex, and is
 specific to the topological connections between triangles. 
 
 We present a technique which applies equally well to other types of topological 
-connections, such as determining the neighboring facets of tetrahedra. Our technique makes use of the fact that geometry is rarely generated in a vacuum; we usually have some information about how the geometry is generated. To list a few examples: Marching Cubes generates its output vertices on the edges of a structured grid, dual meshes generate their vertices on the faces of an input mesh, and tetrahedralizations can be generated on an existing spatial grid or mesh. 
+connections, such as determining the neighboring facets of tetrahedra. Our
+technique makes use of the fact that in visualization geometry is rarely
+generated in a vacuum; we usually have some information about how the
+geometry is generated. To list a few examples demonstrated in Figure~\ref{fig:teaser}: Marching Cubes generates its output vertices on the edges of a structured grid, dual meshes generate their vertices on the faces of an input mesh, and tetrahedralizations can be generated on an existing spatial grid or mesh. 
 
-We explore the advantages of making a small modification to the algorithms that generate the geometry, where the information is stored about what feature of the input topology was used to generate each output feature. 
+We explore the advantages of making a small modification to algorithms that generate the geometry, where the provenance of the topological features is tracked. More specifically, we associate each feature of the output geometry with a feature from the input geometry, which already has well established connections. .
 
 \begin{figure*}[!tb]
-\subfloat[Marching Cubes\label{fig:teaser:mc}]{\includegraphics[height=0.3415\columnwidth]{MarchingCubesOverview.pdf}}
-\subfloat[Subdivision\label{fig:teaser:subdivision}]{\includegraphics[height=0.3415\columnwidth]{SubdivisionExample.pdf}}
-\subfloat[Face-Centered Tetrahedralization\label{fig:teaser:tetrahedral}]{\includegraphics[height=0.3415\columnwidth]{TetrahedralExample.pdf}}
-\subfloat[Dual Mesh\label{fig:teaser:dual}]{\includegraphics[height=0.3415\columnwidth]{DualMeshExample2.pdf}}
-\caption{Operations that generate geometry usually rely on a known input topology for that purpose. Marching Cubes (a) generates all output vertices on the edges of a known voxel grid. By marking these output vertices with the ID of their generating edges, connectivity information can be retained. The same process can be applied to cell subdivision (b). Tetrahedralizations (c) are more complex, but still supportable by keying on the intput face as well as the input edge. Generating topology on a dual mesh (d) exchanges vertex and face connectivity information.}
+\centering
+\subfloat[Marching Cubes\label{fig:teaser:mc}]{\includegraphics[height=0.32\columnwidth]{MarchingCubesOverview.pdf}}
+\quad
+\subfloat[Subdivision\label{fig:teaser:subdivision}]{\includegraphics[height=0.32\columnwidth]{SubdivisionExample.pdf}}
+\quad
+\subfloat[Face-Centered Tetrahedralization\label{fig:teaser:tetrahedral} \fix{Replace adjacent small dots with larger dots covering nearby vertices.  It would make the dots easier to see and would be more consistent with other figures}]{\includegraphics[height=0.32\columnwidth]{TetrahedralExample.pdf}}
+\quad
+\subfloat[Dual Mesh\label{fig:teaser:dual}]{\includegraphics[height=0.32\columnwidth]{DualMeshExample2.pdf}}
+\caption{Operations that generate geometry usually rely on a known input topology for that purpose. Marching Cubes (a) generates all output vertices on the edges of a known voxel grid. By marking these output vertices with the ID of their generating edges, connectivity information can be retained. The same process can be applied to cell subdivision (b). Tetrahedralizations (c) are more complex, but still supportable by keying on the input face as well as the input edge. Generating topology on a dual mesh (d) exchanges vertex and face connectivity information.}
 \label{fig:teaser}
 \end{figure*}
 
@@ -670,13 +678,13 @@ To summarize, this paper makes the following contributions:
 	\item{Require no modifications to the algorithms generating geometry save for the
 		storage of information about the input topological features used to generate each output feature.}
 
-	\item{Make use provenance of disconnected geometry to enhance the performance of the topology
+	\item{Make use of the provenance of disconnected geometry to enhance the performance of the topology
 		resolution technique.}
 
 	\item{Demonstrate the effectiveness of our technique on the output of the Marching Cubes
 		algorithm and a tetrahedralization algorithm.}
  
-	\item{Show how a provenance-aware algorithmva can be used to perform
+	\item{Show how a provenance-aware algorithms can be used to perform
 		 simple mesh coarsening in the same pass as the topology resolution.}
  
 \end{itemize}
@@ -684,8 +692,12 @@ To summarize, this paper makes the following contributions:
 \end{minipage}
 
 We developed our technique for topology resolution so that it could be implemented
-into the upcoming DAX framework, which will provide data analysis capabilities similar to those
+into the upcoming Dax framework \fix{Cite LDAV paper}, which will provide data analysis capabilities similar to those
 in VTK, but targeted toward massively parallel architectures, beginning with the GPU.
+We leverage the Thrust C++ template library~\cite{Bell2012} to implement
+our parallel algorithms.  Thrust fulfills the dual purpose of providing
+basic parallel operations and simplifies the porting of our code to both
+GPU (CUDA) and multi-core (OpenMP) architectures.
 
 \section{Previous Work}
 \label{sec:PreviousWork}
@@ -696,17 +708,13 @@ Rottger's implementation \cite{Rottger2000}. Dyken provides a fairly
 detailed overview of the advancements in GPU implementations of Marching Cubes and 
 Marching Tetrahedra \cite{Dyken2008}.
 
-The basic topology resolution technique described in the introduction section is
-introduced by Park et al. \cite{Park}. Additionally, Kipfer mentions
-implementing a topology construction technique along with their GPU
-Marching Cubes algorithm \cite{Kipfer2005}. Kipfer's technique involves the use of the edges that vertices 
-will be placed on as a key for determining which vertices would be duplicated. Kipfer 
-thus avoids redundant computation of such vertices and avoids the need for coincident 
-point resolution. To have accurate normals at the generated vertices, Kipfer's technique
-requires precomputation of the gradient of the volume at the voxel vertices. Any other
-interpolable attributes to be derived from the volume must also be precomputed at the
-voxel vertices. Our method for determining duplicate vertices extends Kipfer's method in that
-we may key off of any input feature.
+The basic topology resolution technique described in the introduction
+section is introduced by Park et al. \cite{Park}.  Additionally, Kipfer and
+Westermann \cite{Kipfer2005} use the observation that polygon vertices from
+Marching Tetrahedra all lie on tetrahedra edges to uniquely specify each
+polygon vertex. Our implementation of isosurface generation uses a similar
+observation, but our technique is more general than Kipfer and Westermann's
+and does not require the auxiliary edge structure of their technique.
 
 Stream compaction is an important element for efficient geometry generation on the GPU.
 Horn provides an early method for stream compaction on the GPU \cite{Horn2005}, which
@@ -718,15 +726,27 @@ For our examples, we use geometry generation methods that make use of the prefix
 method of compaction, but other compaction techniques such as histogram pyramids could be
 substituted for the prefix sum technique for increased performance in any case where our method is applied.
 
-We use coincident point resolution (vertex welding) in Marching Cubes with the Thrust
-C++ template library \cite{Bell2012}. Bell, a primary
-developer of the Thrust library, also presents a vertex welding technique as an
+Carr et al. \cite{Carr2006} describe several ways to subdivide voxel grids into tetrahedral grids. To fairly test performance of our topology generation on unstructured grids, we generate each of these subdivisions and demonstrate that the performance of our approach is similar in all cases.
+
+In most cases, existing GPU implementations of Marching Cubes do not determine connectivity information on output contour surfaces, but instead simply forward disconnected geometry for rendering~\cite{Dyken2008,Goetz_Junklewitz_Domik_2005,Johansson_Carr_2006}. However, many serial implementations exist that determine topological connectivity information from discrete geometry. For example, VTK and ParaView make use of a point-locator method, which works by beginning with an empty search structure and progressively updating it with each point, checking for duplicates along the way. There also exist efficient implementations of similar search structures for finely threaded cases such as the GPU \cite{Zhou_Hou_Wang_Guo_2008}, but these are unsuitable for the iterative and concurrent updates required by Marching Cubes. Because operations like tetrahedralization, Marching Cubes (and other contour methods), dual mesh generation, and even simple subdivision can radically alter topology, we can not depend on the reuse of large search structures. Instead, we require a lightweight approach that can generate a new representation of topology quickly using known information from a previous representation.
+
+Bell, a primary
+developer of the Thrust library, presents a vertex welding technique as an
 example application of Thrust \cite{Bell2010}. Bell also notes that GPU sorting techniques can
-be instrumental in the development of high-performance GPU algorithms. Hoberock uses a
+be instrumental in the development of high-performance GPU algorithms. The technique uses a
 lexicographic sort directly on the vertices generated by Marching Cubes, then collapses 
 duplicates to get the final welded surface.
+We find this sorting approach well suited for topology construction in
+finely-threaded architectures and seek to improve and generalize the
+technique in this paper.
 
-The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as described in Algorithm 1.
+The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as
+described in Algorithm 1.  Vertices are first sorted by some representation
+of their coordinates.  Bell suggests \fix{describe how the three
+  coordinates are combined to a single value.}  After the sort, vertices at
+identical locations are adjacent in the array.  These coincident points are
+marked and compacted.
+
 \begin{figure}[h!]
 \vspace{-0.3cm}
 \begin{codebox}
@@ -751,16 +771,11 @@ The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as described i
 Thrust functions \texttt{sort}, \texttt{unique}, and \texttt{lower\_bound},
 respectively.
 
-Our approach has many similarities, but there are several areas of interest where \proc{Vertex-Weld} was not designed to accommodate topological reconstruction. In particular, \proc{Vertex-Weld} provides no way to make use of the provenance of the disconnected geometry. Additionally, the \proc{Vertex-Weld} algorithm as presented is unstable in the presence of floating point errors because these can cause the \proc{Lexicographic-Sort} to place 'identical' points in noncontiguous regions of memory, thus invalidating the algorithm. A more stable solution which still uses bitwise comparison can be constructed by sorting on each dimension and removing duplicates each time, but this is inefficient. Instead, we resolve both of these concerns by allowing a sort on input topological features, and a generalized comparison and merge operation with our algorithm, to be described in the next section.
+Our approach has many similarities, but there are several areas of interest where \proc{Vertex-Weld} was not designed to accommodate topological reconstruction. In particular, \proc{Vertex-Weld} provides no way to make use of the provenance of the disconnected geometry. Additionally, the \proc{Vertex-Weld} algorithm as presented is unstable in the presence of floating point errors because these can cause the \proc{Lexicographic-Sort} to place ``identical'' points in non-contiguous regions of memory, thus invalidating the algorithm. A more stable solution which still uses bitwise comparison can be constructed by sorting on each dimension and removing duplicates each time, but this is inefficient. Instead, we resolve both of these concerns by allowing a sort on input topological features, and a generalized comparison and merge operation with our algorithm, to be described in the next section.
 
-Carr et al. \cite{Carr2006} describe several ways to subdivide voxel grids into tetrahedral grids. To fairly test performance of our topology generation on unstructured grids, we generate each of these subdivisions and demonstrate that the performance of our approach is similar in all cases.
+We also describe a mesh coarsening method which improves triangle output quality over that normally provided by Marching Cubes. There are previously existing methods to obtain improved triangle quality from Marching Cubes \cite{Moore_Warren_1991}. The advantage we provide over these methods is that when topological information is also required we can also perform our coarsening technique in the same pass thus requiring no additional computational cost. 
 
-Observant readers may notice a similarity between our proposed algorithms and those supported by the MapReduce framework \cite{MapReduce}. Like MapReduce, our algorithms first map keys to values then collect keys and reduce the values. Although we believe our algorithms could be implemented in a MapReduce framework (an exercise we leave to the reader), it would require additional collection operations to resolve topological connections. Other researchers 
-\cite{Stuart2010}\cite{Vo2011} have implemented visualization algorithms directly in MapReduce, but they serve purposes other than those we address.
-
-In most cases, existing GPU implementations of Marching Cubes do not determine connectivity information on output contour surfaces, but instead simply forward disconnected geometry for rendering \cite{Dyken2008} \cite{Goetz_Junklewitz_Domik_2005} \cite{Johansson_Carr_2006}. However, many serial implementations exist that determine topological connectivity information from discrete geometry. For example, VTK and ParaView make use of a point-locator method, which works by beginning with an empty search structure and progressively updating it with each point, checking for duplicates along the way. There also exist efficient implementations of similar search structures for finely threaded cases such as the GPU \cite{Zhou_Hou_Wang_Guo_2008}, but these are most applicable when the resultant structures will be used extensively as in the case of raytracing. Because operations like tetrahedralization, Marching Cubes (and other contour methods), dual mesh generation, and even simple subdivision can radically alter topology, we can not depend on the reuse of large search structures. Instead, we require a lightweight approach that can generate a new representation of topology quickly using known information from a previous representation.
-
-Late in the paper, we describe a mesh coarsening method which improves triangle output quality over that normally provided by Marching Cubes. There are previously existing methods to obtain improved triangle quality from Marching Cubes \cite{Moore_Warren_1991}. The advantage we provide over these methods is that when topological information is also required we can also perform our coarsening technique in the same pass thus requiring no additional computational cost. 
+We pattern our algorithms after some of the features of the MapReduce framework~\cite{MapReduce}. Like MapReduce, our algorithms first map keys to values then collect keys and reduce the values. Although we believe our algorithms could be implemented in a MapReduce framework (an exercise we leave to the reader), it would require additional collection operations to resolve topological connections. Other researchers~\cite{Stuart2010,Vo2011} have implemented visualization algorithms directly in MapReduce, but they serve purposes other than those we address.
 
 \section{Using Topology Provenance}
 \label{sec:UsingTopologyProvenance}
