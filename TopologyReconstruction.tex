@@ -797,7 +797,7 @@ familiar with this system.
 \label{fig:KeyWeld}
 \end{figure*}
 
-The first step is a \emph{map} operation that generates key/value pairs
+The first step is a \emph{map} operation that generates key-value pairs
 where the key is some component of the input topology and the value is a
 generated component of the output topology.  In the case of Marching Cubes,
 the values are the vertices generated for the new surface mesh, and each
@@ -806,11 +806,11 @@ vertex.  The map operation may also generate elements that are known to be
 unique and therefore do not need keys.  For example, when subdividing
 cells, some vertices come directly from the input vertices whereas others
 are interpolated and must be connected.  The map operation is designed such that
-key/value pairs can be generated independently, which allows us to safely
+key-value pairs can be generated independently, which allows us to safely
 compute them concurrently on a very large pool of threads.
 
 The second step is a \emph{partition} operation that reorganizes the
-key/value pairs to group duplicate keys.  Like most MapReduce
+key-value pairs to group duplicate keys.  Like most MapReduce
 implementations, we find a parallel sort to be an efficient way to shuffle
 the data.  However, we can also take advantage of domain decompositions
 when available to shorten the partitioning time.
@@ -829,7 +829,7 @@ algorithms using the more imperative parallel operations provided by
 Thrust.  This makes it easier to take advantage of known properties such as
 domain decompositions or implicitly unique keys.  It also simplifies
 storing topologies in efficient indexed array structures rather than
-collections of key/value entities.
+collections of key-value entities.
 
 \section{Connecting Vertices}
 \label{sec:ConnectingVertices}
@@ -855,7 +855,7 @@ operation is a previously known algorithm such as Marching Cubes with the
 trivial extension that cell connection lists contain pairs of input index
 (key) and output vertex (value) rather than just the output vertices.
 
-Next, key/value pairs are partitioned by sorting the pairs based on keys.
+Next, key-value pairs are partitioned by sorting the pairs based on keys.
 From the sorted list of keys we can efficiently extract a list of unique
 keys, which serves to identify the connected vertices to be created.  This
 list of sorted unique keys can also used to look up where each original
@@ -1045,7 +1045,7 @@ MapReduce and \proc{Vertex-Weld}, making it a curious amalgamation between
 the two.  The remainder of this section describes applications of
 \proc{Key-Weld} as a typical vertex weld (albeit potentially faster than
 \proc{Vertex-Weld} with a more robust coincident point comparison).
-Subsequent section\fix{s?} apply the \proc{Key-Weld} algorithm in more
+Subsequent sections apply the \proc{Key-Weld} algorithm in more
 unique ways to identify different topological connections.
 
 \subsection{Marching Cubes}
@@ -1292,6 +1292,68 @@ curvature of each triangle, and removing all triangles containing an edge
 curvature of $180^{\circ}$.
 
 \section{Grouping Cell Connections}
+\label{sec:GroupingCellConnections}
+
+Thus far we have discussed algorithms that are able to locally determine
+the structure of cells but require collective operations to resolve the
+vertices.  However, provenance-enabled topology construction can also be
+applied to the converse problem where vertices can be locally determined
+but the cell structure can only be constructed by tracing through the input
+topology.
+
+The process to collect the elements of cells uses the same
+map-partition-reduce strategy discussed in
+Section~\ref{sec:UsingTopologyProvenance} and the same \proc{Key-Weld}
+process described in Section~\ref{sec:GeneralMergingAlgorithm}.  In this
+case some topological feature of the input is uniquely associated with each
+cell in the output, and an index for this feature is used for the key.  The
+reduce phase is then responsible for generating the cell connectivity
+lists.
+
+We demonstrate the concept of using provenance-enabled topology
+construction for cell grouping with an algorithm for finding the dual of a
+surface mesh.  The dual of a surface mesh has a vertex at the center of
+every polygon in the original mesh and an edge connecting pairs of vertices
+corresponding to adjacent cells in the original mesh.  It happens that
+these edges connect to form a polygon for each vertex in the original mesh.
+A simple example of a mesh and its dual is given in
+Figure~\ref{fig:teaser:dual}.
+
+The map phase of the dual mesh algorithm first finds the centroid of each
+input polygon, which becomes a vertex in the output dual mesh.  Each
+centroid is known to be unique and can be written directly to a vertex list
+without keys and without needing to be partitioned.  The map also writes a
+key-value pair for each vertex of each cell of the input mesh.  The key is
+the index of the input vertex and the value is a 3-tuple containing the
+index to the output vertex (generated from the polygon centroid) and the
+two input vertices adjacent to the keyed vertex and incident to the
+polygon.  These latter two vertices describe the edges through which the
+dual polygon will connect around the keyed vertex.
+
+These key-value pairs effect the reduce phase to merge together the
+centroids of all cells incident to the keyed vertex.  Such a group of
+centroids corresponds to a polygon in the output mesh.  Thus, our merge
+operation is to output a polygon connecting these centroids.  However, the
+partitioning may not (and probably will not) produce the centroids in the
+proper order around the polygon.  To order the vertices, we use the vertex
+key and the two incident input vertices stored in the value to ``walk''
+around each dual mesh polygon, storing the order as we go.
+
+\fix{My description differs from the original description and almost
+  definitely differs from our current implementation.  My description
+  suggests that the vertex list be written immediately and indices be used
+  as values in the welding.  I also suggest passing links through weld
+  values rather than build an adjacency list.  We should talk about it.}
+
+%% To generate the dual of our triangular input meshes, we perform the following procedure: For each face, weaverage the vertices to get the centroid, and store it in a new array at the same ID as the original face. Now the surrounding face lists from \proc{Key-Weld} for each of the vertices in the original mesh form a representation of each face of the dual mesh, with the vertices not necessarily in order. To order the vertices, we create an adjacency list for all faces in parallel as described in \ref{sec:topology}, then use the adacency lists for each face to `walk' around each dual mesh cell, storing the order as we go. We perform all of these operations in a data parallel manner using existing functions of the Thrust library. Figure~\ref{fig:teaser:dual} shows an example of this kind of dual mesh for a 2D case.
+
+%\begin{figure}[!tb]
+%\begin{center}
+%\includegraphics[height=3cm]{DualExample.pdf}
+%\end{center}
+%\caption{2D example of a dual mesh (blue) overlaid against a triangular mesh (green).}
+%\label{fig:DualExample}
+%\end{figure}
 
 \fix{More serious edits after this point.}
 
@@ -1587,15 +1649,6 @@ OpenMP & 28 & 122 & 561 & 2567 & 122 & 807 & 6208 \\
 \end{table}
 
 \subsection{Dual Mesh Generation}
-To generate the dual of our triangular input meshes, we perform the following procedure: For each face, weaverage the vertices to get the centroid, and store it in a new array at the same ID as the original face. Now the surrounding face lists from \proc{Key-Weld} for each of the vertices in the original mesh form a representation of each face of the dual mesh, with the vertices not necessarily in order. To order the vertices, we create an adjacency list for all faces in parallel as described in \ref{sec:topology}, then use the adacency lists for each face to `walk' around each dual mesh cell, storing the order as we go. We perform all of these operations in a data parallel manner using existing functions of the Thrust library. Figure~\ref{fig:teaser}(d) shows an example of this kind of dual mesh for a 2D case.
-
-%\begin{figure}[!tb]
-%\begin{center}
-%\includegraphics[height=3cm]{DualExample.pdf}
-%\end{center}
-%\caption{2D example of a dual mesh (blue) overlaid against a triangular mesh (green).}
-%\label{fig:DualExample}
-%\end{figure}
 
 \subsection{Dual Mesh Generation Results}
 
