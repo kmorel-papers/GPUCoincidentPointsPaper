@@ -755,11 +755,12 @@ marked and compacted.
     }
   \zi \Comment Sort $\id{vertices}$ to make identical vertices adjacent.
   \li $\id{sorted-vertices} \gets \proc{Lexicographic-Sort}(\id{vertices})$
-  \zi \Comment Copy the first element from each group of duplicates.
+  \zi \Comment Copy first element of each group of duplicates.
   \li $\id{welded-vertices} \gets \proc{Unique}(\id{sorted-vertices})$
-  \zi \Comment For each item in $\id{vertices}$ find the corresponding index
-  \zi \Comment in $\id{welded-vertices}$.
-  \li $\id{cell-connections} \gets \proc{Vectorized-Find}(\id{welded-vertices},\id{vertices})$
+  \zi \Comment For each item in $\id{vertices}$ find the corresponding
+  \zi \Comment index in $\id{welded-vertices}$.
+  \li $\id{cell-connections} \gets$
+  \zi \> $\proc{Vectorized-Find}(\id{welded-vertices},\id{vertices})$
   \li \Return $( \id{welded-vertices}, \id{cell-connections} )$
 \end{codebox}
 \vspace{-0.5cm}
@@ -996,32 +997,34 @@ elements and then merge each group into single outputs.  The workings of
 \begin{codebox}
   \Procname{$\proc{Key-Weld}(\id{keys},\id{values},\id{compare},\id{merge},\id{transform})$\\
     \id{keys}: An array of keys uniquely identifying elements.\\
-    \id{values}: An array of mergeable elements the same size as \id{keys}.\\
+    \id{values}: An array of mergeable elements for each key.\\
     \id{compare}: A key comparator $\id{compare}(k_1,k_2) \rightarrow \const{bool}$.\\
     \id{merge}: A merging operator $\id{merge}(m_1,m_2) \rightarrow m_3$.\\
     \id{transform}: A transformation $\id{transform}(m_1,\id{size})
       \rightarrow \id{out}$.
   }
   \zi \Comment Sort \id{values} using \id{keys} to make groups.
-  \li $(\id{sorted-keys},\id{sorted-values})$
-  \zi \>\> $\gets \proc{Key-Sort}(\id{keys},\id{values},\id{compare})$
+  \li $(\id{sorted-keys},\id{sorted-values}) \gets$
+  \zi \> $\proc{Key-Sort}(\id{keys},\id{values},\id{compare})$
   \zi \Comment Determine the new indices for each element.
   \li $\id{unique-keys} \gets \proc{Unique}(\id{sorted-keys})$
-  \li $\id{cell-connections} \gets \proc{Vectorized-Find}(\id{unique-keys},\id{keys})$
-  \zi \Comment Get a reverse map from output array to sorted arrays.
-  \li $\id{reverse-map}$
-  \zi \>\> $\gets \proc{Vectorized-Find}(\id{sorted-keys},\id{unique-keys})$
+  \li $\id{cell-connections} \gets$
+  \zi \> $\proc{Vectorized-Find}(\id{unique-keys},\id{keys})$
+  \zi \Comment Get a reverse map from output to sorted arrays.
+  \li $\id{reverse-map} \gets$
+  \zi \> $\proc{Vectorized-Find}(\id{sorted-keys},\id{unique-keys})$
   \zi \Comment Get the size of each group (one per unique key).
   \li $\id{weld-array-size} \gets \proc{Length}(\id{reverse-map})$
   \li $\id{counts} \gets \{ \}$
   \li \For $i \gets 0$ \To $\id{weld-array-size} - 2$
   \zi \Do \kw{in parallel}
-  \li     $\id{counts}[i] \gets \id{reverse-map}[i+1] - \id{reverse-map}[i]$
+  \li     $\id{counts}[i] \gets \id{reverse-map}[i+1]$
+  \zi \>\>\>\> $- \id{reverse-map}[i]$
       \End
-  \li $\id{counts}[\id{weld-array-size}-1]$
-  \zi \>\> $\gets \proc{Length}(\id{sorted-keys})$
+  \li $\id{counts}[\id{weld-array-size}-1] \gets$
+  \zi \> $\proc{Length}(\id{sorted-keys})$
   \zi \>\>\> $ - \id{reverse-map}[\id{weld-array-size}-1]$
-  \zi \Comment Merge elements of each group into a single element.
+  \zi \Comment Merge each group into a single element.
   \li $\id{welded-values} \gets \{ \}$
   \li \For $\id{weld-index} \gets 0$ \To $\id{weld-array-size} - 1$
   \zi \Do \kw{in parallel}
@@ -1034,8 +1037,8 @@ elements and then merge each group into single outputs.  The workings of
   \zi         \>\>\>\> $+ \id{group-index}$
   \li         $v \gets \id{merge}(\id{sorted-values}[\id{sort-index}])$
           \End
-  \li     $\id{welded-values}[\id{weld-index}]$
-  \zi     \>\> $\gets \id{transform}(v, count)$
+  \li     $\id{welded-values}[\id{weld-index}] \gets$
+  \zi     \>\>\>\> $\id{transform}(v, count)$
       \End
   \li \Return $(\id{welded-values}, \id{cell-connections}, \id{counts})$
 \end{codebox}
