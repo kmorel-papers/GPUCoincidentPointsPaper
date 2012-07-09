@@ -465,7 +465,7 @@
 
 \author{Robert~Miller,~\IEEEmembership{Student Member,~IEEE,}
         Kenneth~Moreland,~\IEEEmembership{Member,~IEEE,} \protect\\
-        and~Kwan-Liu~Ma,~\IEEEmembership{Senior Member,~IEEE}% <-this % stops a space
+        and~Kwan-Liu~Ma,~\IEEEmembership{Fellow,~IEEE}% <-this % stops a space
 \IEEEcompsocitemizethanks{\IEEEcompsocthanksitem Robert Miller and Kwan-Liu Ma are with the University of California,~Davis, 2063 Kemper Hall, One Shields Avenue, Davis, CA 95616-8562.\protect\\
 % note need leading \protect in front of \\ to get a newline within \thanks as
 % \\ is fragile and will error, could use \hfil\break instead.
@@ -529,7 +529,7 @@ E-mail: \{bobmiller, ma\}@ucdavis.edu
 \IEEEcompsoctitleabstractindextext{%
 \begin{abstract}
 %\boldmath
- Many algorithms applied to mesh-based data structures are easily parallelizable because operations can often be divided by the constituent elements of the mesh and parallelized with a large number of threads. The problem with this technique is that when these threads generate new topological features, they tend to generate redundant information such as coincident vertices. This ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring elements. We present a novel approach for the efficient construction of connected topologies on multi- and many-core systems, which we demonstrate with GPU and OpenMP implementations. In this approach, we use input topological features as a basis for efficient location of coincident features in the output. We provide examples and performance numbers of the technique for isosurface generation and multiple forms of tetrahedralization.
+ Many algorithms applied to mesh-based data structures are easily parallelizable because operations can often be divided by the constituent elements of the mesh and parallelized with a large number of threads. The problem with this technique is that when these threads generate new topological features, they tend to generate redundant information such as coincident vertices. This ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring elements. We present a novel approach for the efficient construction of connected topologies on multi- and many-core systems, which we demonstrate with CUDA and OpenMP implementations. We contribute a method to use input topological features as a basis for efficient location of coincident features in the output. We provide examples and performance numbers of the technique for isosurface generation, tetrahedralization, and dual mesh generation.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -656,7 +656,7 @@ We explore the advantages of making a small modification to the algorithms that 
 \subfloat[Subdivision]{\includegraphics[height=0.3415\columnwidth]{SubdivisionExample.pdf}}
 \subfloat[Face-Centered Tetrahedralization]{\includegraphics[height=0.3415\columnwidth]{TetrahedralExample.pdf}}
 \subfloat[Dual Mesh]{\includegraphics[height=0.3415\columnwidth]{DualMeshExample2.pdf}}
-\caption{Operations that generate geometry usually rely on a known input topology for that purpose. Marching Cubes (a) generates all output vertices on the edges of a known voxel grid. By marking these output vertices with the ID of their generating edges, connectivity information can be retained. The same process can be applied to cell subdivision (b). Tetrahedralizations (c) are more complex, but still supportable by keying on the intput face as well as the input edge. Generating topology on a dual mesh (d) exchanges vertex and face connectivity information.}
+\caption{Operations that generate geometry usually rely on a known input topology for that purpose. Marching Cubes (a) generates all output vertices on the edges of a known voxel grid. By marking these output vertices with the ID of their generating edges, connectivity information can be retained. The same process can be applied to cell subdivision (b). Tetrahedralizations (c) are more complex, but still supportable by keying on the intput face as well as the input edge. Generating topology on a dual mesh (d) exchanges vertex and face connectivity information. In each figure, output topological connections known from input topology are displayed by using identical colors to highlight connected vertices.}
 \label{fig:teaser}
 \end{figure*}
 
