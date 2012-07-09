@@ -692,7 +692,7 @@ To summarize, this paper makes the following contributions:
 \end{minipage}
 
 We developed our technique for topology resolution so that it could be implemented
-into the upcoming Dax framework \fix{Cite LDAV paper}, which will provide data analysis capabilities similar to those
+into the upcoming Dax framework \cite{Moreland_Ayachit_Geveci_Ma_2011}, which will provide data analysis capabilities similar to those
 in VTK, but targeted toward massively parallel architectures, beginning with the GPU.
 We leverage the Thrust C++ template library~\cite{Bell2012} to implement
 our parallel algorithms.  Thrust fulfills the dual purpose of providing
@@ -789,7 +789,7 @@ component in MapReduce to facilitate the understanding for those already
 familiar with this system.
 
 \begin{figure}[htb]
-  \includegraphics[width=\linewidth]{ProvenanceConstruction}
+  \includegraphics[width=\linewidth]{MapPartitionReduce.pdf}
   \caption{Basic flow of an algorithm using provenance to construct
     connected topology.}
   \label{fig:ProvenanceFlow}
@@ -805,10 +805,6 @@ familiar with this system.
   and a reduce phase combines vertices and establishes a connections array
   to the new indices.  We collect the mechanisms of this process in an
   algorithm we call \proc{Key-Weld}.
-  \fix{The first three yellow blocks should be changed to correspond to
-    Figure~\ref{fig:ProvenanceFlow}.  Discrete Geometry, Find Groups, and
-    Merge/Transform Groups should be changed to Map, Partition, and Reduce,
-    respectively.}
 }
 \label{fig:KeyWeld}
 \end{figure*}
@@ -2266,6 +2262,11 @@ W.~E. Lorensen and H.~E. Cline.
 D. Moore and J. D. Warren.
 \newblock Mesh displacement: An improved contouring method for trivariate data.
 \newblock In {\em Computer}, pages 1--15, 1991
+
+\bibitem{Moreland_Ayachit_Geveci_Ma_2011}
+K. Moreland, U. Ayachit, B. Geveci, and K.L. Ma.
+\newblock Dax Toolkit: A proposed framework for data analysis and visualization at Extreme Scale.
+\newblock In {\em 2011 IEEE Symposium on Large Data Analysis and Visualization}, pages 97--104, 2011.
 
 \bibitem{Park}
 J.~Park, B.~Choi, and Y.~Chung.
