@@ -113,6 +113,8 @@
 \newfloat{floatbox}{thp}{lob}[section]
 \floatname{floatbox}{Algorithm}
 
+\newcommand{\fix}[1]{{\color{red}\textbf{\textsc{[#1]}}}}
+
 
 % *** CITATION PACKAGES ***
 %
@@ -438,7 +440,7 @@
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
 
-\title{Provenance-Enabled Topological Connection Reconstruction}
+\title{Provenance-Enabled Topology Construction}
 
 %
 %
@@ -470,7 +472,8 @@
 % note need leading \protect in front of \\ to get a newline within \thanks as
 % \\ is fragile and will error, could use \hfil\break instead.
 E-mail: \{bobmiller, ma\}@ucdavis.edu
-\IEEEcompsocthanksitem Kenneth Moreland is with Sandia National Labs}% <-this % stops a space
+\IEEEcompsocthanksitem Kenneth Moreland is with Sandia National Laboratories\protect\\
+E-mail: kmorel@sandia.gov}% <-this % stops a space
 \thanks{}}
 
 % note the % following the last \IEEEmembership and also \thanks - 
@@ -529,7 +532,7 @@ E-mail: \{bobmiller, ma\}@ucdavis.edu
 \IEEEcompsoctitleabstractindextext{%
 \begin{abstract}
 %\boldmath
- Many algorithms applied to mesh-based data structures are easily parallelizable because operations can often be divided by the constituent elements of the mesh and parallelized with a large number of threads. The problem with this technique is that when these threads generate new topological features, they tend to generate redundant information such as coincident vertices. This ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring elements. We present a novel approach for the efficient construction of connected topologies on multi- and many-core systems, which we demonstrate with CUDA and OpenMP implementations. We contribute a method to use input topological features as a basis for efficient location of coincident features in the output. We provide examples and performance numbers of the technique for isosurface generation, tetrahedralization, and dual mesh generation.
+ Many algorithms applied to mesh-based data structures are easily parallelizable on massively threaded devices because operations can often be divided by the constituent elements of the mesh and parallelized with a large number of threads. The problem with this technique is that when these threads generate new topological features, they tend to generate redundant information such as coincident vertices. This ``soup'' of elements requires significant additional memory to store and fails to capture the adjacency of neighboring elements. We present a novel approach for the efficient construction of connected topologies on multi- and many-core systems, which we demonstrate with GPU and OpenMP implementations. In this approach, we use input topological features as a basis for efficient location of coincident features in the output. We provide examples and performance numbers of the technique for isosurface generation tetrahedralization, and dual mesh generation.
 \end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
@@ -620,10 +623,10 @@ the data values at the voxel corners are necessary to generate the geometry
 within the voxel (if any).
 
 The problem with this naive parallelization is that it generates a
-`soup' of output primitives, with no information about connectivity.
+``soup'' of output primitives, with no information about connectivity.
 The aforementioned Marching Cubes algorithm simply produces a set of disconnected triangles.
 This is not a concern so long as all further computation on the output
-depends exclusively on the local attributes of individual primitives, such as is
+depends exclusively on the local attributes of individual primitives and storage cost is not a primary concern, such as is
 the case with rendering. 
 
 Rendering has often been the ultimate goal for the
@@ -638,25 +641,32 @@ on the structure of the pipeline.
 
 This is not a new problem, and techniques exist to determine topological
 information about a primitive soup \cite{Park}. Generally this approach starts by finding 
-and coalescing duplicate vertices, which may require a bounded radius nearest neighbor search to 
+and coalescing duplicate vertices, which may require a bounded-radius nearest-neighbor search to 
 resolve vertices that are identical save for floating point error. Next, the algorithm finds all primitives that 
 share two or more vertices, and links them together as neighbors. Finally,
-some `duplicate' vertices may not actually represent desirable connections,
+some ``duplicate'' vertices may not actually represent desirable connections,
 such as is the case where two cones meet at their apices, so these vertices
 may need to be split in a final pass. This process is computationally complex, and is
 specific to the topological connections between triangles. 
 
 We present a technique which applies equally well to other types of topological 
-connections, such as determining the neighboring facets of tetrahedra. Our technique makes use of the fact that geometry is rarely generated in a vacuum; we usually have some information about how the geometry is generated. To list a few examples: Marching Cubes generates its output vertices on the edges of a structured grid, dual meshes generate their vertices on the faces of an input mesh, and tetrahedralizations can be generated on an existing spatial grid or mesh. 
+connections, such as determining the neighboring facets of tetrahedra. Our
+technique makes use of the fact that in visualization geometry is rarely
+generated in a vacuum; we usually have some information about how the
+geometry is generated. To list a few examples demonstrated in Figure~\ref{fig:teaser}: Marching Cubes generates its output vertices on the edges of a structured grid, dual meshes generate their vertices on the faces of an input mesh, and tetrahedralizations can be generated on an existing spatial grid or mesh. 
 
-We explore the advantages of making a small modification to the algorithms that generate the geometry, where the information is stored about what feature of the input topology was used to generate each output feature. 
+We explore the advantages of making a small modification to algorithms that generate the geometry, where the provenance of the topological features is tracked. More specifically, we associate each feature of the output geometry with a feature from the input geometry, which already has well established connections. .
 
 \begin{figure*}[!tb]
-\subfloat[Marching Cubes]{\includegraphics[height=0.3415\columnwidth]{MarchingCubesOverview.pdf}}
-\subfloat[Subdivision]{\includegraphics[height=0.3415\columnwidth]{SubdivisionExample.pdf}}
-\subfloat[Face-Centered Tetrahedralization]{\includegraphics[height=0.3415\columnwidth]{TetrahedralExample.pdf}}
-\subfloat[Dual Mesh]{\includegraphics[height=0.3415\columnwidth]{DualMeshExample2.pdf}}
-\caption{Operations that generate geometry usually rely on a known input topology for that purpose. Marching Cubes (a) generates all output vertices on the edges of a known voxel grid. By marking these output vertices with the ID of their generating edges, connectivity information can be retained. The same process can be applied to cell subdivision (b). Tetrahedralizations (c) are more complex, but still supportable by keying on the intput face as well as the input edge. Generating topology on a dual mesh (d) exchanges vertex and face connectivity information. In each figure, output topological connections known from input topology are displayed by using identical colors to highlight connected vertices.}
+\centering
+\subfloat[Marching Cubes\label{fig:teaser:mc}]{\includegraphics[height=0.32\columnwidth]{MarchingCubesOverview.pdf}}
+\quad
+\subfloat[Subdivision\label{fig:teaser:subdivision}]{\includegraphics[height=0.32\columnwidth]{SubdivisionExample.pdf}}
+\quad
+\subfloat[Face-Centered Tetrahedralization\label{fig:teaser:tetrahedral} \fix{Replace adjacent small dots with larger dots covering nearby vertices.  It would make the dots easier to see and would be more consistent with other figures}]{\includegraphics[height=0.32\columnwidth]{TetrahedralExample.pdf}}
+\quad
+\subfloat[Dual Mesh\label{fig:teaser:dual}]{\includegraphics[height=0.32\columnwidth]{DualMeshExample2.pdf}}
+\caption{Operations that generate geometry usually rely on a known input topology for that purpose. Marching Cubes (a) generates all output vertices on the edges of a known voxel grid. By marking these output vertices with the ID of their generating edges, connectivity information can be retained. The same process can be applied to cell subdivision (b). Tetrahedralizations (c) are more complex, but still supportable by keying on the input face as well as the input edge. Generating topology on a dual mesh (d) exchanges vertex and face connectivity information. In each figure, output topological connections known from input topology are displayed by using identical colors to highlight connected vertices.}
 \label{fig:teaser}
 \end{figure*}
 
@@ -668,13 +678,13 @@ To summarize, this paper makes the following contributions:
 	\item{Require no modifications to the algorithms generating geometry save for the
 		storage of information about the input topological features used to generate each output feature.}
 
-	\item{Make use provenance of disconnected geometry to enhance the performance of the topology
+	\item{Make use of the provenance of disconnected geometry to enhance the performance of the topology
 		resolution technique.}
 
 	\item{Demonstrate the effectiveness of our technique on the output of the Marching Cubes
 		algorithm and a tetrahedralization algorithm.}
  
-	\item{Show how a provenance-aware algorithmva can be used to perform
+	\item{Show how a provenance-aware algorithms can be used to perform
 		 simple mesh coarsening in the same pass as the topology resolution.}
  
 \end{itemize}
@@ -682,28 +692,29 @@ To summarize, this paper makes the following contributions:
 \end{minipage}
 
 We developed our technique for topology resolution so that it could be implemented
-into the upcoming DAX framework, which will provide data analysis capabilities similar to those
+into the upcoming Dax framework \fix{Cite LDAV paper}, which will provide data analysis capabilities similar to those
 in VTK, but targeted toward massively parallel architectures, beginning with the GPU.
+We leverage the Thrust C++ template library~\cite{Bell2012} to implement
+our parallel algorithms.  Thrust fulfills the dual purpose of providing
+basic parallel operations and simplifies the porting of our code to both
+GPU (CUDA) and multi-core (OpenMP) architectures.
 
 \section{Previous Work}
+\label{sec:PreviousWork}
 
 We use Marching Cubes as an example of parallelized geometry 
 generation \cite{Lorensen1987}. There are myriad existing isosurfacing implementations on the GPU, dating from 
 Rottger's implementation \cite{Rottger2000}. Dyken provides a fairly 
 detailed overview of the advancements in GPU implementations of Marching Cubes and 
-Marching Tetrahedra \cite{Dyken2008} .
+Marching Tetrahedra \cite{Dyken2008}.
 
-The basic topology resolution technique described in the introduction section is
-introduced by Park et al. \cite{Park}. Additionally, Kipfer mentions
-implementing a topology construction technique along with their GPU
-Marching Cubes algorithm \cite{Kipfer2005}. Kipfer's technique involves the use of the edges that vertices 
-will be placed on as a key for determining which vertices would be duplicated. Kipfer 
-thus avoids redundant computation of such vertices and avoids the need for coincident 
-point resolution. To have accurate normals at the generated vertices, Kipfer's technique
-requires precomputation of the gradient of the volume at the voxel vertices. Any other
-interpolable attributes to be derived from the volume must also be precomputed at the
-voxel vertices. Our method for determining duplicate vertices extends Kipfer's method in that
-we may key off of any input feature.
+The basic topology resolution technique described in the introduction
+section is introduced by Park et al. \cite{Park}.  Additionally, Kipfer and
+Westermann \cite{Kipfer2005} use the observation that polygon vertices from
+Marching Tetrahedra all lie on tetrahedra edges to uniquely specify each
+polygon vertex. Our implementation of isosurface generation uses a similar
+observation, but our technique is more general than Kipfer and Westermann's
+and does not require the auxiliary edge structure of their technique.
 
 Stream compaction is an important element for efficient geometry generation on the GPU.
 Horn provides an early method for stream compaction on the GPU \cite{Horn2005}, which
@@ -715,15 +726,27 @@ For our examples, we use geometry generation methods that make use of the prefix
 method of compaction, but other compaction techniques such as histogram pyramids could be
 substituted for the prefix sum technique for increased performance in any case where our method is applied.
 
-We use coincident point resolution (vertex welding) in Marching Cubes with the Thrust
-C++ template library \cite{Bell2012}. Bell, a primary
-developer of the Thrust library, also presents a vertex welding technique as an
+Carr et al. \cite{Carr2006} describe several ways to subdivide voxel grids into tetrahedral grids. To fairly test performance of our topology generation on unstructured grids, we generate each of these subdivisions and demonstrate that the performance of our approach is similar in all cases.
+
+In most cases, existing GPU implementations of Marching Cubes do not determine connectivity information on output contour surfaces, but instead simply forward disconnected geometry for rendering~\cite{Dyken2008,Goetz_Junklewitz_Domik_2005,Johansson_Carr_2006}. However, many serial implementations exist that determine topological connectivity information from discrete geometry. For example, VTK and ParaView make use of a point-locator method, which works by beginning with an empty search structure and progressively updating it with each point, checking for duplicates along the way. There also exist efficient implementations of similar search structures for finely threaded cases such as the GPU \cite{Zhou_Hou_Wang_Guo_2008}, but these are unsuitable for the iterative and concurrent updates required by Marching Cubes. Because operations like tetrahedralization, Marching Cubes (and other contour methods), dual mesh generation, and even simple subdivision can radically alter topology, we can not depend on the reuse of large search structures. Instead, we require a lightweight approach that can generate a new representation of topology quickly using known information from a previous representation.
+
+Bell, a primary
+developer of the Thrust library, presents a vertex welding technique as an
 example application of Thrust \cite{Bell2010}. Bell also notes that GPU sorting techniques can
-be instrumental in the development of high-performance GPU algorithms. Hoberock uses a
+be instrumental in the development of high-performance GPU algorithms. The technique uses a
 lexicographic sort directly on the vertices generated by Marching Cubes, then collapses 
 duplicates to get the final welded surface.
+We find this sorting approach well suited for topology construction in
+finely-threaded architectures and seek to improve and generalize the
+technique in this paper.
 
-The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as described in Algorithm 1.
+The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as
+described in Algorithm 1.  Vertices are first sorted by some representation
+of their coordinates.  Bell suggests \fix{describe how the three
+  coordinates are combined to a single value.}  After the sort, vertices at
+identical locations are adjacent in the array.  These coincident points are
+marked and compacted.
+
 \begin{figure}[h!]
 \vspace{-0.3cm}
 \begin{codebox}
@@ -732,11 +755,12 @@ The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as described i
     }
   \zi \Comment Sort $\id{vertices}$ to make identical vertices adjacent.
   \li $\id{sorted-vertices} \gets \proc{Lexicographic-Sort}(\id{vertices})$
-  \zi \Comment Copy the first element from each group of duplicates.
+  \zi \Comment Copy first element of each group of duplicates.
   \li $\id{welded-vertices} \gets \proc{Unique}(\id{sorted-vertices})$
-  \zi \Comment For each item in $\id{vertices}$ find the corresponding index
-  \zi \Comment in $\id{welded-vertices}$.
-  \li $\id{cell-connections} \gets \proc{Vectorized-Find}(\id{welded-vertices},\id{vertices})$
+  \zi \Comment For each item in $\id{vertices}$ find the corresponding
+  \zi \Comment index in $\id{welded-vertices}$.
+  \li $\id{cell-connections} \gets$
+  \zi \> $\proc{Vectorized-Find}(\id{welded-vertices},\id{vertices})$
   \li \Return $( \id{welded-vertices}, \id{cell-connections} )$
 \end{codebox}
 \vspace{-0.5cm}
@@ -748,101 +772,203 @@ The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as described i
 Thrust functions \texttt{sort}, \texttt{unique}, and \texttt{lower\_bound},
 respectively.
 
-Our approach has many similarities, but there are several areas of interest where \proc{Vertex-Weld} was not designed to accommodate topological reconstruction. In particular, \proc{Vertex-Weld} provides no way to make use of the provenance of the disconnected geometry. Additionally, the \proc{Vertex-Weld} algorithm as presented is unstable in the presence of floating point errors because these can cause the \proc{Lexicographic-Sort} to place 'identical' points in noncontiguous regions of memory, thus invalidating the algorithm. A more stable solution which still uses bitwise comparison can be constructed by sorting on each dimension and removing duplicates each time, but this is inefficient. Instead, we resolve both of these concerns by allowing a sort on input topological features, and a generalized comparison and merge operation with our algorithm, to be described in the next section.
+Our approach has many similarities, but there are several areas of interest where \proc{Vertex-Weld} was not designed to accommodate topological reconstruction. In particular, \proc{Vertex-Weld} provides no way to make use of the provenance of the disconnected geometry. Additionally, the \proc{Vertex-Weld} algorithm as presented is unstable in the presence of floating point errors because these can cause the \proc{Lexicographic-Sort} to place ``identical'' points in non-contiguous regions of memory, thus invalidating the algorithm. A more stable solution which still uses bitwise comparison can be constructed by sorting on each dimension and removing duplicates each time, but this is inefficient. Instead, we resolve both of these concerns by allowing a sort on input topological features, and a generalized comparison and merge operation with our algorithm, to be described in the next section.
 
-Carr et al. \cite{Carr2006} describe several ways to subdivide voxel grids into tetrahedral grids. To fairly test performance of our topology generation on unstructured grids, we generate each of these subdivisions and demonstrate that the performance of our approach is similar in all cases.
+We also describe a mesh coarsening method which improves triangle output quality over that normally provided by Marching Cubes. There are previously existing methods to obtain improved triangle quality from Marching Cubes \cite{Moore_Warren_1991}. The advantage we provide over these methods is that when topological information is also required we can also perform our coarsening technique in the same pass thus requiring no additional computational cost. 
 
-Observant readers may notice a similarity between our proposed algorithms and those supported by the MapReduce framework \cite{MapReduce}. Like MapReduce, our algorithms first map keys to values then collect keys and reduce the values. Although we believe our algorithms could be implemented in a MapReduce framework (an exercise we leave to the reader), it would require additional collection operations to resolve topological connections. Other researchers 
-\cite{Stuart2010}\cite{Vo2011} have implemented visualization algorithms directly in MapReduce, but they serve purposes other than those we address.
+We pattern our algorithms after some of the features of the MapReduce framework~\cite{MapReduce}. Like MapReduce, our algorithms first map keys to values then collect keys and reduce the values. Although we believe our algorithms could be implemented in a MapReduce framework (an exercise we leave to the reader), it would require additional collection operations to resolve topological connections. Other researchers~\cite{Stuart2010,Vo2011} have implemented visualization algorithms directly in MapReduce, but they serve purposes other than those we address.
 
-In most cases, existing GPU implementations of Marching Cubes do not determine connectivity information on output contour surfaces, but instead simply forward disconnected geometry for rendering \cite{Dyken2008} \cite{Goetz_Junklewitz_Domik_2005} \cite{Johansson_Carr_2006}. However, many serial implementations exist that determine topological connectivity information from discrete geometry. For example, VTK and ParaView make use of a point-locator method, which works by beginning with an empty search structure and progressively updating it with each point, checking for duplicates along the way. There also exist efficient implementations of similar search structures for finely threaded cases such as the GPU \cite{Zhou_Hou_Wang_Guo_2008}, but these are most applicable when the resultant structures will be used extensively as in the case of raytracing. Because operations like tetrahedralization, Marching Cubes (and other contour methods), dual mesh generation, and even simple subdivision can radically alter topology, we can not depend on the reuse of large search structures. Instead, we require a lightweight approach that can generate a new representation of topology quickly using known information from a previous representation.
+\section{Using Topology Provenance}
+\label{sec:UsingTopologyProvenance}
 
-Late in the paper, we describe a mesh coarsening method which improves triangle output quality over that normally provided by Marching Cubes. There are previously existing methods to obtain improved triangle quality from Marching Cubes \cite{Moore_Warren_1991}. The advantage we provide over these methods is that when topological information is also required we can also perform our coarsening technique in the same pass thus requiring no additional computational cost. 
+The essential idea behind our provenance-enabled topology construction is
+to use components of the input topology as \emph{keys} in a MapReduce-like
+framework as demonstrated in Figure~\ref{fig:ProvenanceFlow}.  In this
+figure we have labeled the major steps of our algorithm with the analogous
+component in MapReduce to facilitate the understanding for those already
+familiar with this system.
 
-\section{Merging Algorithm}
-Without significant modification of the algorithms generating topological features,
-we present an approach that reconstructs the topological connections
-between these features. By topological connections, we are referring to the information necessary to
-determine all topological features that are adjacent to any individual feature of 
-interest. We assume and provide a representation based on point arrays and either implicit or explicit cell connection lists. Generating incidence lists, such as the list of all cells incident to a point, is a trivial extension to our algorithm. Given a point P 
-generated by the Marching Cubes algorithm, the topological connections
-could be a list of all faces that contain point P as a vertex. Depending on
-the intended use of the topology, it may be preferable to store the list of
-points Q where there exists an edge (P,Q). Our approach can be applied
-to generate any of these forms of connectivity information.
-
-\subsection{Goals}
-In developing our technique for reconstruction of topological connections, we have the
-following requirements.
-\begin{itemize}
-	\item{Support at least the following feature types: vertices, edges, faces and facets.}
-
-	\item{Require minimal modification to the algorithms used to generate topological features.}
-
-	\item{Work as an efficient data-parallel method}
- 
-\end{itemize}
-
-\subsection{Algorithm}
-Our technique was developed by generalizing and extending the vertex welding example from the Thrust library \cite{Bell2012}.
-Since many vertices are redundant when all triangles in a mesh are stored discretely, it is often desirable to
-`weld' the duplicate vertices to single instances. We base our technique on the Thrust method because it has a similar
-structure to the approach we take for topology generation, and because it is designed to work with nVidia CUDA platforms as well as platforms supported by OpenMP. 
-
-%\begin{itemize}
-%	\item{Given an array of point coordinates $V_1$:}
-%	\begin{enumerate}
-%		\item{Lexicographically sort $V_1$ so that duplicate vertices are placed together in the array.}
-%		\item{Take the first element from each group of duplicates and store it in an output array $V_2$.}
-%		\item{Find the new index in $V_2$ for each vertex in $V_1$ and store it in an output array $Map_{1\rightarrow 2}$, which serves as a many-to-one mapping of points in $V_1$ to $V_2$.}
-%	\end{enumerate}
-%	\item{Return $V_2$ and $Map_{1\rightarrow 2}$ as output.}
-%\end{itemize}
-
-\proc{Vertex-Weld} is a good basis for an algorithm to generate topological connectivity because it allows for
-grouping and processing of duplicate vertices. Since we can store which triangle generated each copy of a duplicate vertex,
- the above algorithm can be adapted to calculate a neighboring face list for each point. Therefore, using \proc{Vertex-Weld} as a basis, we set out to create a technique that could be used for generating topological connectivity information 
-from multiple kinds of disconnected input geometric elements. There are several requirements for this which the \proc{Vertex-Weld} algorithm
-does not immediately meet.
-
-Unlike the creators of the \proc{Vertex-Weld} algorithm, we are not interested specifically in the elimination of duplicate elements. Instead, we want
-to form groups of geometric elements and then merge these into an output. These elements may not be simple vertices as in the \proc{Vertex-Weld} example.
-To use this for the generation of topological connections, we will need to associate attributes with each vertex. To this end, rather than taking as input an array of vertices,
-we take in an array of geometric elements of some unspecified type. Often, the input will be an array of `tuples' which may consist of
-vertices and their associated attributes such as normals or polygon IDs. Hereafter, we will refer to this input array as the `mergeable' array.
-
-The \proc{Vertex-Weld} algorithm groups bitwise-equal elements together. 
-This would be inappropriate if additional attributes were associated with
-each sample of a given vertex. For instance, three vertices at the same location that possess different normal vectors
-would not compare bitwise equal, but we may wish to process them as a group. To resolve this, we take as input an array of $keys$ where
-each key corresponds to an element of the mergeable array. The key for each mergeable element will be compared against the keys for
-other mergeable elements using a user defined comparison operator $keycomp$. $keycomp$ is required to be analagous to the less-than operator, so
-it takes two keys as input and must return $true$ if the first element should be placed earlier in the array than the second element, and $false$
-otherwise. If $keycomp(k_1, k_2) = false$ and $keycomp(k_2, k_1) = false$, then the elements are assumed to be part of the same group and will be merged.
-
-The keys can be based off of point coordinates as is done in the \proc{Vertex-Weld} example. However, keys based on floating point numbers such as coordinates are inferior because of the large number of bits required to represent them and the high probability of small numerical errors leading to lexicographic differences. Later in this paper we present algorithms with more efficient keys.
+\begin{figure}[htb]
+  \includegraphics[width=\linewidth]{ProvenanceConstruction}
+  \caption{Basic flow of an algorithm using provenance to construct
+    connected topology.}
+  \label{fig:ProvenanceFlow}
+\end{figure}
 
 \begin{figure*}[!tb]
 \includegraphics[width=\textwidth]{KeyWeld.pdf}
-\caption{An example of the \proc{Key-Weld} procedure on a very small set of triangles. Data values within the algorithm at several stages are shown above the flow diagram. The represented geometry is shown below the flow diagram. Background color in the upper tables reflect the color of the associated triangle in the lower diagrams. After processing, we have a map $cell\mbox{-}connections$ that lists the new vertices for each triangle. We also have the
-number of faces attached to each vertex in $counts$, and the welded vertices and their associated attributes in $welded\mbox{-}values.$}
+%% \caption{An example of the \proc{Key-Weld} procedure on a very small set of triangles. Data values within the algorithm at several stages are shown above the flow diagram. The represented geometry is shown below the flow diagram. Background color in the upper tables reflect the color of the associated triangle in the lower diagrams. After processing, we have a map $cell\mbox{-}connections$ that lists the new vertices for each triangle. We also have the
+%% number of faces attached to each vertex in $counts$, and the welded vertices and their associated attributes in $welded\mbox{-}values.$}
+\caption{An example of using topology provenance to find vertex
+  connections.  A map operation, such as Marching Cubes, defines some
+  collection of cells as shown at left.  A partition phase groups the keys
+  and a reduce phase combines vertices and establishes a connections array
+  to the new indices.  We collect the mechanisms of this process in an
+  algorithm we call \proc{Key-Weld}.
+  \fix{The first three yellow blocks should be changed to correspond to
+    Figure~\ref{fig:ProvenanceFlow}.  Discrete Geometry, Find Groups, and
+    Merge/Transform Groups should be changed to Map, Partition, and Reduce,
+    respectively.}
+}
 \label{fig:KeyWeld}
 \end{figure*}
 
-Since we no longer require elements of each group to be bitwise
-equal, we cannot simply use the first element of the group for our output vector. Instead, we will rely on two user-defined operators
-which together will merge the grouped elements to a single output. The reason for having two operators is that some operations, such
-as averaging, require two steps; in this case, the first operator would be a sum, and the second operator would be a divide. In our
-implementation, we restrict the first operator, hereafter referred to as a merge, to be analogous to a sum: a binary operator that is commutative and associative. We restrict the input and output types of this operator so that it must take in two geometric elements and output a version that merges the elements' properties in some way.
-Likewise, we restrict the second operator, hereafter referred to as a transform, to be analogous to scalar division: a binary operator taking one geometric element and the number of elements in the
-group as input. The return type of the transformation operator is unrestricted, and the result of these transformations will be passed as the output of our algorithm. 
+The first step is a \emph{map} operation that generates key-value pairs
+where the key is some component of the input topology and the value is a
+generated component of the output topology.  In the case of Marching Cubes,
+the values are the vertices generated for the new surface mesh, and each
+vertex is keyed by an identifier for the edge used to interpolate the
+vertex.  The map operation may also generate elements that are known to be
+unique and therefore do not need keys.  For example, when subdividing
+cells, some vertices come directly from the input vertices whereas others
+are interpolated and must be connected.  The map operation is designed such that
+key-value pairs can be generated independently, which allows us to safely
+compute them concurrently on a very large pool of threads.
 
-Finally, for this technique to be useful it must be possible to determine where each element of the mergeable array is mapped to in the output array. 
-Our algorithm will therefore return an array of the new indices for each of the input elements.
+The second step is a \emph{partition} operation that reorganizes the
+key-value pairs to group duplicate keys.  Like most MapReduce
+implementations, we find a parallel sort to be an efficient way to shuffle
+the data.  However, we can also take advantage of domain decompositions
+when available to shorten the partitioning time.
+
+The third step is a \emph{reduce} operation that merges groups of
+coincident components identified by the partition and generates the
+connected structures.  In the Marching Cubes example, this reduction means
+averaging the field values on merged vertices and updating the triangle
+connection indices.  Because all dependent operations are collected into
+partitions, the reduce operations can also be safely computed
+concurrently.
+
+Although our system is conceptually similar to MapReduce and we believe it
+possible to implement in a MapReduce framework, we choose to implement our
+algorithms using the more imperative parallel operations provided by
+Thrust.  This makes it easier to take advantage of known properties such as
+domain decompositions or implicitly unique keys.  It also simplifies
+storing topologies in efficient indexed array structures rather than
+collections of key-value entities.
+
+\section{Connecting Vertices}
+\label{sec:ConnectingVertices}
+
+Provenance can be used to identify topology elements of any type, but by
+far the most common we have encountered is that of finding coincident
+vertices.  Although many techniques exist to find coincident vertices, as
+outlined in Section~\ref{sec:PreviousWork}, they all operate in ignorance
+of any a priori knowledge.  We show that our provenance enabled technique
+is both faster than existing techniques and is less susceptible to some of
+the inherent limitations.
+
+\subsection{General Merging Algorithm}
+\label{sec:GeneralMergingAlgorithm}
+
+Figure~\ref{fig:KeyWeld} provides a simple example of applying the topology
+provenance technique, described in
+Section~\ref{sec:UsingTopologyProvenance}, to find connections among
+generated vertices.  First, a mapping operation generates the connections
+for a set of cells.  Vertices are duplicated to allow independent operation
+on multiple threads.  For the purposes of this paper we assume the map
+operation is a previously known algorithm such as Marching Cubes with the
+trivial extension that cell connection lists contain pairs of input index
+(key) and output vertex (value) rather than just the output vertices.
+
+Next, key-value pairs are partitioned by sorting the pairs based on keys.
+From the sorted list of keys we can efficiently extract a list of unique
+keys, which serves to identify the connected vertices to be created.  This
+list of sorted unique keys can also used to look up where each original
+unsorted key resides in the final list of merged vertices, which is how we
+generate the $\id{cell-connections}$ array defining the cell topology.
+
+The final step is to merge values with identical keys in the reduction
+phase.  This reduction operation provides an opportunity to combine
+neighborhood information such as averaging normals across surface polygons.
+To facilitate averaging we also generate a $\id{counts}$ array marking
+the number of cells incident to each vertex.  Although this array is not
+specifically necessary to describe the final topology, it can be leveraged
+to find vertex incidence lists using the algorithm proposed by \fix{cite
+  whoever made the Vertex-Incidence-List algorithm}.
+
+%% \section{Merging Algorithm}
+%% Without significant modification of the algorithms generating topological features,
+%% we present an approach that reconstructs the topological connections
+%% between these features. By topological connections, we are referring to the information necessary to
+%% determine all topological features that are adjacent to any individual feature of 
+%% interest. We assume and provide a representation based on point arrays and either implicit or explicit cell connection lists. Generating incidence lists, such as the list of all cells incident to a point, is a trivial extension to our algorithm. Given a point P 
+%% generated by the Marching Cubes algorithm, the topological connections
+%% could be a list of all faces that contain point P as a vertex. Depending on
+%% the intended use of the topology, it may be preferable to store the list of
+%% points Q where there exists an edge (P,Q). Our approach can be applied
+%% to generate any of these forms of connectivity information.
+
+%% \subsection{Goals}
+%% In developing our technique for reconstruction of topological connections, we have the
+%% following requirements.
+%% \begin{itemize}
+%% 	\item{Support at least the following feature types: vertices, edges, faces and facets.}
+
+%% 	\item{Require minimal modification to the algorithms used to generate topological features.}
+
+%% 	\item{Work as an efficient data-parallel method}
+ 
+%% \end{itemize}
+
+%% \subsection{Algorithm}
+%% Our technique was developed by generalizing and extending the vertex welding example from the Thrust library \cite{Bell2012}.
+%% Since many vertices are redundant when all triangles in a mesh are stored discretely, it is often desirable to
+%% `weld' the duplicate vertices to single instances. We base our technique on the Thrust method because it has a similar
+%% structure to the approach we take for topology generation, and because it is designed to work with nVidia CUDA platforms as well as platforms supported by OpenMP. 
+
+%% %\begin{itemize}
+%% %	\item{Given an array of point coordinates $V_1$:}
+%% %	\begin{enumerate}
+%% %		\item{Lexicographically sort $V_1$ so that duplicate vertices are placed together in the array.}
+%% %		\item{Take the first element from each group of duplicates and store it in an output array $V_2$.}
+%% %		\item{Find the new index in $V_2$ for each vertex in $V_1$ and store it in an output array $Map_{1\rightarrow 2}$, which serves as a many-to-one mapping of points in $V_1$ to $V_2$.}
+%% %	\end{enumerate}
+%% %	\item{Return $V_2$ and $Map_{1\rightarrow 2}$ as output.}
+%% %\end{itemize}
+
+%% \proc{Vertex-Weld} is a good basis for an algorithm to generate topological connectivity because it allows for
+%% grouping and processing of duplicate vertices. Since we can store which triangle generated each copy of a duplicate vertex,
+%%  the above algorithm can be adapted to calculate a neighboring face list for each point. Therefore, using \proc{Vertex-Weld} as a basis, we set out to create a technique that could be used for generating topological connectivity information 
+%% from multiple kinds of disconnected input geometric elements. There are several requirements for this which the \proc{Vertex-Weld} algorithm
+%% does not immediately meet.
+
+%% Unlike the creators of the \proc{Vertex-Weld} algorithm, we are not interested specifically in the elimination of duplicate elements. Instead, we want
+%% to form groups of geometric elements and then merge these into an output. These elements may not be simple vertices as in the \proc{Vertex-Weld} example.
+%% To use this for the generation of topological connections, we will need to associate attributes with each vertex. To this end, rather than taking as input an array of vertices,
+%% we take in an array of geometric elements of some unspecified type. Often, the input will be an array of `tuples' which may consist of
+%% vertices and their associated attributes such as normals or polygon IDs. Hereafter, we will refer to this input array as the `mergeable' array.
+
+%% The \proc{Vertex-Weld} algorithm groups bitwise-equal elements together. 
+%% This would be inappropriate if additional attributes were associated with
+%% each sample of a given vertex. For instance, three vertices at the same location that possess different normal vectors
+%% would not compare bitwise equal, but we may wish to process them as a group. To resolve this, we take as input an array of $keys$ where
+%% each key corresponds to an element of the mergeable array. The key for each mergeable element will be compared against the keys for
+%% other mergeable elements using a user defined comparison operator $keycomp$. $keycomp$ is required to be analagous to the less-than operator, so
+%% it takes two keys as input and must return $true$ if the first element should be placed earlier in the array than the second element, and $false$
+%% otherwise. If $keycomp(k_1, k_2) = false$ and $keycomp(k_2, k_1) = false$, then the elements are assumed to be part of the same group and will be merged.
+
+%% The keys can be based off of point coordinates as is done in the \proc{Vertex-Weld} example. However, keys based on floating point numbers such as coordinates are inferior because of the large number of bits required to represent them and the high probability of small numerical errors leading to lexicographic differences. Later in this paper we present algorithms with more efficient keys.
+
+%% Since we no longer require elements of each group to be bitwise
+%% equal, we cannot simply use the first element of the group for our output vector. Instead, we will rely on two user-defined operators
+%% which together will merge the grouped elements to a single output. The reason for having two operators is that some operations, such
+%% as averaging, require two steps; in this case, the first operator would be a sum, and the second operator would be a divide. In our
+%% implementation, we restrict the first operator, hereafter referred to as a merge, to be analogous to a sum: a binary operator that is commutative and associative. We restrict the input and output types of this operator so that it must take in two geometric elements and output a version that merges the elements' properties in some way.
+%% Likewise, we restrict the second operator, hereafter referred to as a transform, to be analogous to scalar division: a binary operator taking one geometric element and the number of elements in the
+%% group as input. The return type of the transformation operator is unrestricted, and the result of these transformations will be passed as the output of our algorithm. 
+
+%% Finally, for this technique to be useful it must be possible to determine where each element of the mergeable array is mapped to in the output array. 
+%% Our algorithm will therefore return an array of the new indices for each of the input elements.
 
 
-With these modifications, we provide a generalized method named \proc{Key-Weld} that groups various 
-types of geometric elements and then merge each group into single outputs. The workings of \proc{Key-Weld} are described in Algorithm 2.
+%% With these modifications, we provide a generalized method named \proc{Key-Weld} that groups various 
+%% types of geometric elements and then merge each group into single outputs. The workings of \proc{Key-Weld} are described in Algorithm 2.
+
+We provide a generalized method that captures these partition and reduce
+phases named \proc{Key-Weld} that groups various types of geometric
+elements and then merge each group into single outputs.  The workings of
+\proc{Key-Weld} are described in Algorithm 2.
 
 %\begin{itemize}
 %	\item{Given:}
@@ -871,32 +997,34 @@ types of geometric elements and then merge each group into single outputs. The w
 \begin{codebox}
   \Procname{$\proc{Key-Weld}(\id{keys},\id{values},\id{compare},\id{merge},\id{transform})$\\
     \id{keys}: An array of keys uniquely identifying elements.\\
-    \id{values}: An array of mergeable elements the same size as \id{keys}.\\
+    \id{values}: An array of mergeable elements for each key.\\
     \id{compare}: A key comparator $\id{compare}(k_1,k_2) \rightarrow \const{bool}$.\\
     \id{merge}: A merging operator $\id{merge}(m_1,m_2) \rightarrow m_3$.\\
     \id{transform}: A transformation $\id{transform}(m_1,\id{size})
       \rightarrow \id{out}$.
   }
   \zi \Comment Sort \id{values} using \id{keys} to make groups.
-  \li $(\id{sorted-keys},\id{sorted-values})$
-  \zi \>\> $\gets \proc{Key-Sort}(\id{keys},\id{values},\id{compare})$
+  \li $(\id{sorted-keys},\id{sorted-values}) \gets$
+  \zi \> $\proc{Key-Sort}(\id{keys},\id{values},\id{compare})$
   \zi \Comment Determine the new indices for each element.
   \li $\id{unique-keys} \gets \proc{Unique}(\id{sorted-keys})$
-  \li $\id{cell-connections} \gets \proc{Vectorized-Find}(\id{unique-keys},\id{keys})$
-  \zi \Comment Get a reverse map from output array to sorted arrays.
-  \li $\id{reverse-map}$
-  \zi \>\> $\gets \proc{Vectorized-Find}(\id{sorted-keys},\id{unique-keys})$
+  \li $\id{cell-connections} \gets$
+  \zi \> $\proc{Vectorized-Find}(\id{unique-keys},\id{keys})$
+  \zi \Comment Get a reverse map from output to sorted arrays.
+  \li $\id{reverse-map} \gets$
+  \zi \> $\proc{Vectorized-Find}(\id{sorted-keys},\id{unique-keys})$
   \zi \Comment Get the size of each group (one per unique key).
   \li $\id{weld-array-size} \gets \proc{Length}(\id{reverse-map})$
   \li $\id{counts} \gets \{ \}$
   \li \For $i \gets 0$ \To $\id{weld-array-size} - 2$
   \zi \Do \kw{in parallel}
-  \li     $\id{counts}[i] \gets \id{reverse-map}[i+1] - \id{reverse-map}[i]$
+  \li     $\id{counts}[i] \gets \id{reverse-map}[i+1]$
+  \zi \>\>\>\> $- \id{reverse-map}[i]$
       \End
-  \li $\id{counts}[\id{weld-array-size}-1]$
-  \zi \>\> $\gets \proc{Length}(\id{sorted-keys})$
+  \li $\id{counts}[\id{weld-array-size}-1] \gets$
+  \zi \> $\proc{Length}(\id{sorted-keys})$
   \zi \>\>\> $ - \id{reverse-map}[\id{weld-array-size}-1]$
-  \zi \Comment Merge elements of each group into a single element.
+  \zi \Comment Merge each group into a single element.
   \li $\id{welded-values} \gets \{ \}$
   \li \For $\id{weld-index} \gets 0$ \To $\id{weld-array-size} - 1$
   \zi \Do \kw{in parallel}
@@ -909,312 +1037,118 @@ types of geometric elements and then merge each group into single outputs. The w
   \zi         \>\>\>\> $+ \id{group-index}$
   \li         $v \gets \id{merge}(\id{sorted-values}[\id{sort-index}])$
           \End
-  \li     $\id{welded-values}[\id{weld-index}]$
-  \zi     \>\> $\gets \id{transform}(v, count)$
+  \li     $\id{welded-values}[\id{weld-index}] \gets$
+  \zi     \>\>\>\> $\id{transform}(v, count)$
       \End
   \li \Return $(\id{welded-values}, \id{cell-connections}, \id{counts})$
 \end{codebox}
 \vspace{-0.47cm}
-\caption*{Alg. 2: The \proc{Key-Weld} procedure welds vertices and allows multiple local samples of vertex attributes to be merged to form a better sampling without nonlocal operation during geometry generation.}
+\caption*{Alg. 2: The \proc{Key-Weld} procedure welds vertices and allows multiple local samples of vertex attributes to be merged to form a better sampling without non-local operation during geometry generation.}
 \end{figure}
 
+The \proc{Key-Weld} algorithm takes as its input data the result of a map
+operation.  Also passed to \proc{Key-Weld} are a \emph{merge} operation, which
+combines two values, and a \emph{transform} operation, which completes a
+reduction from a fully merged set.  Together the merge and transform
+operations allow reductions to take place iteratively, which can be
+important for distributed or streaming implementations.
+
+Our \proc{Key-Weld} algorithm is implemented wholly using the parallel
+operations provided by the Thrust library.  Steps 1 through 6 use functions
+that are analogous to those directly provided by thrust.
 Steps 7 through 18 in \proc{Key-Weld} are described at a high level for clarity. For increased data parallelism, we actually implement this portion of the algorithm using the Thrust library's \texttt{inclusive\_scan\_by\_key} and \texttt{zip\_iterator}. An example of how this algorithm works is provided in Figure \ref{fig:KeyWeld}.
 
+We note that the \proc{Key-Weld} algorithm combines features of both
+MapReduce and \proc{Vertex-Weld}, making it a curious amalgamation between
+the two.  The remainder of this section describes applications of
+\proc{Key-Weld} as a typical vertex weld (albeit potentially faster than
+\proc{Vertex-Weld} with a more robust coincident point comparison).
+Subsequent sections apply the \proc{Key-Weld} algorithm in more
+unique ways to identify different topological connections.
 
-\section{Mesh Generation}
-In order to test our method for generation of topological connectivities on a range of data types, we made use of several techniques to generate geometry.
-To test with data calculated along a structured grid, we used the Marching Cubes algorithm to generate contour surfaces from input volume data. Next, to test
-with data from unstructured grids, we tetrahedralized the volume in each of the manners as presented by Carr, et al. \cite{Carr2006}. We generated contour surfaces from these tetrahedralizations
-to get similar data as from the Marching Cubes results but from an unstructured grid. Additionally, we use the tetrahedralizations directly as the input to test our technique
-to find the topological connections of a 3D structure.
+\subsection{Marching Cubes}
+\label{sec:MarchingCubes}
 
+In the case of Marching Cubes (or any variant like Marching Tetrahedra), we
+know a good deal about the input topology on which the output is
+generated. Specifically, the output vertices from Marching Cubes are
+generated only on the edges of input voxels.
 
-\subsection{Testing Environment and Datasets}
+To create a provenance aware Marching Cubes, we run a typical
+implementation such as \fix{cite algorithm we use}.  In addition to
+recording the coordinates of each triangle vertex, we also write out an
+index identifying to edge on which the vertex lies.
 
-We measure performance on a test system containing an Intel Core i7 975 Processor, which has a clock speed of 3.33GHz. Our test system has 12GB of RAM, and contains 2 nVidia Tesla C2070 cards. The datasets we use for timing are shown in Table~\ref{tab:datasets}.  We do not include a tetrahedralized version of the Spherical Distance D dataset because of memory constraints. For all OpenMP tests, we set the number of threads to 8.
+For a structured voxel grid, we assign each unique edge an implicit integer
+index, then store the corresponding edge index for each vertex generated by
+Marching Cubes.  Because the edge indices are implicit, we need neither to
+create nor to store an edge list.  For unstructured grids, no such implicit
+edge identifiers necessarily exist.  However, each edge is uniquely
+identified by its two end vertices.  We build unique local edge indices by
+concatenating these two end vertices in a canonical order (we put the
+smallest vertex first).  This unstructured approach works fine for voxel
+grids, but requires more bits in the indices than necessary and can thus
+slow down the key sort.
 
+The results of this keyed Marching Cubes map are completed using the
+\proc{Key-Weld} process described in
+Section~\ref{sec:GeneralMergingAlgorithm}, which results in a manifold
+surface.  We also offer to blend other field information at the vertices.
+This is particularly helpful for creating interpolated surface normals from
+flat triangle normals or input gradients, which are not continuous across
+cell boundaries.
 
-\begin{table}[tb!]
-\begin{center}
-\caption{Test Datasets}
-\label{tab:datasets}
-\begin{tabular}{l r r r}
-\multicolumn{4}{c}{ } \\
-Name & Dims &  Triangles & Tetrahedrons \\
-\hline
-Spherical Distance A & $64^3 $ & 35,996    & 1,250,235 \\
-Spherical Distance B & $128^3$ & 149,420   & 10,241,915 \\
-Spherical Distance C & $256^3$ & 607,388   & 82,906,875 \\
-Spherical Distance D & $512^3$ & 2,451,212 & N/A \\
-MRI Head A           & $64^3 $ & 138,510   & 1,250,235 \\
-MRI Head B           & $128^3$ & 789,440   & 10,241,915 \\
-MRI Head C           & $256^3$ & 4,947,294 & 82,906,875  \\
-\end{tabular}
-\end{center}
-\end{table}
+\subsection{Cell Subdivision}
 
+A simple topology-generating algorithm is that of cell subdivision, which
+can be used to smooth or improve the representation of a finite element
+mesh.  For example, a triangle can be divided into four sub-triangles, as
+demonstrated in Figure~\ref{fig:teaser:subdivision}, or a tetrahedron can
+be divided into twelve sub-tetrahedra.
 
-The isovalues used for contour generation are consistent for all tests within each dataset, and are chosen to show relevant features. We attach vertex normals and a scalar color value as associated attributes to each input vertex for surface contour data, but only include the color value for the tetrahedral tests due to memory constraints. In addition to the datasets listed for timings, we also use a concentric ripple dataset for some of our images for demonstration. Timings for this dataset were similar to those for the spherical dataset in all cases.
+As with Marching Cubes, simplex subdivision always adds vertices on edges
+of the input mesh, and our subdivision algorithm incorporates the
+\proc{Key-Weld} process in much the same way as Marching Cubes.  One major
+difference, however, is that subdivision also reuses all the vertices from
+the initial mesh whose connectivity is already known.  Thus, only the new
+vertices generated on the edges should be partitioned and reduce while the
+others are passed and incorporated into the output.
 
-We have performed multiple tetrahedralizations as described in Carr \cite{Carr2006} to generate tetrahedral grids for input to our method, but found that our method's performance is similar in all cases. We therefore report only the timings for the minimal tetrahedralization method described in the aforementioned paper due to its smaller memory requirements. We perform Marching Cubes on each dataset to produce contour geometry. We have found that our algorithm performs similarly with output from Marching Tetrahedrons, and therefore only report the timings for Marching Cubes. All reported times in all tables are in milliseconds unless otherwise noted.  The Thrust library does not currently support spanning operations over multiple GPUs. We make use of two GPUs for our measurements by partitioning the input and performing the algorithm separately on each, then merging the results.
+\subsection{Face-Centered Tetrahedralization}
 
+There are many ways in which to divide hexahedra into tetrahedra.  One
+technique known as face-centered tetrahedralization divides each hexahedron
+into 24 tetrahedra by adding new vertices to each face and the center of
+the hexahedron.  Although it generates many more tetrahedra than some of
+its counterpart algorithms, the face-centered tetrahedralization captures
+the nonlinear field well~\cite{Carr2006}.
 
-\subsection{Method of Topological Connectivity Construction}
-Our technique is an extension of existing vertex welding methods. We will first analyze the original vertex welding approach and the manner in which we extended it for topological connectivity construction. We will then discuss methods of performance improvement of the original vertex welding method that we can achieve due to our extensions. Finally, we will discuss the usage of our extensions for the generation of topological connectivity information for various types of geometric inputs.
+Unlike our previous algorithms, face-centered tetrahedralization generates
+new vertices on faces instead of on edges.  The only change we need for our
+provenance aware approach is how we create keys for face elements.  For
+voxel grids, we can implicitly index the faces is a similar way we indexed
+edges.  For unstructured grids, we observe that each face can be uniquely
+identified by three of its vertices.  So in this case we can represent each
+face with three canonical vertices, such as the vertices with the lowest,
+second lowest, and third lowest indices in that order.
 
-\subsubsection{Vertex Welding}
-
-Because we made several modifications and extensions to the original vertex welding technique, we measure the additional performance
-cost of our implementation of the technique as compared to the original. To perform a fair comparison, it is necessary to apply our technique to the same task. Vertex welding with
-our \proc{Key-Weld} algorithm can be accomplished by specifying the following inputs:
-
-\begin{itemize}
-\item{The array of mergeables $values$ should be an input array of vertex coordinates.}
-\item{The $keys$ array should be the same array as $values$.}
-\item{The key comparator $compare$ should compare vertex coordinates lexicographically.}
-\item{The $merge$ operator should simply return the first element.}
-\item{The $transform$ operator should simply return the given element.}
-\end{itemize}
-
-For the purposes of vertex welding, we ignore the $counts$ output of the \proc{Key-Weld} algorithm, and treat the outputs $welded\mbox{-}values$ and $cell\mbox{-}connections$ as the original \proc{Vertex-Weld} algorithm's corresponding outputs with the same names. In this case, steps 7 through 18 can be optimized to a single call to \proc{Unique}, as in the original \proc{Vertex-Weld} algorithm. We therefore take no performance hit by generalizing \proc{Vertex-Weld} for the no-attribute case, as demonstrated in Table~\ref{tab:welding}.
-
-Although we were able to measure the performance differences using the \proc{Key-Weld} technique, it provides no benefit over the original \proc{Vertex-Weld} in this case. Also, our generated contour surfaces contain per-vertex normals and several scalar attributes, and this approach loses all information for these associated attributes except for those related to the first encountered instance of each vertex. To resolve this, we substitute a $merge$ operator that sums these attributes, and a $transform$ operator that divides the given element by $size$ (and renormalizes in the case of the normal vector) so that our output vertices contain an averaged sample of the associated attributes from each instance of each vertex. We then measure the performance impact from this change.
-
-\label{sec:IntegralIDs}
-To improve performance over \proc{Vertex-Weld}, we make use of our ability to use input keys other than the original vertices. Initially we considered the case of the output of our structured grid
-approach, Marching Cubes. In this case, we know a good deal about the input topology on which the output is generated that was not previously being used to help generate the topological connections. Specifically, the output vertices from Marching Cubes are generated only on the edges of input voxels. Each of these edges is shared by at most four voxels (ignoring degenerate vertex intersections), so there can be at most four instances of any one vertex.
-We assign each unique edge in the voxel grid an implicit integer ID, then store the corresponding edge ID for each vertex generated by Marching Cubes. There is no additional storage requirement because the ID can be implicitly determined from vertex position, but even when doing so this modification causes no measurable change in the performance of geometry generation. It does, however, significantly improve performance during vertex welding. Because it is known that these IDs are identical if and only if the vertices are identical, we hypothesize that by using these integer IDs as the $keys$ in the \proc{Key-Weld} algorithm we noticeably improve the performance of the technique due to the simpler $compare$ operation used during \proc{Key-Sort}, \proc{Unique}, and \proc{Vectorized-Find}. 
-
-We next consider the case of unstructured grid inputs. In this case edges cannot in general be implicitly assigned IDs, so they must be built from vertex IDs, which are implicit. We pair vertex IDs (least to greatest) to form a unique integral ID for each edge of the unstructured grid and store this as an attribute of each output vertex. 
-
-Using the integer ID approach described above carries an additional advantage. From our Marching Cubes and Marching Tetrahedra implementations, we find that the \proc{Vertex-Weld} approach often fails to weld meshes as expected. We trace this failure to the fact that some vertices that should be identical actually differ slightly due to floating point error, and thus are not bitwise equal as required by the \proc{Vertex-Weld} approach. Such errors are exceptionally easy to encounter: since floating-point operations are not associative, these errors can be generated simply by failing to ensure that we always use the same vertex order when generating interpolants. By assigning integral IDs to the output vertices, \proc{Key-Weld} becomes agnostic to such floating-point error in the input vertices, and thus does not require careful prevention of these errors in the geometry-generating implementation.
-
-
-\subsubsection{Vertex Welding Results}
-We measure performance of the \proc{Vertex-Weld} example on each set of generated geometry. Additionally, we measure \proc{Key-Weld} with and without merging of vertex properties, and with and without the integral IDs as $keys$ to each vertex. Even when explicitly storing IDs in memory, the difference in recorded times for geometry generation are negligible for both structured and unstructured grids as opposed to the timings when these IDs are not generated. Because of this, and because geometry generation is independent of our technique, we do not report timings for geometry generation here. We report the CUDA and OpenMP timings for each approach for vertex welding on the 512x512x512 spherical dataset in Table~\ref{tab:welding}.
-
-\begin{table}[tb!]
-\begin{center}
-\caption{Performance comparison for different approaches to Vertex Welding}
-\label{tab:welding}
-\begin{tabular}{l r r r}
-%\multicolumn{4}{c}{ } \\
-Test & CUDA & OpenMP \\
-\hline
-\proc{Vertex-Weld} (no attribute merging) & 281 & 1557 \\
-\proc{Key-Weld} (no attribute merging) & 281 &  1557 \\
-\proc{Key-Weld} (with attribute merging) & 527 & 2862\\
-\proc{Key-Weld} (integral IDs, no merging) & 204 & 1620 \\
-\proc{Key-Weld} (integral IDs, merging) & 350 & 2516 \\
-\end{tabular}
-\end{center}
-\end{table}
-
-Because the timings are best for merging when using integral edge IDs as keys for vertex welding when merging is necessary, all further timings in this paper use that approach for the vertex welding component. \proc{Key-Weld} reduces to \proc{Vertex-Weld} when no attribute merging is performed, so the timings are identical. Also note that using integral IDs for the non-merging case with \proc{Key-Weld} yields better performance in CUDA than \proc{Vertex-Weld}, due to the less complex comparison operator within the sort. 
-
-The OpenMP non-merging case does not appear to benefit from the use of integral IDs. Timings for the \proc{Key-Weld} technique for Marching Cubes contours of all input datasets are shown in Table~\ref{tab:vertexwelding}, and timings when using tetrahedralizations of the input dataset are shown in Table~\ref{tab:vertexweldingtetrahedra}
-
-\begin{table}[tb!]
-\begin{center}
-\caption{\proc{Key-Weld} timings for contours on structured grids.}
-\label{tab:vertexwelding}
-\begin{tabular}{l|r r r r|r r r}
-\multicolumn{8}{c}{ } \\
- & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
-Arch. & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
-\hline
-CUDA & 7 & 23 & 254 & 349 & 22 & 116 & 755 \\
-OpenMP & 30 & 125 & 550 & 2516 & 115 & 695 & 3377 \\
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{table}[tb!]
-\begin{center}
-\caption{\proc{Key-Weld} timings for tetrahedra.}
-\label{tab:vertexweldingtetrahedra}
-\begin{tabular}{l|r r r|r r r}
-\multicolumn{7}{c}{ } \\
- & \multicolumn{3}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
-Arch. & $64^3$ & $128^3$ & $256^3$ & $64^3$ & $128^3$ & $256^3$\\
-\hline
-CUDA & 127 & 1137 & 9301 & 128 & 1136 & 9322 \\
-OpenMP & 1228 & 11677 & $>5$min & 1231 & 11655 & $>5$min \\
-\end{tabular}
-\end{center}
-\end{table}
-
-The performance of the technique appears to be bound by the number of vertices passed as input. In all cases, performance scales approximately with the number of input vertices. 
-
-The tetrahedral case achieves approximately twice the performance per vertex of the contour case because of the absence of the normal vector as an attribute. The OpenMP version scales similarly to the CUDA version until system memory is exceeded in the largest tetrahedral dataset, at which point disk thrashing occurs during the sorts.
-
-\subsubsection{Incidence and adjacency list construction}
-\label{sec:topology}
-When only considering vertex welding, we make no use of the output $counts$ of \proc{Key-Weld}, which contains the sizes of the merged groups. This output is more useful when we wish to determine the topological connections between the merged elements in $welded\mbox{-}values$. 
-
-\noindent
-\begin{minipage}{\linewidth}
-We demonstrate the use of our \proc{Key-Weld} technique as a basis for determination of the following kinds of topological connectivity information:
-
-\begin{itemize}
-\item{Lists of adjacent vertices and incident edges, faces and tetrahedra for each input vertex}
-\item{Lists of faces incident to each edge or adjacent to each face, even those connected only by a single vertex}
-\item{Lists of faces adjacent to each face, sharing exactly one edge}
-\item{Lists of tetrahedra adjacent to each tetrahedron, including those connected only by an edge or point}
-\item{Lists of tetrahedra adjacent to each tetrahedron, sharing exactly one face}
-\end{itemize}
-\vspace{0.2cm}
-\end{minipage}
-
-We begin with a procedure \proc{Vertex-Incidence-Lists} for the generation of incident faces for each input vertex on a generated surface. 
-
-%Example input is provided in Figure~\ref{fig:IncidenceList}.
-%\begin{figure*}[!tb]
-%\includegraphics[width=\textwidth]{IncidenceList.pdf}
-%\caption{An example of the \proc{Vertex-Incidence-Lists} procedure on a very small set of triangles. Data values within the algorithm at several stages are shown above the flow diagram. The numbers shown in the green bubbles represent \emph{values (cell-ids)}, not \emph{keys} as in the \proc{Key-Weld} algorithm in Figure~\ref{fig:KeyWeld}. Upon output, $links\mbox{-}offsets$ contains offsets to the beginning of each vertex's face list in $links$.}
-%\label{fig:IncidenceList}
-%\end{figure*}
-
-\noindent
-\begin{figure}[hb]
-\vspace{-0.4cm}
-\begin{codebox}
-  \Procname{$\proc{Vertex-Incidence-Lists}(\id{cell-ids},\id{cell-connections},\id{counts})$\\
-    \id{cell-ids}: An array of cell identifiers for each cell vertex.\\
-    \makebox[.2in]{}Usually sequential repeated indices (e.g. $\{0,0,0,1,1,1,...\}$)\\
-    \id{cell-connections}: Result from \proc{Key-Weld} representing cell connectivity.\\
-    \id{counts}: Result from \proc{Key-Weld}, number of cells per vertex.\\
-  }
-  \zi \Comment Use a key-sort with cell connections as the keys to
-  \zi \Comment group cell identifiers by vertices.
-  \li $(-, \id{links}) \gets \proc{Key-Sort}(\id{cell-connections},\id{cell-ids})$
-  \zi \Comment The size of each incidence list is the same as \id{count}.
-  \li $\id{links-counts} \gets \id{counts}$
-  \zi \Comment Use an exclusive scan to find the offset to the incidence
-  \zi \Comment list for each vertex.
-  \li $\id{links-offsets} \gets \proc{Exclusive-Scan}(\id{links-counts})$
-  \li \Return $(\id{links},\id{links-counts},\id{links-offsets})$
-\end{codebox}
-\vspace{-0.4cm}
-\caption*{Alg. 3: \proc{Vertex-Incidence-Lists} takes the output of the \proc{Key-Weld} algorithm and quickly generates an incidence list, represented as an array of \emph{cell-ids} and an array of pointers into \emph{cell-ids} called \emph{links-offsets} that represents the start of each cell's incidence list.}
-\end{figure}
-
-%\begin{itemize}
-%\item{Generate an array $F$ containing the ID of the face represented by each instance of each vertex. For a triangular mesh, such an array would normally have the form  $\lbrace0,0,0,1,1,1,2,2,2...\rbrace$, and thus can be generated implicitly. More complex meshes may require the IDs to be generated during geometry generation, which requires extra storage but is computationally trivial.}
-%\item{Perform Vertex Welding via our previously described method, using $M$ to merge any associated attributes and with $K$ being the integral IDs assigned per-vertex described in \ref{sec:IntegralIDs}. $F$ is not passed into this method.}
-%\item{Use the output array $Map_{1\rightarrow 2}$ from the group merging operation in the previous step as a key to sort both $F$ and $Map_{1\rightarrow 2}$ by the elements in $Map_{1\rightarrow 2}$. }
-%\item{Perform an exclusive scan on the output array $C$ from the group merging operation, storing the result in $I$.}
-%\item{The output incident face list is represented by our outputs $F$, $I$, and $C$. Elements in $F$ represent faces incident to specific vertices. Elements in $I$ represent the indices in $F$ where face lists for individual vertices begin. The elements in $C$ represent the sizes of the face lists in $F$ pointed to by $I$.}
-%\end{itemize}
-
-Though our example input $cell\mbox{-}ids$ is for triangular faces, this process can be trivially extended by modifying the array $cell\mbox{-}ids$ to represent other polygonal faces, tetrahedra or any other cell type. To determine edges surrounding a point, the process could be similarly modified to have each item in $cell\mbox{-}ids$ label the represented edge. Note that when surrounding tetrahedra are generated for each vertex, surrounding faces are also generated as a subset. Similarly, when surrounding faces are generated surrounding edges are generated as a subset, which can be used to quickly determine the nearest neighboring vertices for each input vertices where an edge exists between the two.
-
-Marching Cubes and Marching Tetrahedra both have the property that all generated surface geometry forms a manifold, with the exception of degenerate and boundary cases. Because of this, we can determine more information about the neighboring geometric features. To determine all faces touched by an edge, simply combine the incident face lists of the two endpoints. If only the two faces separated by the edge are desired, these can be detected because they will occur twice in the list. All other faces will occur only once. 
-
-Determination of adjacent face lists for each triangular face works similarly to edges. Combine the incident face lists of all three endpoints. The face that appears three times in the combined list is the current face. Faces that occur twice are separated from this face by an edge, and those that appear only once are separated by a point.
-Likewise for tetrahedra: The tetrahedron that appears four times in the resultant list is the current tetrahedron, those that appear three times are adjacent to it through a face, those that appear twice are adjacent to it through an edge, and those that appear once are adjacent to it through a point. Similar behavior occurs for other types of polyhedra and polygons.
-
-Although the optimizations used to perform \proc{Key-Weld} change depending on whether the input is a structured or unstructured grid, the output is processed into topological connectivity information in the same manner for either case.
-
-\subsubsection{Incidence and adjacency list construction results}
-The time necessary to generate incidence lists for contours of structured and unstructured grids is shown in Table~\ref{tab:toptimings}. The time necessary to generate incidence lists for tetrahedral volumes is shown in Table~\ref{tab:toptimingstetra}.
-
-\begin{table}[tb!]
-\begin{center}
-\caption{Timings for \proc{Vertex-Incidence-List} for contours on structured (SG) and unstructured (UG) grids.}
-\label{tab:toptimings}
-\begin{tabular}{l|r r r r|r r r}
-\multicolumn{8}{c}{ } \\
- & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
-Arch. & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
-\hline
-CUDA & 1 & 2 & 6 & 25 & 2 & 7 & 47 \\
-OpenMP & 6 & 32 & 125 & 563 & 33 & 191 & 1213 \\
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{table}[tb!]
-\begin{center}
-\caption{Timings for \proc{Vertex-Incidence-List} on tetrahedra.}
-\label{tab:toptimingstetra}
-\begin{tabular}{l|r r r|r r r}
-\multicolumn{7}{c}{ } \\
- & \multicolumn{3}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
-Arch. & $64^3$ & $128^3$ & $256^3$ & $64^3$ & $128^3$ & $256^3$\\
-\hline
-CUDA & 15 & 139 & 1141 & 16 & 142 & 1128 \\
-OpenMP & 378 & 3610 & $>5$min & 371 & 3621 & $>5$min \\
-\end{tabular}
-\end{center}
-\end{table}
-
-Performance for generation of incidence lists scales approximately linearly with the number of input vertices for CUDA. OpenMP scales similarly to CUDA until system memory is exceeded in the largest tetrahedral dataset.
-
-\section{Applications}
-To test that the generated incidence and adjacency lists are useful on parallel systems once generated, we implement several calculations that make use this topological connectivity information. Specifically, we have implemented the following:
-
-\begin{itemize}
-\item{Local averaging of vertex attributes}
-\item{A form of mesh coarsening, implemented as an extension to \proc{Key-Weld} without incurring additional performance cost}
-\item{Generation of a dual mesh}
-\end{itemize}
-
-The local averaging technique is an example that does not alter the topological connectivity information, and thus does not require an additional application of our technique after its completion. Mesh coarsening is an example that alters the input topology, and thus requires a regeneration of the topological connectivity information after its completion. Also, we use mesh coarsening to demonstrate that certain types of mesh processing can occur during the vertex welding phase of topological connectivity construction. Generation of a dual mesh is an example that generates a new topology.
-
-\subsection{Local Averaging}
-
-We perform a simple averaging of properties of the nearest neighboring vertices surrounding each processed vertex. This is accomplished by first obtaining the list of indices to neighboring points as described in \ref{sec:topology}. Duplicates in this list are removed, then the attributes of each are stored. We perform a segmented scan \cite{Blelloch1991} to sum the properties of the neighboring vertices using a merge operator that is appropriate for the property type, then divide the summed properties by the number of neighbors for the group. Some vertex properties, such as normals, need an alternative operator to replace the division operation. Since we implemented our approach as a C++ template, this operator can be specified as a template parameter.
-
-\subsection{Local Averaging Results}
-
-Table~\ref{tab:timingsaverage} shows the timings for calculating the local averages of vector properties on the generated surfaces. Figure \ref{fig:averaging} shows a before and after comparison of averaging used for vector averaging.
-
-\begin{table}[tb!]
-\begin{center}
-\caption{Timings for local averaging of scalar (S) and vector (V) properties on contour surfaces}
-\label{tab:timingsaverage}
-\begin{tabular}{l|r r r r|r r r}
-\multicolumn{8}{c}{ } \\
-& \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
-Type & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
-\hline
-(S) CUDA & 18 & 47 & 158 & 650 & 44 & 51 & 203 \\
-(V) CUDA & 18 & 48 & 158 & 649 & 45 & 51 & 203 \\
-(S) OMP & 39 & 180 & 905 & 4035 & 184 & 1391 & 8611 \\
-(V) OMP & 39 & 181 & 914 & 4039 & 191 & 1390 & 8625 \\
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{figure}[!tb]
-\includegraphics[width=0.32\columnwidth]{FaceNoAveraging.png}
-\includegraphics[width=0.32\columnwidth]{FaceAveraging.png}
-\includegraphics[width=0.32\columnwidth]{FaceCoarsening.png}
-\caption{Surface normal artifacts are visible in the image of the MRI head dataset at left due to sampling error caused by the local operation of our Marching Cubes algorithm. The most common solution is to visit neighboring voxels while producing geometry to obtain a better sampling, but this can impede performance on the GPU. Without modifying Marching Cubes to do so, we can achieve better results by averaging local normals as shown in the central image, but this requires an additional computation pass. In section \ref{sec:coarsening}, we demonstrate a way to remove these artifacts without incurring the additional performance cost required by local averaging, as shown in right image.}
-\label{fig:averaging}
-\end{figure}
-
-Performance for averaging scales approximately linearly with the number of input vertices in all cases. We have profiled the performance of the algorithm and found that approximately 96\% of the time taken is spent removing duplicate vertices from the incidence lists. Generation of the incidence list is the next largest fraction of the processing time, at 3\%. The time taken to perform the sum and divide operations is negligible.
-
-
-\subsection{Mesh coarsening}
+\section{Mesh Coarsening}
 \label{sec:coarsening}
-Many algorithms that make use of an input topology must modify that topology to produce their output. To demonstrate how such an algorithm can be constructed with our technique, we implement a form of simple mesh coarsening. Traditional implementations of mesh coarsening operate without regard to the mesh's provenance by either iteratively collapsing features \cite{Potter2011} or collectively clustering vertices \cite{DeCoro2007}.  However, by combining edge collapsing with vertex welding we can provide a first-level coarsening that is fast, has low error, provides well-formed cells, and adapts to the structure of the original mesh.
 
-Rather than computing the topological connectivity of the original generated data and then coarsening it thereafter, we instead alter the input key array to our Vertex Welding technique to perform a type of coarsening in the process of topological connectivity generation. Specifically, it is our goal to eliminate poor quality triangles in the mesh while performing minimal modifications to the others, without requiring an additional processing pass. We define triangle quality $Q$ as in Equation~\ref{eq:quality}, where $h_x$ are side lengths and $a$ is the triangle area. This quality metric operates only on triangle shape, and is agnostic to triangle size.
+One of the more curious attributes of provenance-enabled topology
+construction is that there is flexibility in how we record the provenance,
+and changing the association between input and output elements can have
+interesting and useful outcomes.  In this section we describe how to alter
+the provenance of the Marching Cubes algorithm to provide an effective but
+free first-level coarsening of the resulting surface.
 
-\begin{equation}
-\label{eq:quality}
-	Q = \frac{4a\sqrt{3}}{h_1^2 + h_2^2 + h_3^2}
-\end{equation}
-
-This measure of triangle quality considers only aspect ratio, and is such that triangles where $Q > 0.6$ are considered to be of acceptable quality, and $Q = 1$ when the triangle is equilateral \cite{Bank2003}. This is equivalent to the pdetriq function in MATLAB.
-
-\begin{figure}[!tb]
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[width=\columnwidth]{SkinnyCollapse.pdf}
-\caption{When Marching Cubes and Marching Tetrahedra generate contour surfaces, the produced vertices can only occur on voxel edges (black). When several output vertices (blue) fall close to the same voxel vertex (black), small or skinny triangles may be produced (red). We eliminate these by merging all vertices that fall close to a voxel vertex into a single output. This collapses the skinny triangles into degenerate triangles, which are then removed. }
+\caption{When several Marching Cubes output vertices (blue) fall close to
+  the same input vertex (black), small or skinny triangles may be produced
+  (red).  Merging the nearby vertices collapses the skinny triangles into
+  degenerate triangles, which are then removed. }
 \label{fig:SkinnyCollapse}
 \end{center}
 \end{figure}
@@ -1237,62 +1171,199 @@ This measure of triangle quality considers only aspect ratio, and is such that t
 %\end{figure}
 
 
-The basic idea for our coarsening is described in Figure \ref{fig:SkinnyCollapse}. Marching Cubes generates small or skinny triangles when two adjacent output vertices are generated near the same input mesh vertex. To eliminate this possibility, we consider all vertices close to any particular endpoint as identical so that during Vertex Welding, these skinny triangles become degenerate and can be removed. Essentially we divide the edges on which geometry is generated into three regions. We reserve a parameter $k$ to determine the size of these regions as a fraction of the edge length $\ell$. For unstructured grids, we modify the ID assignment we used previously in vertex welding. As before, we initially assign each vertex in the input topology an ID. During geometry generation, we pair these vertex IDs to form edge IDs, which are attached as attributes to the output vertex. However, when a vertex falls within $\frac{k\ell}{2}$ of an endpoint of this edge, the ID of that endpoint is repeated.
+The basic idea for our coarsening is described in
+Figure~\ref{fig:SkinnyCollapse}. Marching Cubes generates small or skinny
+triangles when two adjacent output vertices are generated near the same
+input mesh vertex.  These skinny triangles are a problematic artifact of
+Marching Cubes.  They lead to poor interpolation of surface normals,
+shading, and other fields as demonstrated in Figure~\ref{fig:coarsening}.
+The juxtaposition of skinny and fat triangles can also cause irregularities
+in their orientations, which can yield a staircase-like appearance as
+evident in Figure~\ref{fig:averaging}.
 
-As with the original ID assignment for structured grids, we can use our knowledge of the input topology to assign the IDs implicitly so that there is no performance or storage cost. This is accomplished by subdividing space such that each voxel vertex falls within a unique cell and assigning an integral ID to each cell. All output vertices generated within these cells will be considered identical and merged during Vertex Welding. The value of $k$ is restricted such that $0\leq k \leq 1$, and $k$ specifies the width of the cells that will group vertices. By placing the center of these cells over the intersections of the voxel grid, the `skinny' triangles generated by Marching Cubes can be reduced or eliminated. In the structured grid case, when $k=1$ we can guarantee a minimum possible triangle quality. For cubic voxel grids, this minimum is $Q=0.275$, and the expected triangle quality is much higher, as shown in Figure~\ref{fig:coarseninggraphs}. We cannot make such a guarantee about the output of the coarsening in the unstructured grid case because the triangle quality depends on the aspect ratios of the input cells. When $k=0$ this technique is equivalent to the previous form of vertex welding. In our experience, using a value of $k=1$ provides the best results, which is equivalent to simply keying each generated vertex on the nearest input edge vertex. This allows for a faster sorting operation, so it is the approach taken for all figures and timings representing coarsening in this paper.
-
-After the coarsening has been applied, we expect many degenerate triangles in the output. These triangles may be quickly removed in parallel by removing
-all instances of faces containing two or more identical indices. This invalidates the output array of group sizes $C$ from the Vertex Welding array, but a corrected group sizes $C$ can be generated by sorting the output array $cell-connections$ and performing a segmented scan to determine the number of instances of each index.
-
-\begin{figure}[!tb]
-\includegraphics[width=\columnwidth]{Nonmanifold.pdf}
-\caption{A problem with our coarsening method is that in some cases nonmanifold faces may be produced. In the example above, two vertices from different faces are merged and a 3D volume is collapsed into a single plane. To recreate a manifold surface, we detect and remove these cases in a separate step.}
-\label{fig:Nonmanifold}
-\end{figure}
-
-A larger problem with the coarsening technique is that in some cases, such as the case shown in Figure \ref{fig:Nonmanifold}, non-manifold surface elements may be generated. If such surface elements are undesirable, they may be eliminated by calculating the maximum edge curvature of each triangle, and removing all triangles containing an edge curvature of $180^{\circ}$.
-
-\begin{figure}[!tb]
+\begin{figure}[htb]
 \includegraphics[width=\columnwidth]{Coarsening.jpg}
-\caption{Top: Before coarsening. Bottom: After coarsening. Note that skinny triangles caused by the underlying voxel grid are removed in the bottom image. Removal of these triangles eliminates the artifacts visible along the crests and valleys of the top image, and provides a better sampling of vertex properties across the contour surface. The coarsened mesh in the bottom image contains approximately half the triangle count of the mesh in the top image. The blue region (left) shows how triangle quality is improved by eliminating thin triangles near input voxel borders. The green regions show improvements to surface interpolation made possible by removal of the thin triangles.}
+\caption{Marching Cubes output without (top) and with (bottom) coarsening.
+  The blue region shows how triangle quality is improved by eliminating
+  thin triangles. The green regions show improvements to surface
+  interpolation made possible by removal of the thin triangles.}
 
 \label{fig:coarsening}
 \end{figure}
 
-\subsection{Mesh Coarsening Results}
-Figure \ref{fig:coarsening} shows a before and after comparison of our coarsening technique with $k=1$. 
-Figure \ref{fig:coarseninggraphs} shows the change in triangle quality before and after coarsening.
-Table~\ref{tab:timingscoarsening} shows the timings for coarsening the mesh as part of the vertex welding algorithm. Compare with Table~\ref{tab:vertexwelding} to observe that simultaneously performing the coarsening operation does not significantly affect the timing of the topology generation. In addition, sampling of vertex attributes is markedly improved in the coarsened graph. Although our Marching Cubes algorithm strictly determines surface normals by the information given in a single voxel, we find that our approach yields similar quality surface normals to those generated by the VTK Marching Cubes algorithm, which visits neighboring voxels to determine accurate normals. This is advantageous because it allows for completely local operation during geometry generation without loss of computed attribute quality, which provides better performance on the GPU.
+\begin{figure}[htb]
+\includegraphics[width=0.32\columnwidth]{FaceNoAveraging.png}
+\includegraphics[width=0.32\columnwidth]{FaceAveraging.png}
+\includegraphics[width=0.32\columnwidth]{FaceCoarsening.png}
+\caption{At left artifacts are visible due to sampling error caused by the
+  local operation of the Marching Cubes algorithm.  At center surface
+  normals are averaged on merged vertices, and smooth shading attempts to
+  make the bumps less noticeable.  At right we remove these artifacts using
+  our coarsening without incurring additional performance costs.  \fix{One
+    thing I notice about the left image is that it does not look as if the
+    shading is totally flat.  Why is that?}}
+\label{fig:averaging}
+\end{figure}
 
-\begin{table}[htb!]
-\begin{center}
-\caption{Timings for mesh coarsening of surface contours during vertex welding}
-\label{tab:timingscoarsening}
-\begin{tabular}{l|r r r r|r r r}
-\multicolumn{8}{c}{ } \\
- & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
-Arch. & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
-\hline
-CUDA & 7 & 24 & 86 & 351 & 22 & 114 & 716 \\
-OpenMP & 28 & 122 & 561 & 2567 & 122 & 807 & 6208 \\
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{figure*}[!tb]
+\begin{figure*}[htb]
 \begin{center}
 \includegraphics[height=7.05cm]{ScatterAll.png}
 \hspace{0.1cm}
 \includegraphics[height=7.05cm]{MergedFigures.pdf}
-\caption{Left: Scatterplot of triangle area and triangle quality for the MRI head dataset as calculated in Eq. \ref{eq:quality} in Section \ref{sec:coarsening}. Note that in general the triangles that are removed by our coarsening (green) are either small or poor quality as compared with other triangles in the distribution. Triangles that are not removed by the coarsening (orange) are transformed by the coarsening into the output triangles (blue). While not all passed triangles are improved by this coarsening, there is a lower bound on produced triangle quality. After coarsening, most of the triangles are relatively large and high quality.
+\caption{Left: Scatterplot of triangle area and triangle quality for the MRI head dataset as calculated in Eq. \ref{eq:quality}.
 Top Right: Histograms of the quality of passed, removed, and coarsened triangles.
-Bottom Right: Cumulative distributions of triangles before and after coarsening. Our coarsening generally reduces the size of the output mesh to approximately half of its original size. Median quality of the removed triangles is approximately $Q=0.5$. Median quality of passed triangles is approximately $Q=0.85$, and after coarsening the median quality of the output triangles remains at approximately $Qb=0.85$.}
+Bottom Right: Cumulative distributions of triangles before and after coarsening.}
 \label{fig:coarseninggraphs}
 \end{center}
 \end{figure*}
 
-\subsection{Dual Mesh Generation}
-To generate the dual of our triangular input meshes, we perform the following procedure: For each face, weaverage the vertices to get the centroid, and store it in a new array at the same ID as the original face. Now the surrounding face lists from \proc{Key-Weld} for each of the vertices in the original mesh form a representation of each face of the dual mesh, with the vertices not necessarily in order. To order the vertices, we create an adjacency list for all faces in parallel as described in \ref{sec:topology}, then use the adacency lists for each face to `walk' around each dual mesh cell, storing the order as we go. We perform all of these operations in a data parallel manner using existing functions of the Thrust library. Figure~\ref{fig:teaser}(d) shows an example of this kind of dual mesh for a 2D case.
+The skinny triangles can be eliminated by collapsing nearby vertices.  With
+provenance-enabled topology generation, this collapsing is deceptively
+simple.  Rather than key each output vertex by the input edge whence it
+comes, as described in Section~\ref{sec:MarchingCubes}, we key each output
+vertex by the nearest input vertex connected to the input edge.  This
+simple change causes the partition to group all nearby vertices and the
+reduce to merge these vertices together.  When vertices are merged their
+point coordinates and field values are averaged.
+
+%% Essentially we divide the edges on which geometry is generated into three regions. We reserve a parameter $k$ to determine the size of these regions as a fraction of the edge length $\ell$. For unstructured grids, we modify the ID assignment we used previously in vertex welding. As before, we initially assign each vertex in the input topology an ID. During geometry generation, we pair these vertex IDs to form edge IDs, which are attached as attributes to the output vertex. However, when a vertex falls within $\frac{k\ell}{2}$ of an endpoint of this edge, the ID of that endpoint is repeated.
+
+%% As with the original ID assignment for structured grids, we can use our knowledge of the input topology to assign the IDs implicitly so that there is no performance or storage cost. This is accomplished by subdividing space such that each voxel vertex falls within a unique cell and assigning an integral ID to each cell. All output vertices generated within these cells will be considered identical and merged during Vertex Welding. The value of $k$ is restricted such that $0\leq k \leq 1$, and $k$ specifies the width of the cells that will group vertices. By placing the center of these cells over the intersections of the voxel grid, the `skinny' triangles generated by Marching Cubes can be reduced or eliminated. In the structured grid case, when $k=1$ we can guarantee a minimum possible triangle quality. For cubic voxel grids, this minimum is $Q=0.275$, and the expected triangle quality is much higher, as shown in Figure~\ref{fig:coarseninggraphs}. We cannot make such a guarantee about the output of the coarsening in the unstructured grid case because the triangle quality depends on the aspect ratios of the input cells. When $k=0$ this technique is equivalent to the previous form of vertex welding. In our experience, using a value of $k=1$ provides the best results, which is equivalent to simply keying each generated vertex on the nearest input edge vertex. This allows for a faster sorting operation, so it is the approach taken for all figures and timings representing coarsening in this paper.
+
+After the coarsening has been applied, we expect many degenerate triangles
+in the output. These triangles may be quickly removed in parallel by
+removing all instances of faces containing two or more identical indices.
+%This invalidates the output array of group sizes $C$ from the Vertex Welding array, but a corrected group sizes $C$ can be generated by sorting the output array $cell-connections$ and performing a segmented scan to determine the number of instances of each index.
+
+%% Many algorithms that make use of an input topology must modify that
+%% topology to produce their output. To demonstrate how such an algorithm can
+%% be constructed with our technique, we implement a form of simple mesh
+%% coarsening.
+
+There exist many surface coarsening algorithms.  Traditional
+implementations of mesh coarsening operate without regard to the mesh's
+provenance by either iteratively collapsing features \cite{Potter2011} or
+collectively clustering vertices \cite{DeCoro2007}.  Our approach is
+similar to those clustering vertices except that by integrating the
+clustering with the partitioning we already do, we get a free first-level
+coarsening without requiring a bounded-radius nearest-neighbor search or
+auxiliary search structures.
+
+%% However, by combining
+%% edge collapsing with vertex welding we can provide a first-level coarsening
+%% that is fast, has low error, provides well-formed cells, and adapts to the
+%% structure of the original mesh.
+
+%% Rather than computing the topological connectivity of the original
+%% generated data and then coarsening it thereafter, we instead alter the
+%% input key array to our Vertex Welding technique to perform a type of
+%% coarsening in the process of topological connectivity generation.
+
+Also, although our technique reduces the mesh size, philosophically
+speaking we are more interested in improving the quality of the mesh than
+in reducing the number of triangles, which is the primary focus of previous
+work.  Specifically, it is our goal to eliminate poor quality triangles in
+the mesh while performing minimal modifications to the others, without
+requiring an additional processing pass. We define triangle quality $Q$ as
+\begin{equation}
+\label{eq:quality}
+	Q = \frac{4a\sqrt{3}}{h_1^2 + h_2^2 + h_3^2},
+\end{equation}
+where $h_x$ are side lengths and $a$ is the triangle area. This quality
+metric operates only on triangle shape, and is agnostic to triangle size.
+
+This measure of triangle quality considers only aspect ratio, and is such
+that triangles where $Q > 0.6$ are considered to be of acceptable quality,
+and $Q = 1$ when the triangle is equilateral \cite{Bank2003}. This is
+equivalent to the pdetriq function in MATLAB.  We use this metric to
+empirically demonstrate the effectiveness of our coarsening.
+
+Figure~\ref{fig:coarseninggraphs} demonstrates the effect of our coarsening
+to the isosurface of the MRI head rendered in Figure~\ref{fig:averaging}.
+In general the triangles that are removed by our coarsening (green) are
+either small or poor quality as compared with other triangles in the
+distribution. Triangles that are not removed by the coarsening (orange) are
+altered into the output triangles (blue) when point coordinates are
+averaged. Although not all passed triangles are improved by this coordinate
+averaging, there is a lower bound on produced triangle quality. After
+coarsening, most of the triangles are relatively large and high quality.
+The cumulative triangle distributions show that our coarsening reduces the
+size of the output mesh to approximately half of its original size. The
+median quality of the removed triangles is approximately $Q=0.5$ whereas
+the median quality of passed and output triangles is approximately
+$Q=0.85$.
+
+\begin{figure}[htb]
+\includegraphics[width=\columnwidth]{Nonmanifold.pdf}
+\caption{An example of mesh coarsening causing a non-manifold, overlapping
+  surface.}
+\label{fig:Nonmanifold}
+\end{figure}
+
+A problem with the coarsening technique is that in some cases, such as the
+case shown in Figure \ref{fig:Nonmanifold}, non-manifold surface elements
+may be generated by collapsing vertices from different parts of the
+surface. In this example, two vertices from different faces are merged and
+a 3D volume is collapsed into a single plane.  If such surface elements are
+undesirable, they may be eliminated by calculating the maximum edge
+curvature of each triangle, and removing all triangles containing an edge
+curvature of $180^{\circ}$.
+
+\section{Grouping Cell Connections}
+\label{sec:GroupingCellConnections}
+
+Thus far we have discussed algorithms that are able to locally determine
+the structure of cells but require collective operations to resolve the
+vertices.  However, provenance-enabled topology construction can also be
+applied to the converse problem where vertices can be locally determined
+but the cell structure can only be constructed by tracing through the input
+topology.
+
+The process to collect the elements of cells uses the same
+map-partition-reduce strategy discussed in
+Section~\ref{sec:UsingTopologyProvenance} and the same \proc{Key-Weld}
+process described in Section~\ref{sec:GeneralMergingAlgorithm}.  In this
+case some topological feature of the input is uniquely associated with each
+cell in the output, and an index for this feature is used for the key.  The
+reduce phase is then responsible for generating the cell connectivity
+lists.
+
+We demonstrate the concept of using provenance-enabled topology
+construction for cell grouping with an algorithm for finding the dual of a
+surface mesh.  The dual of a surface mesh has a vertex at the center of
+every polygon in the original mesh and an edge connecting pairs of vertices
+corresponding to adjacent cells in the original mesh.  It happens that
+these edges connect to form a polygon for each vertex in the original mesh.
+A simple example of a mesh and its dual is given in
+Figure~\ref{fig:teaser:dual}.
+
+The map phase of the dual mesh algorithm first finds the centroid of each
+input polygon, which becomes a vertex in the output dual mesh.  Each
+centroid is known to be unique and can be written directly to a vertex list
+without keys and without needing to be partitioned.  The map also writes a
+key-value pair for each vertex of each cell of the input mesh.  The key is
+the index of the input vertex and the value is a 3-tuple containing the
+index to the output vertex (generated from the polygon centroid) and the
+two input vertices adjacent to the keyed vertex and incident to the
+polygon.  These latter two vertices describe the edges through which the
+dual polygon will connect around the keyed vertex.
+
+These key-value pairs effect the reduce phase to merge together the
+centroids of all cells incident to the keyed vertex.  Such a group of
+centroids corresponds to a polygon in the output mesh.  Thus, our merge
+operation is to output a polygon connecting these centroids.  However, the
+partitioning may not (and probably will not) produce the centroids in the
+proper order around the polygon.  To order the vertices, we use the vertex
+key and the two incident input vertices stored in the value to ``walk''
+around each dual mesh polygon, storing the order as we go.
+
+\fix{My description differs from the original description and almost
+  definitely differs from our current implementation.  My description
+  suggests that the vertex list be written immediately and indices be used
+  as values in the welding.  I also suggest passing links through weld
+  values rather than build an adjacency list.  We should talk about it.}
+
+%% To generate the dual of our triangular input meshes, we perform the following procedure: For each face, weaverage the vertices to get the centroid, and store it in a new array at the same ID as the original face. Now the surrounding face lists from \proc{Key-Weld} for each of the vertices in the original mesh form a representation of each face of the dual mesh, with the vertices not necessarily in order. To order the vertices, we create an adjacency list for all faces in parallel as described in \ref{sec:topology}, then use the adacency lists for each face to `walk' around each dual mesh cell, storing the order as we go. We perform all of these operations in a data parallel manner using existing functions of the Thrust library. Figure~\ref{fig:teaser:dual} shows an example of this kind of dual mesh for a 2D case.
 
 %\begin{figure}[!tb]
 %\begin{center}
@@ -1302,32 +1373,615 @@ To generate the dual of our triangular input meshes, we perform the following pr
 %\label{fig:DualExample}
 %\end{figure}
 
-\subsection{Dual Mesh Generation Results}
 
-\begin{figure}[!tb]
+%% \section{Removed Topics}
+
+%% \subsection{Method of Topological Connectivity Construction}
+%% Our technique is an extension of existing vertex welding methods. We will first analyze the original vertex welding approach and the manner in which we extended it for topological connectivity construction. We will then discuss methods of performance improvement of the original vertex welding method that we can achieve due to our extensions. Finally, we will discuss the usage of our extensions for the generation of topological connectivity information for various types of geometric inputs.
+
+%% \subsubsection{Vertex Welding}
+
+%% Because we made several modifications and extensions to the original vertex welding technique, we measure the additional performance
+%% cost of our implementation of the technique as compared to the original. To perform a fair comparison, it is necessary to apply our technique to the same task. Vertex welding with
+%% our \proc{Key-Weld} algorithm can be accomplished by specifying the following inputs:
+
+%% \begin{itemize}
+%% \item{The array of mergeables $values$ should be an input array of vertex coordinates.}
+%% \item{The $keys$ array should be the same array as $values$.}
+%% \item{The key comparator $compare$ should compare vertex coordinates lexicographically.}
+%% \item{The $merge$ operator should simply return the first element.}
+%% \item{The $transform$ operator should simply return the given element.}
+%% \end{itemize}
+
+%% For the purposes of vertex welding, we ignore the $counts$ output of the \proc{Key-Weld} algorithm, and treat the outputs $welded\mbox{-}values$ and $cell\mbox{-}connections$ as the original \proc{Vertex-Weld} algorithm's corresponding outputs with the same names. In this case, steps 7 through 18 can be optimized to a single call to \proc{Unique}, as in the original \proc{Vertex-Weld} algorithm. We therefore take no performance hit by generalizing \proc{Vertex-Weld} for the no-attribute case, as demonstrated in Table~\ref{tab:welding}.
+
+%% Although we were able to measure the performance differences using the \proc{Key-Weld} technique, it provides no benefit over the original \proc{Vertex-Weld} in this case. Also, our generated contour surfaces contain per-vertex normals and several scalar attributes, and this approach loses all information for these associated attributes except for those related to the first encountered instance of each vertex. To resolve this, we substitute a $merge$ operator that sums these attributes, and a $transform$ operator that divides the given element by $size$ (and renormalizes in the case of the normal vector) so that our output vertices contain an averaged sample of the associated attributes from each instance of each vertex. We then measure the performance impact from this change.
+
+%% \label{sec:IntegralIDs}
+%% To improve performance over \proc{Vertex-Weld}, we make use of our ability to use input keys other than the original vertices. Initially we considered the case of the output of our structured grid
+%% approach, Marching Cubes. In this case, we know a good deal about the input topology on which the output is generated that was not previously being used to help generate the topological connections. Specifically, the output vertices from Marching Cubes are generated only on the edges of input voxels. Each of these edges is shared by at most four voxels (ignoring degenerate vertex intersections), so there can be at most four instances of any one vertex.
+%% We assign each unique edge in the voxel grid an implicit integer ID, then store the corresponding edge ID for each vertex generated by Marching Cubes. There is no additional storage requirement because the ID can be implicitly determined from vertex position, but even when doing so this modification causes no measurable change in the performance of geometry generation. It does, however, significantly improve performance during vertex welding. Because it is known that these IDs are identical if and only if the vertices are identical, we hypothesize that by using these integer IDs as the $keys$ in the \proc{Key-Weld} algorithm we noticeably improve the performance of the technique due to the simpler $compare$ operation used during \proc{Key-Sort}, \proc{Unique}, and \proc{Vectorized-Find}. 
+
+%% We next consider the case of unstructured grid inputs. In this case edges cannot in general be implicitly assigned IDs, so they must be built from vertex IDs, which are implicit. We pair vertex IDs (least to greatest) to form a unique integral ID for each edge of the unstructured grid and store this as an attribute of each output vertex. 
+
+%% \subsubsection{Incidence and adjacency list construction}
+%% \label{sec:topology}
+%% When only considering vertex welding, we make no use of the output $counts$ of \proc{Key-Weld}, which contains the sizes of the merged groups. This output is more useful when we wish to determine the topological connections between the merged elements in $welded\mbox{-}values$. 
+
+%% \noindent
+%% \begin{minipage}{\linewidth}
+%% We demonstrate the use of our \proc{Key-Weld} technique as a basis for determination of the following kinds of topological connectivity information:
+
+%% \begin{itemize}
+%% \item{Lists of adjacent vertices and incident edges, faces and tetrahedra for each input vertex}
+%% \item{Lists of faces incident to each edge or adjacent to each face, even those connected only by a single vertex}
+%% \item{Lists of faces adjacent to each face, sharing exactly one edge}
+%% \item{Lists of tetrahedra adjacent to each tetrahedron, including those connected only by an edge or point}
+%% \item{Lists of tetrahedra adjacent to each tetrahedron, sharing exactly one face}
+%% \end{itemize}
+%% \vspace{0.2cm}
+%% \end{minipage}
+
+%% We begin with a procedure \proc{Vertex-Incidence-Lists} for the generation of incident faces for each input vertex on a generated surface. 
+
+%% %Example input is provided in Figure~\ref{fig:IncidenceList}.
+%% %\begin{figure*}[!tb]
+%% %\includegraphics[width=\textwidth]{IncidenceList.pdf}
+%% %\caption{An example of the \proc{Vertex-Incidence-Lists} procedure on a very small set of triangles. Data values within the algorithm at several stages are shown above the flow diagram. The numbers shown in the green bubbles represent \emph{values (cell-ids)}, not \emph{keys} as in the \proc{Key-Weld} algorithm in Figure~\ref{fig:KeyWeld}. Upon output, $links\mbox{-}offsets$ contains offsets to the beginning of each vertex's face list in $links$.}
+%% %\label{fig:IncidenceList}
+%% %\end{figure*}
+
+%% \noindent
+%% \begin{figure}[hb]
+%% \vspace{-0.4cm}
+%% \begin{codebox}
+%%   \Procname{$\proc{Vertex-Incidence-Lists}(\id{cell-ids},\id{cell-connections},\id{counts})$\\
+%%     \id{cell-ids}: An array of cell identifiers for each cell vertex.\\
+%%     \makebox[.2in]{}Usually sequential repeated indices (e.g. $\{0,0,0,1,1,1,...\}$)\\
+%%     \id{cell-connections}: Result from \proc{Key-Weld} representing cell connectivity.\\
+%%     \id{counts}: Result from \proc{Key-Weld}, number of cells per vertex.\\
+%%   }
+%%   \zi \Comment Use a key-sort with cell connections as the keys to
+%%   \zi \Comment group cell identifiers by vertices.
+%%   \li $(-, \id{links}) \gets \proc{Key-Sort}(\id{cell-connections},\id{cell-ids})$
+%%   \zi \Comment The size of each incidence list is the same as \id{count}.
+%%   \li $\id{links-counts} \gets \id{counts}$
+%%   \zi \Comment Use an exclusive scan to find the offset to the incidence
+%%   \zi \Comment list for each vertex.
+%%   \li $\id{links-offsets} \gets \proc{Exclusive-Scan}(\id{links-counts})$
+%%   \li \Return $(\id{links},\id{links-counts},\id{links-offsets})$
+%% \end{codebox}
+%% \vspace{-0.4cm}
+%% \caption*{Alg. 3: \proc{Vertex-Incidence-Lists} takes the output of the \proc{Key-Weld} algorithm and quickly generates an incidence list, represented as an array of \emph{cell-ids} and an array of pointers into \emph{cell-ids} called \emph{links-offsets} that represents the start of each cell's incidence list.}
+%% \end{figure}
+
+%% %\begin{itemize}
+%% %\item{Generate an array $F$ containing the ID of the face represented by each instance of each vertex. For a triangular mesh, such an array would normally have the form  $\lbrace0,0,0,1,1,1,2,2,2...\rbrace$, and thus can be generated implicitly. More complex meshes may require the IDs to be generated during geometry generation, which requires extra storage but is computationally trivial.}
+%% %\item{Perform Vertex Welding via our previously described method, using $M$ to merge any associated attributes and with $K$ being the integral IDs assigned per-vertex described in \ref{sec:IntegralIDs}. $F$ is not passed into this method.}
+%% %\item{Use the output array $Map_{1\rightarrow 2}$ from the group merging operation in the previous step as a key to sort both $F$ and $Map_{1\rightarrow 2}$ by the elements in $Map_{1\rightarrow 2}$. }
+%% %\item{Perform an exclusive scan on the output array $C$ from the group merging operation, storing the result in $I$.}
+%% %\item{The output incident face list is represented by our outputs $F$, $I$, and $C$. Elements in $F$ represent faces incident to specific vertices. Elements in $I$ represent the indices in $F$ where face lists for individual vertices begin. The elements in $C$ represent the sizes of the face lists in $F$ pointed to by $I$.}
+%% %\end{itemize}
+
+%% Though our example input $cell\mbox{-}ids$ is for triangular faces, this process can be trivially extended by modifying the array $cell\mbox{-}ids$ to represent other polygonal faces, tetrahedra or any other cell type. To determine edges surrounding a point, the process could be similarly modified to have each item in $cell\mbox{-}ids$ label the represented edge. Note that when surrounding tetrahedra are generated for each vertex, surrounding faces are also generated as a subset. Similarly, when surrounding faces are generated surrounding edges are generated as a subset, which can be used to quickly determine the nearest neighboring vertices for each input vertices where an edge exists between the two.
+
+%% Marching Cubes and Marching Tetrahedra both have the property that all generated surface geometry forms a manifold, with the exception of degenerate and boundary cases. Because of this, we can determine more information about the neighboring geometric features. To determine all faces touched by an edge, simply combine the incident face lists of the two endpoints. If only the two faces separated by the edge are desired, these can be detected because they will occur twice in the list. All other faces will occur only once. 
+
+%% Determination of adjacent face lists for each triangular face works similarly to edges. Combine the incident face lists of all three endpoints. The face that appears three times in the combined list is the current face. Faces that occur twice are separated from this face by an edge, and those that appear only once are separated by a point.
+%% Likewise for tetrahedra: The tetrahedron that appears four times in the resultant list is the current tetrahedron, those that appear three times are adjacent to it through a face, those that appear twice are adjacent to it through an edge, and those that appear once are adjacent to it through a point. Similar behavior occurs for other types of polyhedra and polygons.
+
+%% Although the optimizations used to perform \proc{Key-Weld} change depending on whether the input is a structured or unstructured grid, the output is processed into topological connectivity information in the same manner for either case.
+
+%% \subsubsection{Incidence and adjacency list construction results}
+%% The time necessary to generate incidence lists for contours of structured and unstructured grids is shown in Table~\ref{tab:toptimings}. The time necessary to generate incidence lists for tetrahedral volumes is shown in Table~\ref{tab:toptimingstetra}.
+
+%% \begin{table}[tb!]
+%% \begin{center}
+%% \caption{Timings for \proc{Vertex-Incidence-List} for contours on structured (SG) and unstructured (UG) grids.}
+%% \label{tab:toptimings}
+%% \begin{tabular}{l|r r r r|r r r}
+%% \multicolumn{8}{c}{ } \\
+%%  & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
+%% Arch. & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
+%% \hline
+%% CUDA & 1 & 2 & 6 & 25 & 2 & 7 & 47 \\
+%% OpenMP & 6 & 32 & 125 & 563 & 33 & 191 & 1213 \\
+%% \end{tabular}
+%% \end{center}
+%% \end{table}
+
+%% \begin{table}[tb!]
+%% \begin{center}
+%% \caption{Timings for \proc{Vertex-Incidence-List} on tetrahedra.}
+%% \label{tab:toptimingstetra}
+%% \begin{tabular}{l|r r r|r r r}
+%% \multicolumn{7}{c}{ } \\
+%%  & \multicolumn{3}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
+%% Arch. & $64^3$ & $128^3$ & $256^3$ & $64^3$ & $128^3$ & $256^3$\\
+%% \hline
+%% CUDA & 15 & 139 & 1141 & 16 & 142 & 1128 \\
+%% OpenMP & 378 & 3610 & $>5$min & 371 & 3621 & $>5$min \\
+%% \end{tabular}
+%% \end{center}
+%% \end{table}
+
+%% Performance for generation of incidence lists scales approximately linearly with the number of input vertices for CUDA. OpenMP scales similarly to CUDA until system memory is exceeded in the largest tetrahedral dataset.
+
+%% \subsection{Applications}
+%% To test that the generated incidence and adjacency lists are useful on parallel systems once generated, we implement several calculations that make use this topological connectivity information. Specifically, we have implemented the following:
+
+%% \begin{itemize}
+%% \item{Local averaging of vertex attributes}
+%% \item{A form of mesh coarsening, implemented as an extension to \proc{Key-Weld} without incurring additional performance cost}
+%% \item{Generation of a dual mesh}
+%% \end{itemize}
+
+%% The local averaging technique is an example that does not alter the topological connectivity information, and thus does not require an additional application of our technique after its completion. Mesh coarsening is an example that alters the input topology, and thus requires a regeneration of the topological connectivity information after its completion. Also, we use mesh coarsening to demonstrate that certain types of mesh processing can occur during the vertex welding phase of topological connectivity construction. Generation of a dual mesh is an example that generates a new topology.
+
+%% \subsection{Local Averaging}
+
+%% We perform a simple averaging of properties of the nearest neighboring vertices surrounding each processed vertex. This is accomplished by first obtaining the list of indices to neighboring points as described in \ref{sec:topology}. Duplicates in this list are removed, then the attributes of each are stored. We perform a segmented scan \cite{Blelloch1991} to sum the properties of the neighboring vertices using a merge operator that is appropriate for the property type, then divide the summed properties by the number of neighbors for the group. Some vertex properties, such as normals, need an alternative operator to replace the division operation. Since we implemented our approach as a C++ template, this operator can be specified as a template parameter.
+
+%% \subsection{Local Averaging Results}
+
+%% Table~\ref{tab:timingsaverage} shows the timings for calculating the local averages of vector properties on the generated surfaces. Figure \ref{fig:averaging} shows a before and after comparison of averaging used for vector averaging.
+
+%% \begin{table}[tb!]
+%% \begin{center}
+%% \caption{Timings for local averaging of scalar (S) and vector (V) properties on contour surfaces}
+%% \label{tab:timingsaverage}
+%% \begin{tabular}{l|r r r r|r r r}
+%% \multicolumn{8}{c}{ } \\
+%% & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
+%% Type & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
+%% \hline
+%% (S) CUDA & 18 & 47 & 158 & 650 & 44 & 51 & 203 \\
+%% (V) CUDA & 18 & 48 & 158 & 649 & 45 & 51 & 203 \\
+%% (S) OMP & 39 & 180 & 905 & 4035 & 184 & 1391 & 8611 \\
+%% (V) OMP & 39 & 181 & 914 & 4039 & 191 & 1390 & 8625 \\
+%% \end{tabular}
+%% \end{center}
+%% \end{table}
+
+%% Performance for averaging scales approximately linearly with the number of input vertices in all cases. We have profiled the performance of the algorithm and found that approximately 96\% of the time taken is spent removing duplicate vertices from the incidence lists. Generation of the incidence list is the next largest fraction of the processing time, at 3\%. The time taken to perform the sum and divide operations is negligible.
+
+
+
+\section{Results}
+
+To test our provenance-enabled topology creation algorithms we use a range
+of different data sets and types.  All the datasets we use for timing,
+listed in Table~\ref{tab:datasets}, originate as structured voxel grids.
+For tests on 3D unstructured grid we use a minimal tetrahedralization of
+these voxel grids.  We do not include a tetrahedralized version of the
+Spherical Distance D dataset because of memory constraints.  For tests on
+unstructured surfaces, we use a surface generated by Marching Cubes.
+
+\begin{table}[htb]
+\begin{center}
+\caption{Test Datasets}
+\label{tab:datasets}
+\begin{tabular}{l r r r}
+\multicolumn{4}{c}{ } \\
+Name & Dims &  Triangles & Tetrahedrons \\
+\hline
+Spherical Distance A & $64^3 $ & 35,996    & 1,250,235 \\
+Spherical Distance B & $128^3$ & 149,420   & 10,241,915 \\
+Spherical Distance C & $256^3$ & 607,388   & 82,906,875 \\
+Spherical Distance D & $512^3$ & 2,451,212 & N/A \\
+MRI Head A           & $64^3 $ & 138,510   & 1,250,235 \\
+MRI Head B           & $128^3$ & 789,440   & 10,241,915 \\
+MRI Head C           & $256^3$ & 4,947,294 & 82,906,875  \\
+\end{tabular}
+\end{center}
+\end{table}
+
+The isovalues used for contour generation are consistent for all tests within each dataset, and are chosen to show relevant features. We attach vertex normals and a scalar color value as associated attributes to each input vertex for surface contour data, but only include the color value for the tetrahedral tests due to memory constraints. In addition to the datasets listed for timings, we also use a concentric ripple dataset for some of our images for demonstration. Timings for this dataset were similar to those for the spherical dataset in all cases.
+
+%% In order to test our method for generation of topological connectivities on a range of data types, we made use of several techniques to generate geometry.
+%% To test with data calculated along a structured grid, we used the Marching Cubes algorithm to generate contour surfaces from input volume data. Next, to test
+%% with data from unstructured grids, we tetrahedralized the volume in each of the manners as presented by Carr, et al. \cite{Carr2006}. We generated contour surfaces from these tetrahedralizations
+%% to get similar data as from the Marching Cubes results but from an unstructured grid. Additionally, we use the tetrahedralizations directly as the input to test our technique
+%% to find the topological connections of a 3D structure.
+
+
+%% \subsection{Testing Environment and Datasets}
+
+We measure performance on a test system containing an Intel Core i7 975 Processor, which has a clock speed of 3.33GHz. Our test system has 12GB of RAM, and contains 2 nVidia Tesla C2070 cards. For all OpenMP tests, we set the number of threads to 8.
+
+
+%% We have performed multiple tetrahedralizations as described in Carr \cite{Carr2006} to generate tetrahedral grids for input to our method, but found that our method's performance is similar in all cases. We therefore report only the timings for the minimal tetrahedralization method described in the aforementioned paper due to its smaller memory requirements. We perform Marching Cubes on each dataset to produce contour geometry. We have found that our algorithm performs similarly with output from Marching Tetrahedrons, and therefore only report the timings for Marching Cubes. 
+
+All reported times in all tables are in milliseconds unless otherwise noted.  The Thrust library does not currently support spanning operations over multiple GPUs. We make use of two GPUs for our measurements by partitioning the input and performing the algorithm separately on each, then merging the results.  \fix{Are all measurements taken with two GPUs?  If not, which ones use 2 GPUs?  How are the data partitioned when 2 are used?}
+
+\subsection{Marching Cubes}
+
+We measure performance of our provenance-enabled Marching Cubes algorithm
+on each dataset.  One of the features of our Marching Cubes implementation
+is the ability to merge vertex properties, but the operation of this
+merging takes some time.  Thus, we report the time of the algorithm without
+any attribute merge and with the averaging of surface normals \fix{that is
+  the attribute merging that happens, right?}.  The best technique for
+merging coincident points in previous literature is using the
+\proc{Vertex-Weld} algorithm, so for comparison we include timings for this
+mechanism as well.  Note, however, that the \proc{Vertex-Weld} algorithm
+does not feature the ability to merge vertex attributes, so the timing is
+only comparable to the non-merging version of our algorithm.  These timings
+are listed in Tables \ref{table:MarchingCubesCUDA} and
+\ref{table:MarchingCubesOpenMP}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Time to perform Marching Cubes complete with vertex merging for a
+    manifold surface using CUDA.}
+  \label{table:MarchingCubesCUDA}
+  \begin{tabular}{l l r r r}
+    && \multicolumn{1}{c}{\proc{Vertex-Weld}}
+    & \multicolumn{1}{c}{\proc{Key-Weld}}
+    & \multicolumn{1}{c}{\proc{Key-Weld}} \\
+    \multicolumn{2}{c}{Data}
+    & \multicolumn{1}{c}{(no merge)}
+    & \multicolumn{1}{c}{(no merge)}
+    & \multicolumn{1}{c}{(averaging)} \\
+    \hline
+    \multicolumn{5}{l}{Spherical Distance, Structured} \\
+    \quad
+    & $64^3$ &  ms &  ms &  ms \\
+    & $128^3$ &  ms &  ms &  ms \\
+    & $256^3$ &  ms &  ms &  ms \\
+    & $512^3$ &  ms &  ms &  ms \\
+    \multicolumn{5}{l}{Spherical Distance, Unstructured} \\
+    & $64^3$ &  ms &  ms &  ms \\
+    & $128^3$ &  ms &  ms &  ms \\
+    & $256^3$ &  ms &  ms &  ms \\
+    \multicolumn{5}{l}{MRI Head, Structured} \\
+    & $64^3$ &  ms &  ms &  ms \\
+    & $128^3$ &  ms &  ms &  ms \\
+    & $256^3$ &  ms &  ms &  ms \\
+    \multicolumn{5}{l}{MRI Head, Unstructured} \\
+    & $64^3$ &  ms &  ms &  ms \\
+    & $128^3$ &  ms &  ms &  ms \\
+    & $256^3$ &  ms &  ms &  ms
+  \end{tabular}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Time to perform Marching Cubes complete with vertex merging for a
+    manifold surface using OpenMP.}
+  \label{table:MarchingCubesOpenMP}
+  \begin{tabular}{l l r r r}
+    && \multicolumn{1}{c}{\proc{Vertex-Weld}}
+    & \multicolumn{1}{c}{\proc{Key-Weld}}
+    & \multicolumn{1}{c}{\proc{Key-Weld}} \\
+    \multicolumn{2}{c}{Data}
+    & \multicolumn{1}{c}{(no merge)}
+    & \multicolumn{1}{c}{(no merge)}
+    & \multicolumn{1}{c}{(averaging)} \\
+    \hline
+    \multicolumn{5}{l}{Spherical Distance, Structured} \\
+    \quad
+    & $64^3$ &  ms &  ms &  ms \\
+    & $128^3$ &  ms &  ms &  ms \\
+    & $256^3$ &  ms &  ms &  ms \\
+    & $512^3$ &  ms &  ms &  ms \\
+    \multicolumn{5}{l}{Spherical Distance, Unstructured} \\
+    & $64^3$ &  ms &  ms &  ms \\
+    & $128^3$ &  ms &  ms &  ms \\
+    & $256^3$ &  ms &  ms &  ms \\
+    \multicolumn{5}{l}{MRI Head, Structured} \\
+    & $64^3$ &  ms &  ms &  ms \\
+    & $128^3$ &  ms &  ms &  ms \\
+    & $256^3$ &  ms &  ms &  ms \\
+    \multicolumn{5}{l}{MRI Head, Unstructured} \\
+    & $64^3$ &  ms &  ms &  ms \\
+    & $128^3$ &  ms &  ms &  ms \\
+    & $256^3$ &  ms &  ms &  ms
+  \end{tabular}
+\end{table}
+
+\fix{These tables need to be filled with timings for the complete Marching
+  Cubes operation.  They provide similar data to the original tables 2-4
+  but in a different way that is more consistent with the description.}
+
+%% \subsubsection{Vertex Welding Results}
+%% We measure performance of the \proc{Vertex-Weld} example on each set of generated geometry. Additionally, we measure \proc{Key-Weld} with and without merging of vertex properties, and with and without the integral IDs as $keys$ to each vertex. Even when explicitly storing IDs in memory, the difference in recorded times for geometry generation are negligible for both structured and unstructured grids as opposed to the timings when these IDs are not generated. Because of this, and because geometry generation is independent of our technique, we do not report timings for geometry generation here. We report the CUDA and OpenMP timings for each approach for vertex welding on the 512x512x512 spherical dataset in Table~\ref{tab:welding}.
+
+%% \begin{table}[tb!]
+%% \begin{center}
+%% \caption{Performance comparison for different approaches to Vertex Welding}
+%% \label{tab:welding}
+%% \begin{tabular}{l r r r}
+%% %\multicolumn{4}{c}{ } \\
+%% Test & CUDA & OpenMP \\
+%% \hline
+%% \proc{Vertex-Weld} (no attribute merging) & 281 & 1557 \\
+%% \proc{Key-Weld} (no attribute merging) & 281 &  1557 \\
+%% \proc{Key-Weld} (with attribute merging) & 527 & 2862\\
+%% \proc{Key-Weld} (integral IDs, no merging) & 204 & 1620 \\
+%% \proc{Key-Weld} (integral IDs, merging) & 350 & 2516 \\
+%% \end{tabular}
+%% \end{center}
+%% \end{table}
+
+%% Because the timings are best for merging when using integral edge IDs as keys for vertex welding when merging is necessary, all further timings in this paper use that approach for the vertex welding component. \proc{Key-Weld} reduces to \proc{Vertex-Weld} when no attribute merging is performed, so the timings are identical. Also note that using integral IDs for the non-merging case with \proc{Key-Weld} yields better performance in CUDA than \proc{Vertex-Weld}, due to the less complex comparison operator within the sort. 
+
+The CUDA implementation achieves better performance when using provenance
+over the spatial search in \proc{Vertex-Weld} although the OpenMP
+implementation does not appear to have the same benefit.  In either case,
+the provenance allows for further attribute averaging with only a small
+overhead.
+
+%% The OpenMP non-merging case does not appear to benefit from the use of integral IDs. Timings for the \proc{Key-Weld} technique for Marching Cubes contours of all input datasets are shown in Table~\ref{tab:vertexwelding}, and timings when using tetrahedralizations of the input dataset are shown in Table~\ref{tab:vertexweldingtetrahedra}
+
+%% \begin{table}[tb!]
+%% \begin{center}
+%% \caption{\proc{Key-Weld} timings for contours on structured grids.}
+%% \label{tab:vertexwelding}
+%% \begin{tabular}{l|r r r r|r r r}
+%% \multicolumn{8}{c}{ } \\
+%%  & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
+%% Arch. & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
+%% \hline
+%% CUDA & 7 & 23 & 254 & 349 & 22 & 116 & 755 \\
+%% OpenMP & 30 & 125 & 550 & 2516 & 115 & 695 & 3377 \\
+%% \end{tabular}
+%% \end{center}
+%% \end{table}
+
+%% \begin{table}[tb!]
+%% \begin{center}
+%% \caption{\proc{Key-Weld} timings for tetrahedra.}
+%% \label{tab:vertexweldingtetrahedra}
+%% \begin{tabular}{l|r r r|r r r}
+%% \multicolumn{7}{c}{ } \\
+%%  & \multicolumn{3}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
+%% Arch. & $64^3$ & $128^3$ & $256^3$ & $64^3$ & $128^3$ & $256^3$\\
+%% \hline
+%% CUDA & 127 & 1137 & 9301 & 128 & 1136 & 9322 \\
+%% OpenMP & 1228 & 11677 & $>5$min & 1231 & 11655 & $>5$min \\
+%% \end{tabular}
+%% \end{center}
+%% \end{table}
+
+The performance of the technique appears to be bound by the number of vertices passed as input. In all cases, performance scales approximately with the number of input vertices. 
+
+The tetrahedral case achieves approximately twice the performance per vertex of the contour case because of the absence of the normal vector as an attribute. The OpenMP version scales similarly to the CUDA version until system memory is exceeded in the largest tetrahedral dataset, at which point disk thrashing occurs during the sorts.
+
+Although not reflected in these timings, we find that the
+provenance-enabled technique carries an additional advantage over the
+previous \proc{Vertex-Weld} technique. From our Marching Cubes and Marching
+Tetrahedra implementations, we find that the \proc{Vertex-Weld} approach
+often fails to weld meshes as expected. We trace this failure to the fact
+that some vertices that should be identical actually differ slightly due to
+floating point error, and thus are not bitwise equal as required by the
+\proc{Vertex-Weld} approach. Such errors are exceptionally easy to
+encounter. Since floating-point operations are not associative, these
+errors can be generated simply by failing to ensure that we always use the
+same vertex order when generating interpolants. By assigning integral keys
+to the output vertices, \proc{Key-Weld} becomes agnostic to such
+floating-point error in the input vertices, and thus does not require
+careful prevention of these errors in the geometry-generating
+implementation.
+
+\subsection{Tetrahedron Subdivision}
+
+We compare our provenance-enabled tetrahedron subdivision against a similar
+version that uses \proc{Vertex-Weld} to establish new vertex connections.
+These timings are listed in Tables \ref{table:SubdivisionCUDA} and
+\ref{table:SubdivisionOpenMP}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Time to perform one level of cell subdivision using CUDA.}
+  \label{table:SubdivisionCUDA}
+  \begin{tabular}{l l r r}
+    \multicolumn{2}{c}{Data}
+    & \multicolumn{1}{c}{\proc{Vertex-Weld}}
+    & \multicolumn{1}{c}{\proc{Key-Weld}} \\
+    \hline
+    \multicolumn{4}{l}{Spherical Distance} \\
+    \quad
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{MRI Head} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms
+  \end{tabular}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Time to perform one level of cell subdivision using OpenMP.}
+  \label{table:SubdivisionOpenMP}
+  \begin{tabular}{l l r r}
+    \multicolumn{2}{c}{Data}
+    & \multicolumn{1}{c}{\proc{Vertex-Weld}}
+    & \multicolumn{1}{c}{\proc{Key-Weld}} \\
+    \hline
+    \multicolumn{4}{l}{Spherical Distance} \\
+    \quad
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{MRI Head} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms
+  \end{tabular}
+\end{table}
+
+\subsection{Face-Centered Tetrahedralization}
+
+We compare our provenance-enabled face-centered tetrahedralization against
+a similar version that uses \proc{Vertex-Weld} to establish new vertex
+connections.  These timings are listed in Tables \ref{table:FCTCUDA} and
+\ref{table:FCTOpenMP}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Time to perform face-centered tetrahedralization using CUDA.}
+  \label{table:FCTCUDA}
+  \begin{tabular}{l l r r}
+    \multicolumn{2}{c}{Data}
+    & \multicolumn{1}{c}{\proc{Vertex-Weld}}
+    & \multicolumn{1}{c}{\proc{Key-Weld}} \\
+    \hline
+    \multicolumn{4}{l}{Spherical Distance} \\
+    \quad
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{MRI Head} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms
+  \end{tabular}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Time to perform face-centered tetrahedralization using OpenMP.}
+  \label{table:FCTOpenMP}
+  \begin{tabular}{l l r r}
+    \multicolumn{2}{c}{Data}
+    & \multicolumn{1}{c}{\proc{Vertex-Weld}}
+    & \multicolumn{1}{c}{\proc{Key-Weld}} \\
+    \hline
+    \multicolumn{4}{l}{Spherical Distance} \\
+    \quad
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{MRI Head} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms
+  \end{tabular}
+\end{table}
+
+\subsection{Mesh coarsening}
+
+Table~\ref{table:Coarsening} shows the timings for coarsening the mesh
+as part of the vertex welding algorithm. Compare with Tables
+\ref{table:MarchingCubesCUDA} and \ref{table:MarchingCubesOpenMP} to
+observe that simultaneously performing the coarsening operation does not
+significantly affect the timing of the topology generation.
+
+%% \begin{table}[htb!]
+%% \begin{center}
+%% \caption{Timings for mesh coarsening of surface contours during vertex welding}
+%% \label{tab:timingscoarsening}
+%% \begin{tabular}{l|r r r r|r r r}
+%% \multicolumn{8}{c}{ } \\
+%%  & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
+%% Arch. & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
+%% \hline
+%% CUDA & 7 & 24 & 86 & 351 & 22 & 114 & 716 \\
+%% OpenMP & 28 & 122 & 561 & 2567 & 122 & 807 & 6208 \\
+%% \end{tabular}
+%% \end{center}
+%% \end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Time to perform Marching Cubes with additional mesh coarsening.}
+  \label{table:Coarsening}
+  \begin{tabular}{l l r r}
+    \multicolumn{2}{c}{Data}
+    & \multicolumn{1}{c}{CUDA}
+    & \multicolumn{1}{c}{OpenMP} \\
+    \hline
+    \multicolumn{4}{l}{Spherical Distance, Structured} \\
+    \quad
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    & $512^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{Spherical Distance, Unstructured} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{MRI Head, Structured} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{MRI Head, Unstructured} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms
+  \end{tabular}
+\end{table}
+
+In addition, sampling of vertex attributes is markedly improved in the
+coarsened graph. Although our Marching Cubes algorithm strictly determines
+surface normals by the information given in a single voxel, we find that
+our approach yields similar quality surface normals to those generated by
+the VTK voxel grid Marching Cubes algorithm, which visits neighboring
+voxels to determine accurate normals. This is advantageous because it
+allows for completely local operation during geometry generation without
+loss of computed attribute quality, which provides better performance on
+the GPU.
+
+\subsection{Dual Mesh Generation}
+
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[width=\linewidth]{DualMeshSkeleton.jpg}
 \end{center}
 \caption{Dual mesh (blue) overlaid as as a skeleton upon a triangular contour mesh (green) that was generated by Marching Cubes with the spherical distance dataset.}
 \label{fig:DualMeshSkeleton}
 \end{figure}
-Figure~\ref{fig:DualMeshSkeleton} shows a mesh and its dual overlaid as a skeleton. Table~\ref{tab:timingsdualmesh} shows the timings for generating dual meshes. Similarly to the case for local averaging, the time taken to generate a dual mesh is dominated by the time taken to remove unique elements from the incidence list, thereby generating an edge adjacency list. The time taken for generating a dual mesh exceeds that for the local averaging case because the face adjacency lists are larger than vertex incidence lists by a factor of 3. 
 
-\begin{table}[tb!]
-\begin{center}
-\caption{Timings for dual mesh generation}
-\label{tab:timingsdualmesh}
-\begin{tabular}{l|r r r r|r r r}
-\multicolumn{8}{c}{ } \\
- & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
-Arch. & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
-\hline
-CUDA & 20 & 64 & 255 & 1111 & 62 & 337 & 1480 \\
-%OpenMP (1 thread) & 35 & 215 & 1410 & 6102 & 211 & 1383 & 5985 \\
-OpenMP & 24 & 113 & 522 & 2263 & 115 & 531 & 2302
-\end{tabular}
-\end{center}
-\vspace{-0.6cm}
+Figure~\ref{fig:DualMeshSkeleton} shows a mesh and its dual overlaid as a skeleton. Table~\ref{table:DualMesh} shows the timings for generating dual meshes.
+
+%% \begin{table}[tb!]
+%% \begin{center}
+%% \caption{Timings for dual mesh generation}
+%% \label{tab:timingsdualmesh}
+%% \begin{tabular}{l|r r r r|r r r}
+%% \multicolumn{8}{c}{ } \\
+%%  & \multicolumn{4}{|c|}{Spherical Distance} & \multicolumn{3}{|c}{MRI Head}\\
+%% Arch. & $64^3$ & $128^3$ & $256^3$ & $512^3$ & $64^3$ & $128^3$ & $256^3$\\
+%% \hline
+%% CUDA & 20 & 64 & 255 & 1111 & 62 & 337 & 1480 \\
+%% %OpenMP (1 thread) & 35 & 215 & 1410 & 6102 & 211 & 1383 & 5985 \\
+%% OpenMP & 24 & 113 & 522 & 2263 & 115 & 531 & 2302
+%% \end{tabular}
+%% \end{center}
+%% \vspace{-0.6cm}
+%% \end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Time to create a dual mesh from a contour surface.}
+  \label{table:DualMesh}
+  \begin{tabular}{l l r r}
+    \multicolumn{2}{c}{Data}
+    & \multicolumn{1}{c}{CUDA}
+    & \multicolumn{1}{c}{OpenMP} \\
+    \hline
+    \multicolumn{4}{l}{Spherical Distance, Structured} \\
+    \quad
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    & $512^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{Spherical Distance, Unstructured} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{MRI Head, Structured} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms \\
+    \multicolumn{4}{l}{MRI Head, Unstructured} \\
+    & $64^3$ &  ms &  ms \\
+    & $128^3$ &  ms &  ms \\
+    & $256^3$ &  ms &  ms
+  \end{tabular}
 \end{table}
 
 \section{Conclusions and Future Work}
