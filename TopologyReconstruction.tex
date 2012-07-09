@@ -663,7 +663,7 @@ We explore the advantages of making a small modification to algorithms that gene
 \quad
 \subfloat[Subdivision\label{fig:teaser:subdivision}]{\includegraphics[height=0.32\columnwidth]{SubdivisionExample.pdf}}
 \quad
-\subfloat[Face-Centered Tetrahedralization\label{fig:teaser:tetrahedral} \fix{Replace adjacent small dots with larger dots covering nearby vertices.  It would make the dots easier to see and would be more consistent with other figures}]{\includegraphics[height=0.32\columnwidth]{TetrahedralExample.pdf}}
+\subfloat[Face-Centered Tetrahedralization\label{fig:teaser:tetrahedral}]{\includegraphics[height=0.32\columnwidth]{TetrahedralExample.pdf}}
 \quad
 \subfloat[Dual Mesh\label{fig:teaser:dual}]{\includegraphics[height=0.32\columnwidth]{DualMeshExample2.pdf}}
 \caption{Operations that generate geometry usually rely on a known input topology for that purpose. Marching Cubes (a) generates all output vertices on the edges of a known voxel grid. By marking these output vertices with the ID of their generating edges, connectivity information can be retained. The same process can be applied to cell subdivision (b). Tetrahedralizations (c) are more complex, but still supportable by keying on the input face as well as the input edge. Generating topology on a dual mesh (d) exchanges vertex and face connectivity information. In each figure, output topological connections known from input topology are displayed by using identical colors to highlight connected vertices.}
