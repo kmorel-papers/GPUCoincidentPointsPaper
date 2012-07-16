@@ -1215,16 +1215,14 @@ evident in Figure~\ref{fig:averaging}.
 \end{figure}
 
 \begin{figure}[htb]
+\includegraphics[width=0.32\columnwidth]{FaceNoMerge.png}
 \includegraphics[width=0.32\columnwidth]{FaceNoAveraging.png}
-\includegraphics[width=0.32\columnwidth]{FaceAveraging.png}
 \includegraphics[width=0.32\columnwidth]{FaceCoarsening.png}
 \caption{At left artifacts are visible due to sampling error caused by the
   local operation of the Marching Cubes algorithm.  At center surface
   normals are averaged on merged vertices, and smooth shading attempts to
   make the bumps less noticeable.  At right we remove these artifacts using
-  our coarsening without incurring additional performance costs.  \fix{One
-    thing I notice about the left image is that it does not look as if the
-    shading is totally flat.  Why is that?}}
+  our coarsening without incurring additional performance costs.}
 \label{fig:averaging}
 \end{figure}
 
@@ -1754,12 +1752,21 @@ floating-point error in the input vertices, and thus does not require
 careful prevention of these errors in the geometry-generating
 implementation.
 
-\subsection{Tetrahedron Subdivision}
+\begin{figure}[tb]
+\centering
+\includegraphics[width=\linewidth]{Subdivision0.png}
 
-We compare our provenance-enabled tetrahedron subdivision against a similar
+\includegraphics[width=\linewidth]{Subdivision1.png}
+\caption{An example of cell subdivision using triangular Bezier patches on a rippled surface.}
+\end{figure}
+
+\subsection{Cell Subdivision}
+
+We compare our provenance-enabled cell subdivision against a similar
 version that uses \proc{Vertex-Weld} to establish new vertex connections.
 These timings are listed in Tables \ref{table:SubdivisionCUDA} and
-\ref{table:SubdivisionOpenMP}.
+\ref{table:SubdivisionOpenMP}. Figure~\ref{fig:subdivision} shows an example
+of cell subdivision on a surface.
 
 \begin{table}[htb]
   \centering
@@ -1807,7 +1814,7 @@ These timings are listed in Tables \ref{table:SubdivisionCUDA} and
 
 We compare our provenance-enabled face-centered tetrahedralization against
 a similar version that uses \proc{Vertex-Weld} to establish new vertex
-connections.  These timings are listed in Tables \ref{table:FCTCUDA} and
+connections. See Figure~\ref{fig:teaser:tetrahedral} for a diagram of face-centered tetrahedralization of two voxels. These timings are listed in Tables \ref{table:FCTCUDA} and
 \ref{table:FCTOpenMP}.
 
 \begin{table}[htb]
