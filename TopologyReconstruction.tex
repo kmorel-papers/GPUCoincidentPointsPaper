@@ -742,10 +742,12 @@ technique in this paper.
 
 The algorithm, hereafter referred to as \proc{Vertex-Weld}, works as
 described in Algorithm 1.  Vertices are first sorted by some representation
-of their coordinates.  Bell suggests \fix{describe how the three
-  coordinates are combined to a single value.}  After the sort, vertices at
+of their coordinates.  Bell suggests a lexicographic sort
+where first the x, then y, then z coordinates are compared. After the sort, vertices at
 identical locations are adjacent in the array.  These coincident points are
-marked and compacted.
+marked and compacted. Note that the lexicographic sorting method is very sensitive to
+floating-point error because small differences in either of the x or y coordinates may
+lead to nonadjacent placement of otherwise identical vertices in the sorted array.
 
 \begin{figure}[h!]
 \vspace{-0.3cm}
@@ -789,7 +791,8 @@ component in MapReduce to facilitate the understanding for those already
 familiar with this system.
 
 \begin{figure}[htb]
-  \includegraphics[width=\linewidth]{MapPartitionReduce.pdf}
+\centering
+  \includegraphics[width=0.85\linewidth]{MapPartitionReduce.pdf}
   \caption{Basic flow of an algorithm using provenance to construct
     connected topology.}
   \label{fig:ProvenanceFlow}
@@ -880,8 +883,8 @@ neighborhood information such as averaging normals across surface polygons.
 To facilitate averaging we also generate a $\id{counts}$ array marking
 the number of cells incident to each vertex.  Although this array is not
 specifically necessary to describe the final topology, it can be leveraged
-to find vertex incidence lists using the algorithm proposed by \fix{cite
-  whoever made the Vertex-Incidence-List algorithm}.
+to find vertex incidence lists using the \proc{Vertex-Incidence-List} method
+described in Algorithm~3.
 
 %% \section{Merging Algorithm}
 %% Without significant modification of the algorithms generating topological features,
@@ -1040,6 +1043,30 @@ elements and then merge each group into single outputs.  The workings of
 \end{codebox}
 \vspace{-0.47cm}
 \caption*{Alg. 2: The \proc{Key-Weld} procedure welds vertices and allows multiple local samples of vertex attributes to be merged to form a better sampling without non-local operation during geometry generation.}
+\end{figure}
+
+\noindent
+\begin{figure}[tb]
+ \vspace{-0.4cm}
+ \begin{codebox}
+   \Procname{$\proc{Vertex-Incidence-Lists}(\id{cell-ids},\id{cell-connections},\id{counts})$\\
+     \id{cell-ids}: An array of cell identifiers for each cell vertex.\\
+     \makebox[.2in]{}Usually sequential repeated indices (e.g. $\{0,0,0,1,1,1,...\}$)\\
+     \id{cell-connections}: Result from \proc{Key-Weld} representing cell connectivity.\\
+     \id{counts}: Result from \proc{Key-Weld}, number of cells per vertex.\\
+   }
+   \zi \Comment Use a key-sort with cell connections as the keys to
+   \zi \Comment group cell identifiers by vertices.
+   \li $(-, \id{links}) \gets \proc{Key-Sort}(\id{cell-connections},\id{cell-ids})$
+   \zi \Comment The size of each incidence list is the same as \id{count}.
+   \li $\id{links-counts} \gets \id{counts}$
+   \zi \Comment Use an exclusive scan to find the offset to the incidence
+   \zi \Comment list for each vertex.
+   \li $\id{links-offsets} \gets \proc{Exclusive-Scan}(\id{links-counts})$
+   \li \Return $(\id{links},\id{links-counts},\id{links-offsets})$
+ \end{codebox}
+ \vspace{-0.4cm}
+ \caption*{Alg. 3: \proc{Vertex-Incidence-Lists} takes the output of the \proc{Key-Weld} algorithm and quickly generates an incidence list, represented as an array of \emph{cell-ids} and an array of pointers into \emph{cell-ids} called \emph{links-offsets} that represents the start of each cell's incidence list. Adjacency lists across edges may be produced by removing incidences that do not occur exactly twice in a cell, and adjacency lists across faces may be generated similarly. }
 \end{figure}
 
 The \proc{Key-Weld} algorithm takes as its input data the result of a map
@@ -1353,12 +1380,6 @@ proper order around the polygon.  To order the vertices, we use the vertex
 key and the two incident input vertices stored in the value to ``walk''
 around each dual mesh polygon, storing the order as we go.
 
-\fix{My description differs from the original description and almost
-  definitely differs from our current implementation.  My description
-  suggests that the vertex list be written immediately and indices be used
-  as values in the welding.  I also suggest passing links through weld
-  values rather than build an adjacency list.  We should talk about it.}
-
 %% To generate the dual of our triangular input meshes, we perform the following procedure: For each face, weaverage the vertices to get the centroid, and store it in a new array at the same ID as the original face. Now the surrounding face lists from \proc{Key-Weld} for each of the vertices in the original mesh form a representation of each face of the dual mesh, with the vertices not necessarily in order. To order the vertices, we create an adjacency list for all faces in parallel as described in \ref{sec:topology}, then use the adacency lists for each face to `walk' around each dual mesh cell, storing the order as we go. We perform all of these operations in a data parallel manner using existing functions of the Thrust library. Figure~\ref{fig:teaser:dual} shows an example of this kind of dual mesh for a 2D case.
 
 %\begin{figure}[!tb]
@@ -1427,31 +1448,7 @@ around each dual mesh polygon, storing the order as we go.
 %% %\label{fig:IncidenceList}
 %% %\end{figure*}
 
-%% \noindent
-%% \begin{figure}[hb]
-%% \vspace{-0.4cm}
-%% \begin{codebox}
-%%   \Procname{$\proc{Vertex-Incidence-Lists}(\id{cell-ids},\id{cell-connections},\id{counts})$\\
-%%     \id{cell-ids}: An array of cell identifiers for each cell vertex.\\
-%%     \makebox[.2in]{}Usually sequential repeated indices (e.g. $\{0,0,0,1,1,1,...\}$)\\
-%%     \id{cell-connections}: Result from \proc{Key-Weld} representing cell connectivity.\\
-%%     \id{counts}: Result from \proc{Key-Weld}, number of cells per vertex.\\
-%%   }
-%%   \zi \Comment Use a key-sort with cell connections as the keys to
-%%   \zi \Comment group cell identifiers by vertices.
-%%   \li $(-, \id{links}) \gets \proc{Key-Sort}(\id{cell-connections},\id{cell-ids})$
-%%   \zi \Comment The size of each incidence list is the same as \id{count}.
-%%   \li $\id{links-counts} \gets \id{counts}$
-%%   \zi \Comment Use an exclusive scan to find the offset to the incidence
-%%   \zi \Comment list for each vertex.
-%%   \li $\id{links-offsets} \gets \proc{Exclusive-Scan}(\id{links-counts})$
-%%   \li \Return $(\id{links},\id{links-counts},\id{links-offsets})$
-%% \end{codebox}
-%% \vspace{-0.4cm}
-%% \caption*{Alg. 3: \proc{Vertex-Incidence-Lists} takes the output of the \proc{Key-Weld} algorithm and quickly generates an incidence list, represented as an array of \emph{cell-ids} and an array of pointers into \emph{cell-ids} called \emph{links-offsets} that represents the start of each cell's incidence list.}
-%% \end{figure}
-
-%% %\begin{itemize}
+ %\begin{itemize}
 %% %\item{Generate an array $F$ containing the ID of the face represented by each instance of each vertex. For a triangular mesh, such an array would normally have the form  $\lbrace0,0,0,1,1,1,2,2,2...\rbrace$, and thus can be generated implicitly. More complex meshes may require the IDs to be generated during geometry generation, which requires extra storage but is computationally trivial.}
 %% %\item{Perform Vertex Welding via our previously described method, using $M$ to merge any associated attributes and with $K$ being the integral IDs assigned per-vertex described in \ref{sec:IntegralIDs}. $F$ is not passed into this method.}
 %% %\item{Use the output array $Map_{1\rightarrow 2}$ from the group merging operation in the previous step as a key to sort both $F$ and $Map_{1\rightarrow 2}$ by the elements in $Map_{1\rightarrow 2}$. }
@@ -1468,7 +1465,7 @@ around each dual mesh polygon, storing the order as we go.
 
 %% Although the optimizations used to perform \proc{Key-Weld} change depending on whether the input is a structured or unstructured grid, the output is processed into topological connectivity information in the same manner for either case.
 
-%% \subsubsection{Incidence and adjacency list construction results}
+%%\subsection{Incidence list construction}
 %% The time necessary to generate incidence lists for contours of structured and unstructured grids is shown in Table~\ref{tab:toptimings}. The time necessary to generate incidence lists for tetrahedral volumes is shown in Table~\ref{tab:toptimingstetra}.
 
 %% \begin{table}[tb!]
@@ -1583,12 +1580,10 @@ The isovalues used for contour generation are consistent for all tests within ea
 
 %% \subsection{Testing Environment and Datasets}
 
-We measure performance on a test system containing an Intel Core i7 975 Processor, which has a clock speed of 3.33GHz. Our test system has 12GB of RAM, and contains 2 nVidia Tesla C2070 cards. For all OpenMP tests, we set the number of threads to 8.
+We measure performance on a test system containing an Intel Core i7 975 Processor, which has a clock speed of 3.33GHz. Our test system has 12GB of RAM, and contains 2 nVidia Tesla C2070 cards. For all OpenMP tests, we set the number of threads to 8. All reported times in all tables are in milliseconds unless otherwise noted.
 
 
 %% We have performed multiple tetrahedralizations as described in Carr \cite{Carr2006} to generate tetrahedral grids for input to our method, but found that our method's performance is similar in all cases. We therefore report only the timings for the minimal tetrahedralization method described in the aforementioned paper due to its smaller memory requirements. We perform Marching Cubes on each dataset to produce contour geometry. We have found that our algorithm performs similarly with output from Marching Tetrahedrons, and therefore only report the timings for Marching Cubes. 
-
-All reported times in all tables are in milliseconds unless otherwise noted.  The Thrust library does not currently support spanning operations over multiple GPUs. We make use of two GPUs for our measurements by partitioning the input and performing the algorithm separately on each, then merging the results.  \fix{Are all measurements taken with two GPUs?  If not, which ones use 2 GPUs?  How are the data partitioned when 2 are used?}
 
 \subsection{Marching Cubes}
 
@@ -1596,8 +1591,7 @@ We measure performance of our provenance-enabled Marching Cubes algorithm
 on each dataset.  One of the features of our Marching Cubes implementation
 is the ability to merge vertex properties, but the operation of this
 merging takes some time.  Thus, we report the time of the algorithm without
-any attribute merge and with the averaging of surface normals \fix{that is
-  the attribute merging that happens, right?}.  The best technique for
+any attribute merge and with the averaging of surface normals.  The best technique for
 merging coincident points in previous literature is using the
 \proc{Vertex-Weld} algorithm, so for comparison we include timings for this
 mechanism as well.  Note, however, that the \proc{Vertex-Weld} algorithm
