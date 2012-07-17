@@ -792,7 +792,7 @@ familiar with this system.
 
 \begin{figure}[htb]
 \centering
-  \includegraphics[width=0.85\linewidth]{MapPartitionReduce.pdf}
+  \includegraphics[width=0.75\linewidth]{MapPartitionReduce.pdf}
   \caption{Basic flow of an algorithm using provenance to construct
     connected topology.}
   \label{fig:ProvenanceFlow}
@@ -1049,19 +1049,21 @@ elements and then merge each group into single outputs.  The workings of
 \begin{figure}[tb]
  \vspace{-0.4cm}
  \begin{codebox}
-   \Procname{$\proc{Vertex-Incidence-Lists}(\id{cell-ids},\id{cell-connections},\id{counts})$\\
+   \Procname{$\proc{Vertex-Incidence-Lists}(\id{cell-ids}, \\
+							\hspace*{4.18cm}\id{cell-connections}, \\
+                            \hspace*{4.18cm}\id{counts})$\\
      \id{cell-ids}: An array of cell identifiers for each cell vertex.\\
-     \makebox[.2in]{}Usually sequential repeated indices (e.g. $\{0,0,0,1,1,1,...\}$)\\
-     \id{cell-connections}: Result from \proc{Key-Weld} representing cell connectivity.\\
-     \id{counts}: Result from \proc{Key-Weld}, number of cells per vertex.\\
+     \makebox[.2in]{}Usually sequential repeated indices $\{0,0,0,1,1,1,...\}$\\
+     \id{cell-connections}: Result from \proc{Key-Weld}.\\
+     \id{counts}: Result from \proc{Key-Weld}, cell counts per vertex.\\
    }
    \zi \Comment Use a key-sort with cell connections as the keys to
    \zi \Comment group cell identifiers by vertices.
    \li $(-, \id{links}) \gets \proc{Key-Sort}(\id{cell-connections},\id{cell-ids})$
-   \zi \Comment The size of each incidence list is the same as \id{count}.
+   \zi \Comment The size of each incidence list is stored in \id{count}.
    \li $\id{links-counts} \gets \id{counts}$
-   \zi \Comment Use an exclusive scan to find the offset to the incidence
-   \zi \Comment list for each vertex.
+   \zi \Comment Use an exclusive scan to find the offset to the
+   \zi \Comment incidence list for each vertex.
    \li $\id{links-offsets} \gets \proc{Exclusive-Scan}(\id{links-counts})$
    \li \Return $(\id{links},\id{links-counts},\id{links-offsets})$
  \end{codebox}
@@ -1758,6 +1760,7 @@ implementation.
 
 \includegraphics[width=\linewidth]{Subdivision1.png}
 \caption{An example of cell subdivision using triangular Bezier patches on a rippled surface.}
+\label{fig:cellsubdivision}
 \end{figure}
 
 \subsection{Cell Subdivision}
@@ -1765,8 +1768,8 @@ implementation.
 We compare our provenance-enabled cell subdivision against a similar
 version that uses \proc{Vertex-Weld} to establish new vertex connections.
 These timings are listed in Tables \ref{table:SubdivisionCUDA} and
-\ref{table:SubdivisionOpenMP}. Figure~\ref{fig:subdivision} shows an example
-of cell subdivision on a surface.
+\ref{table:SubdivisionOpenMP}. Figure~\ref{fig:cellsubdivision} shows an example
+of cell subdivision on a surface. We observed similar performance when subdividing tetrahedral grids.
 
 \begin{table}[htb]
   \centering
