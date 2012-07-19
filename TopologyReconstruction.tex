@@ -1616,22 +1616,22 @@ are listed in Tables \ref{table:MarchingCubesCUDA} and
     \hline
     \multicolumn{5}{l}{Spherical Distance, Structured} \\
     \quad
-    & $64^3$ &  ms &  ms &  ms \\
-    & $128^3$ &  ms &  ms &  ms \\
-    & $256^3$ &  ms &  ms &  ms \\
-    & $512^3$ &  ms &  ms &  ms \\
+    & $64^3$  &  14ms &  11ms &   13ms \\
+    & $128^3$ &  40ms &  31ms &   42ms \\
+    & $256^3$ & 166ms & 141ms &  177ms \\
+    & $512^3$ & 847ms & 752ms &  894ms \\
     \multicolumn{5}{l}{Spherical Distance, Unstructured} \\
-    & $64^3$ &  ms &  ms &  ms \\
-    & $128^3$ &  ms &  ms &  ms \\
-    & $256^3$ &  ms &  ms &  ms \\
+    & $64^3$  &  41ms &  35ms &   41ms \\
+    & $128^3$ & 242ms & 226ms &  251ms \\
+    & $256^3$ &1871ms &1791ms & 2014ms \\
     \multicolumn{5}{l}{MRI Head, Structured} \\
-    & $64^3$ &  ms &  ms &  ms \\
-    & $128^3$ &  ms &  ms &  ms \\
-    & $256^3$ &  ms &  ms &  ms \\
+    & $64^3$  &  34ms &  26ms &  36ms \\
+    & $128^3$ & 168ms & 138ms & 181ms \\
+    & $256^3$ &1092ms & 903ms &1193ms \\
     \multicolumn{5}{l}{MRI Head, Unstructured} \\
-    & $64^3$ &  ms &  ms &  ms \\
-    & $128^3$ &  ms &  ms &  ms \\
-    & $256^3$ &  ms &  ms &  ms
+    & $64^3$  &  86ms &  71ms &  92ms \\
+    & $128^3$ & 545ms & 476ms & 583ms \\
+    & $256^3$ &4193ms &4011ms &4347ms
   \end{tabular}
 \end{table}
 
@@ -1651,28 +1651,24 @@ are listed in Tables \ref{table:MarchingCubesCUDA} and
     \hline
     \multicolumn{5}{l}{Spherical Distance, Structured} \\
     \quad
-    & $64^3$ &  ms &  ms &  ms \\
-    & $128^3$ &  ms &  ms &  ms \\
-    & $256^3$ &  ms &  ms &  ms \\
-    & $512^3$ &  ms &  ms &  ms \\
+    & $64^3$  &  118ms &  105ms &  108ms \\
+    & $128^3$ &  184ms &  168ms &  191ms \\
+    & $256^3$ &  652ms &  640ms &  721ms \\
+    & $512^3$ & 3266ms & 3254ms & 3582ms \\
     \multicolumn{5}{l}{Spherical Distance, Unstructured} \\
-    & $64^3$ &  ms &  ms &  ms \\
-    & $128^3$ &  ms &  ms &  ms \\
-    & $256^3$ &  ms &  ms &  ms \\
+    & $64^3$  &  104ms &   97ms &  122ms \\
+    & $128^3$ &  816ms &  771ms &  901ms \\
+    & $256^3$ & 9623ms & 9159ms &10515ms \\
     \multicolumn{5}{l}{MRI Head, Structured} \\
-    & $64^3$ &  ms &  ms &  ms \\
-    & $128^3$ &  ms &  ms &  ms \\
-    & $256^3$ &  ms &  ms &  ms \\
+    & $64^3$  &  167ms &  159ms &  192ms \\
+    & $128^3$ &  654ms &  634ms &  721ms \\
+    & $256^3$ & 4022ms & 3090ms & 4851ms \\
     \multicolumn{5}{l}{MRI Head, Unstructured} \\
-    & $64^3$ &  ms &  ms &  ms \\
-    & $128^3$ &  ms &  ms &  ms \\
-    & $256^3$ &  ms &  ms &  ms
+    & $64^3$  &  270ms &  263ms &  326ms \\
+    & $128^3$ & 2123ms & 2117ms & 2514ms \\
+    & $256^3$ &29425ms &29224ms &31429ms
   \end{tabular}
 \end{table}
-
-\fix{These tables need to be filled with timings for the complete Marching
-  Cubes operation.  They provide similar data to the original tables 2-4
-  but in a different way that is more consistent with the description.}
 
 %% \subsubsection{Vertex Welding Results}
 %% We measure performance of the \proc{Vertex-Weld} example on each set of generated geometry. Additionally, we measure \proc{Key-Weld} with and without merging of vertex properties, and with and without the integral IDs as $keys$ to each vertex. Even when explicitly storing IDs in memory, the difference in recorded times for geometry generation are negligible for both structured and unstructured grids as opposed to the timings when these IDs are not generated. Because of this, and because geometry generation is independent of our technique, we do not report timings for geometry generation here. We report the CUDA and OpenMP timings for each approach for vertex welding on the 512x512x512 spherical dataset in Table~\ref{tab:welding}.
@@ -1782,13 +1778,13 @@ of cell subdivision on a surface. We observed similar performance when subdividi
     \hline
     \multicolumn{4}{l}{Spherical Distance} \\
     \quad
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
+    & $64^3$  &   26ms &   21ms \\
+    & $128^3$ &   91ms &   84ms \\
+    & $256^3$ &  362ms &  340ms \\
     \multicolumn{4}{l}{MRI Head} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms
+    & $64^3$  &   87ms &   79ms \\
+    & $128^3$ &  479ms &  409ms \\
+    & $256^3$ & 3768ms & 3231ms
   \end{tabular}
 \end{table}
 
@@ -1803,13 +1799,13 @@ of cell subdivision on a surface. We observed similar performance when subdividi
     \hline
     \multicolumn{4}{l}{Spherical Distance} \\
     \quad
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
+    & $64^3$  &  183ms &  161ms \\
+    & $128^3$ &  360ms &  337ms \\
+    & $256^3$ & 1410ms & 1304ms \\
     \multicolumn{4}{l}{MRI Head} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms
+    & $64^3$  &  352ms &  262ms \\
+    & $128^3$ & 1532ms & 1376ms \\
+    & $256^3$ & 8905ms & 7939ms
   \end{tabular}
 \end{table}
 
@@ -1831,13 +1827,13 @@ connections. See Figure~\ref{fig:teaser:tetrahedral} for a diagram of face-cente
     \hline
     \multicolumn{4}{l}{Spherical Distance} \\
     \quad
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
+    & $64^3$  &   9ms & 10ms \\
+    & $128^3$ &  79ms & 75ms \\
+    & $256^3$ & 624ms &595ms \\
     \multicolumn{4}{l}{MRI Head} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms
+    & $64^3$  &  19ms & 16ms \\
+    & $128^3$ & 152ms &125ms \\
+    & $256^3$ &1219ms &997ms
   \end{tabular}
 \end{table}
 
@@ -1852,13 +1848,13 @@ connections. See Figure~\ref{fig:teaser:tetrahedral} for a diagram of face-cente
     \hline
     \multicolumn{4}{l}{Spherical Distance} \\
     \quad
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
+    & $64^3$ &   12ms &   9ms \\
+    & $128^3$ &  95ms &  77ms \\
+    & $256^3$ & 766ms & 721ms \\
     \multicolumn{4}{l}{MRI Head} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms
+    & $64^3$ &   31ms &  26ms \\
+    & $128^3$ & 215ms & 194ms \\
+    & $256^3$ &1994ms &1781ms
   \end{tabular}
 \end{table}
 
@@ -1896,22 +1892,22 @@ significantly affect the timing of the topology generation.
     \hline
     \multicolumn{4}{l}{Spherical Distance, Structured} \\
     \quad
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
-    & $512^3$ &  ms &  ms \\
+    & $64^3$  &  13ms & 101ms \\
+    & $128^3$ &  41ms & 199ms \\
+    & $256^3$ & 175ms & 725ms \\
+    & $512^3$ & 885ms &3571ms \\
     \multicolumn{4}{l}{Spherical Distance, Unstructured} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
+    & $64^3$  &  44ms &  123ms \\
+    & $128^3$ & 245ms &  899ms \\
+    & $256^3$ &1997ms &10529ms \\
     \multicolumn{4}{l}{MRI Head, Structured} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
+    & $64^3$  &  35ms & 188ms \\
+    & $128^3$ & 179ms & 729ms \\
+    & $256^3$ &1150ms &4875ms \\
     \multicolumn{4}{l}{MRI Head, Unstructured} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms
+    & $64^3$  &   90ms &  319ms \\
+    & $128^3$ &  589ms & 2519ms \\
+    & $256^3$ & 4332ms &31444ms
   \end{tabular}
 \end{table}
 
@@ -1965,22 +1961,22 @@ Figure~\ref{fig:DualMeshSkeleton} shows a mesh and its dual overlaid as a skelet
     \hline
     \multicolumn{4}{l}{Spherical Distance, Structured} \\
     \quad
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
-    & $512^3$ &  ms &  ms \\
+    & $64^3$ &   14ms &  22ms \\
+    & $128^3$ &  38ms & 100ms \\
+    & $256^3$ & 138ms & 465ms \\
+    & $512^3$ & 575ms &1992ms \\
     \multicolumn{4}{l}{Spherical Distance, Unstructured} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
+    & $64^3$ &   16ms &  31ms \\
+    & $128^3$ &  52ms & 124ms \\
+    & $256^3$ & 198ms & 657ms \\
     \multicolumn{4}{l}{MRI Head, Structured} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms \\
+    & $64^3$ &   39ms & 109ms \\
+    & $128^3$ & 203ms & 662ms \\
+    & $256^3$ &1348ms &4414ms \\
     \multicolumn{4}{l}{MRI Head, Unstructured} \\
-    & $64^3$ &  ms &  ms \\
-    & $128^3$ &  ms &  ms \\
-    & $256^3$ &  ms &  ms
+    & $64^3$ &  57ms &  139ms \\
+    & $128^3$ &297ms &  904ms \\
+    & $256^3$ &1321ms &4259ms
   \end{tabular}
 \end{table}
 
